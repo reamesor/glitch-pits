@@ -2,13 +2,14 @@
 
 interface GlitchPitsLogoProps {
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 const sizeClass = {
   sm: "text-xs",
   md: "text-base sm:text-lg",
   lg: "text-xl sm:text-2xl md:text-3xl",
+  xl: "text-3xl sm:text-4xl md:text-5xl lg:text-6xl",
 };
 
 export function GlitchPitsLogo({ className = "", size = "md" }: GlitchPitsLogoProps) {

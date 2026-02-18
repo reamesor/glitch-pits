@@ -368,3 +368,22 @@
   animation: logo-glitch 4s ease-in-out infinite, logo-glow-pulse 3s ease-in-out infinite;
   display: inline-block;
 }
+
+/* Landing page: floating characters (DGB-style) */
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0) translateX(0) scale(1); }
+  25% { transform: translateY(-8px) translateX(4px) scale(1.05); }
+  50% { transform: translateY(4px) translateX(-6px) scale(0.98); }
+  75% { transform: translateY(-4px) translateX(-4px) scale(1.02); }
+}
+
+.landing-character {
+  animation: landing-float 6s ease-in-out infinite;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.2s;
+}
+.landing-character:hover {
+  filter: drop-shadow(0 0 12px var(--glitch-teal)) drop-shadow(0 0 24px var(--glitch-pink));
+  animation-play-state: paused;
+  transform: scale(1.15);
+}

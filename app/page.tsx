@@ -12,9 +12,16 @@ import { GameCanvas } from "@/components/GameCanvas";
 import { ConnectWalletModal } from "@/components/ConnectWalletModal";
 import { DashboardModal } from "@/components/DashboardModal";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
+import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
+const LANDING_SEEN_KEY = "glitch-pits-landing-seen";
+
 export default function Home() {
+  const [showLanding, setShowLanding] = useState(() => {
+    if (typeof window === "undefined") return true;
+    return !sessionStorage.getItem(LANDING_SEEN_KEY);
+  });
   const [showForge, setShowForge] = useState(true);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [showGameHelp, setShowGameHelp] = useState(false);
@@ -65,6 +72,34 @@ export default function Home() {
     const saved = typeof window !== "undefined" ? localStorage.getItem(WALLET_STORAGE_KEY) : null;
     if (saved?.trim()) setWalletAddress(saved.trim());
   }, [setWalletAddress]);
+
+  const handleEnterPits = () => {
+    setShowLanding(false);
+    try {
+      sessionStorage.setItem(LANDING_SEEN_KEY, "1");
+    } catch {
+      // ignore
+    }
+  };
+
+  if (showLanding) {
+    return (
+      <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
+        <LandingPage
+          onEnter={handleEnterPits}
+          onOpenHelp={() => setShowGameHelp(true)}
+          onOpenBlackMarket={() => setShowBlackMarket(true)}
+          onOpenDashboard={() => setShowDashboard(true)}
+          onOpenConnectWallet={() => setShowConnectWallet(true)}
+          hasWallet={!!walletAddress}
+        />
+        {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
+        {showBlackMarket && <BlackMarketModal onClose={() => setShowBlackMarket(false)} />}
+        {showDashboard && <DashboardModal onClose={() => setShowDashboard(false)} />}
+        {showConnectWallet && <ConnectWalletModal onClose={() => setShowConnectWallet(false)} />}
+      </main>
+    );
+  }
 
   return (
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>

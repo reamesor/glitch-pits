@@ -72,7 +72,10 @@ export function GameCanvas() {
       setBattlePhase("result");
     }, waitMs);
 
-    const tIdle = setTimeout(() => setBattlePhase("idle"), waitMs + RESULT_DISPLAY_MS);
+    const tIdle = setTimeout(() => {
+      useGameStore.getState().setLastBetResult(null);
+      setBattlePhase("idle");
+    }, waitMs + RESULT_DISPLAY_MS);
 
     return () => {
       clearTimeout(t);
@@ -195,26 +198,14 @@ export function GameCanvas() {
           )}
 
           {battlePhase === "result" && (
-            <>
-              <p
-                className="text-center font-mono text-[10px] sm:text-xs"
-                style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
-              >
-                {battleWon
-                  ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
-                  : "House wins."}
-              </p>
-              <button
-                type="button"
-                onClick={() => {
-                  setLastBetResult(null);
-                  setBattlePhase("idle");
-                }}
-                className="mt-2 w-full pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[9px] sm:text-[10px]"
-              >
-                START REVENGE
-              </button>
-            </>
+            <p
+              className="text-center font-mono text-[10px] sm:text-xs"
+              style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
+            >
+              {battleWon
+                ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
+                : "House wins."}
+            </p>
           )}
         </div>
       </div>
@@ -332,7 +323,7 @@ export function GameCanvas() {
 
           {lastBetResult !== null && battlePhase === "idle" && (
             <div
-              className={`flex flex-col gap-2 rounded border-2 py-2 px-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
+              className={`rounded border-2 py-2 px-3 ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
             >
               <p className="font-mono text-xs font-semibold sm:text-sm">
                 {lastBetResult.won ? (
@@ -341,13 +332,6 @@ export function GameCanvas() {
                   <span className="text-red-400">LAST RESULT: HOUSE WINS. Try again.</span>
                 )}
               </p>
-              <button
-                type="button"
-                onClick={() => setLastBetResult(null)}
-                className="shrink-0 pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[10px] sm:text-[11px]"
-              >
-                START REVENGE
-              </button>
             </div>
           )}
         </div>

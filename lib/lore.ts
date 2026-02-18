@@ -6,7 +6,14 @@ export const LORE = {
   title: "THE GLITCH PITS",
   tagline: "Where the House holds the line. You hold the tokens.",
 
+  vision: "A fair, transparent pit where every round is 50/50: you stake PITS, the House stakes the other side. No hidden odds — gain or burn.",
+  mission: "To make betting simple and readable: one character, one bet, one outcome. Win and your stake is multiplied. Lose and it burns. The utility is in the token: use it to play, upgrade, or walk away.",
+
   sections: [
+    {
+      heading: "GAIN OR BURN",
+      body: "Glitch Pits is a gamble with clear utility. You bet PITS. If you win, you gain (bet × multiplier). If you lose, the House burns your bet — those tokens leave circulation. The only outcomes are gain or burn. No partial refunds, no rollbacks. That simplicity is the utility: every token is either won or burned.",
+    },
     {
       heading: "ORIGIN",
       body: "Beyond the firewalled sectors, the Glitch is a layer where logic stutters and outcomes fork. There, the Pits were dug — not by hand, but by runaway processes and failed rollbacks. What remains is an arena that doesn't care who you were. Only who you bet on.",
@@ -20,8 +27,8 @@ export const LORE = {
       body: "PITS are the only currency the Pits accept. You earn them by entering a character and by winning rounds. You spend them on bets and on upgrades — Attack, Defense, Luck — in the Black Market. The House always keeps a cut. What gets burned is gone. What you win is yours until you put it back on the line.",
     },
     {
-      heading: "REVENGE",
-      body: "After every round the only move is forward: Start Revenge. Pick your amount, place your bet again. The Pit doesn't remember the last fight. It only cares about the next one. Revenge isn't narrative. It's the next bet.",
+      heading: "NEXT ROUND",
+      body: "After every round the only move is forward. Pick your amount, place your bet again. The Pit doesn't remember the last fight. It only cares about the next one.",
     },
     {
       heading: "PURPOSE",

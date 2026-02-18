@@ -8,14 +8,26 @@ export interface RumbleParticipant {
   name: string;
   clothes?: string;
   weapon?: string;
+  loreClass?: string;
   isAlive?: boolean;
+  betAmount?: number;
 }
 
 export interface RumbleState {
   phase: "idle" | "entries" | "battle" | "finished";
   participants: RumbleParticipant[];
   prizePool: number;
+  spectatorPool?: number;
   winner: RumbleParticipant | null;
+  seedId?: string | null;
+  gameMode?: "duel" | "rumble" | null;
+}
+
+export interface LeaderboardEntry {
+  name: string;
+  amount: number;
+  seedId: string;
+  date: string;
 }
 
 export interface GameState {
@@ -28,6 +40,7 @@ export interface GameState {
   treasuryBalance: number;
   rumbleState: RumbleState | null;
   victoryData: { name: string; amount: number } | null;
+  leaderboard: LeaderboardEntry[];
 }
 
 interface GameActions {
@@ -39,6 +52,7 @@ interface GameActions {
   setCharacterCount: (count: number) => void;
   setRumbleState: (state: RumbleState | null) => void;
   setVictoryData: (data: { name: string; amount: number } | null) => void;
+  setLeaderboard: (entries: LeaderboardEntry[]) => void;
   addGlitchLog: (entry: { type: string; message: string }) => void;
   setTreasuryBalance: (amount: number) => void;
   reset: () => void;
@@ -61,6 +75,7 @@ const initialState: GameState = {
   treasuryBalance: 0,
   rumbleState: null,
   victoryData: null,
+  leaderboard: [],
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -91,6 +106,7 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
   setCharacterCount: (count) => set({ characterCount: count }),
   setRumbleState: (state) => set({ rumbleState: state }),
   setVictoryData: (data) => set({ victoryData: data }),
+  setLeaderboard: (entries) => set({ leaderboard: entries }),
 
   addGlitchLog: (entry) =>
     set((state) => ({

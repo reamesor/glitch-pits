@@ -4,21 +4,23 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
-/* --- Glitch Pits Global Styles --- */
+/* --- Glitch Pits Global Styles (Glitch-Noir) --- */
 :root {
-  /* MILADY-inspired: purple/blue base with pink/teal accents */
+  /* Spec: Glitch-Noir chromatic aberration */
+  --g-red: #ff00c1;
+  --g-blue: #00fff9;
+  /* Existing palette */
   --glitch-pink: #ff69b4;
   --glitch-teal: #00d4aa;
   --glitch-orange: #ff8c42;
   --glitch-gold: #ffd700;
   --glitch-purple: #6b4b9a;
   --glitch-blue: #4a90d9;
-  --bg-dark: #1a1520;
-  --bg-darker: #120d18;
+  --bg-dark: #0a0a0a;
+  --bg-darker: #060606;
   --window-blue: #3d6aa2;
   --window-blue-dark: #2d4a72;
-  /* Aliases for glitch text */
-  --glitch-red: var(--glitch-pink);
+  --glitch-red: var(--g-red);
   --glitch-green: var(--glitch-teal);
 }
 
@@ -31,4 +33,14 @@ body {
 
 .font-pixel {
   font-family: "Press Start 2P", monospace;
+}
+
+/* Odometer rolling digit */
+@keyframes roll-up {
+  0% { transform: translateY(0) scaleY(1); opacity: 1; }
+  50% { transform: translateY(-6px) scaleY(0.6); opacity: 0.6; }
+  100% { transform: translateY(0) scaleY(1); opacity: 1; }
+}
+.animate-roll-up {
+  animation: roll-up 120ms ease-out;
 }

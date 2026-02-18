@@ -8,27 +8,37 @@ interface VictoryCongratsProps {
 
 export function VictoryCongrats({ name, amount, onClose }: VictoryCongratsProps) {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]/98">
+      {/* Scanline overlay for glitchy victory */}
       <div
-        className="relative max-w-lg animate-pulse"
+        className="pointer-events-none absolute inset-0 z-[101] opacity-40"
         style={{
-          fontFamily: "'Press Start 2P', monospace",
+          background: "linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.3) 50%), linear-gradient(90deg, rgba(255,0,0,.08), rgba(0,255,255,.06))",
+          backgroundSize: "100% 4px, 3px 100%",
         }}
-      >
+      />
+      <div className="relative max-w-lg font-pixel">
         <div
           className="border-4 border-[#ffd700] p-8"
           style={{
-            backgroundColor: "rgba(255, 215, 0, 0.1)",
-            boxShadow: "0 0 60px rgba(255, 215, 0, 0.3)",
+            backgroundColor: "rgba(255, 215, 0, 0.08)",
+            boxShadow: "0 0 60px rgba(255, 215, 0, 0.3), 0 0 20px var(--g-red)",
           }}
         >
-          <p className="mb-4 text-center text-2xl" style={{ color: "#ffd700" }}>
+          <p
+            className="glitch-text mb-4 text-center text-2xl"
+            data-text="🏆 YOU HAVE KILLED ALL 🏆"
+            style={{ color: "#ffd700" }}
+          >
             🏆 YOU HAVE KILLED ALL 🏆
           </p>
           <p className="mb-6 text-center text-sm text-white">
             You took all the betting amounts
           </p>
-          <p className="mb-8 text-center text-lg" style={{ color: "#ffd700" }}>
+          <p
+            className="glitch-text mb-8 text-center text-lg"
+            style={{ color: "#ffd700" }}
+          >
             {amount.toLocaleString()} PITS
           </p>
           <p className="mb-6 text-center text-xs text-gray-500">

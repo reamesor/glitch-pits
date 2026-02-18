@@ -23,6 +23,18 @@ export function GlitchLog() {
           backgroundColor: "rgba(255, 105, 180, 0.08)",
           accentColor: "var(--glitch-pink)",
         };
+      case "arena":
+        return {
+          borderColor: "var(--glitch-orange, #ff8c42)",
+          backgroundColor: "rgba(255, 140, 66, 0.08)",
+          accentColor: "var(--glitch-orange, #ff8c42)",
+        };
+      case "critical":
+        return {
+          borderColor: "#dc2626",
+          backgroundColor: "rgba(220, 38, 38, 0.1)",
+          accentColor: "#dc2626",
+        };
       case "forge":
         return {
           borderColor: "var(--glitch-teal)",
@@ -56,6 +68,10 @@ export function GlitchLog() {
       case "kill":
       case "event":
         return "PIT";
+      case "arena":
+        return "ARENA";
+      case "critical":
+        return "CRITICAL";
       case "forge":
         return "ENTERED";
       case "winner":
@@ -116,7 +132,7 @@ export function GlitchLog() {
                     backgroundColor: "rgba(0,0,0,0.3)",
                   }}
                 >
-                  {entry.type === "kill" ? "💀" : entry.type === "forge" ? "⚡" : "•"}
+                  {entry.type === "kill" ? "💀" : entry.type === "arena" ? "⚠" : entry.type === "critical" ? "✕" : entry.type === "forge" ? "⚡" : "•"}
                 </div>
                 <div className="min-w-0 flex-1">
                   <span

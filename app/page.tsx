@@ -8,6 +8,7 @@ import { BlackMarketModal } from "@/components/BlackMarketModal";
 import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
+import { Leaderboard } from "@/components/Leaderboard";
 import { GameCanvas } from "@/components/GameCanvas";
 
 export default function Home() {
@@ -101,15 +102,20 @@ export default function Home() {
           <GameCanvas />
         </section>
 
-        {/* Glitch Log Sidebar */}
+        {/* Arena Log + Leaderboard Sidebar */}
         <aside
-          className="flex w-80 shrink-0 flex-col border-l-4 p-4"
+          className="flex w-80 shrink-0 flex-col gap-4 border-l-4 p-4"
           style={{
             borderColor: "var(--glitch-purple)",
             backgroundColor: "var(--bg-darker)",
           }}
         >
-          <GlitchLog />
+          <div className="flex min-h-0 flex-1 flex-col">
+            <GlitchLog />
+          </div>
+          <div className="shrink-0">
+            <Leaderboard />
+          </div>
         </aside>
       </div>
 

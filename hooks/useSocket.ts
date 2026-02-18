@@ -19,6 +19,7 @@ export function useSocket() {
   const setCharacterCount = useGameStore((s) => s.setCharacterCount);
   const setRumbleState = useGameStore((s) => s.setRumbleState);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
+  const setLeaderboard = useGameStore((s) => s.setLeaderboard);
 
   useEffect(() => {
     const s = io(SOCKET_URL, { autoConnect: true });
@@ -51,12 +52,16 @@ export function useSocket() {
       setVictoryData(data);
     });
 
+    s.on("leaderboard", (entries: import("@/lib/useGameStore").LeaderboardEntry[]) => {
+      setLeaderboard(entries);
+    });
+
     setSocket(s);
     return () => {
       s.disconnect();
       setSocket(null);
     };
-  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setRumbleState, setVictoryData]);
+  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setRumbleState, setVictoryData, setLeaderboard]);
 
   return { socket, connected };
 }

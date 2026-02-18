@@ -27,13 +27,13 @@ export function VictoryCongrats({ name, amount, onClose }: VictoryCongratsProps)
         >
           <p
             className="glitch-text mb-4 text-center text-2xl"
-            data-text="🏆 YOU HAVE KILLED ALL 🏆"
+            data-text="🏆 YOU WON 🏆"
             style={{ color: "#ffd700" }}
           >
-            🏆 YOU HAVE KILLED ALL 🏆
+            🏆 YOU WON 🏆
           </p>
           <p className="mb-6 text-center text-sm text-white">
-            You took all the betting amounts
+            Bet vs House — payout
           </p>
           <p
             className="glitch-text mb-8 text-center text-lg"

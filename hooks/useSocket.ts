@@ -17,9 +17,8 @@ export function useSocket() {
   const setBalance = useGameStore((s) => s.setBalance);
   const setPlayerId = useGameStore((s) => s.setPlayerId);
   const setCharacterCount = useGameStore((s) => s.setCharacterCount);
-  const setRumbleState = useGameStore((s) => s.setRumbleState);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
-  const setLeaderboard = useGameStore((s) => s.setLeaderboard);
+  const setLastBetResult = useGameStore((s) => s.setLastBetResult);
 
   useEffect(() => {
     const s = io(SOCKET_URL, { autoConnect: true });
@@ -44,16 +43,12 @@ export function useSocket() {
       setCharacterCount(count);
     });
 
-    s.on("rumbleState", (state: unknown) => {
-      setRumbleState(state as import("@/lib/useGameStore").RumbleState);
-    });
-
     s.on("youWon", (data: { name: string; amount: number }) => {
       setVictoryData(data);
     });
 
-    s.on("leaderboard", (entries: import("@/lib/useGameStore").LeaderboardEntry[]) => {
-      setLeaderboard(entries);
+    s.on("betResult", (data: { won: boolean; payout: number }) => {
+      setLastBetResult(data);
     });
 
     setSocket(s);
@@ -61,7 +56,7 @@ export function useSocket() {
       s.disconnect();
       setSocket(null);
     };
-  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setRumbleState, setVictoryData, setLeaderboard]);
+  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setVictoryData, setLastBetResult]);
 
   return { socket, connected };
 }

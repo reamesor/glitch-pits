@@ -8,7 +8,6 @@ import { BlackMarketModal } from "@/components/BlackMarketModal";
 import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
-import { Leaderboard } from "@/components/Leaderboard";
 import { GameCanvas } from "@/components/GameCanvas";
 
 export default function Home() {
@@ -18,7 +17,6 @@ export default function Home() {
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
-  const rumbleState = useGameStore((s) => s.rumbleState);
   const isForged = useGameStore((s) => s.isForged);
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
@@ -64,12 +62,8 @@ export default function Home() {
             {mockBalance.toLocaleString()} Mock-PITS
           </span>
           <span className="text-xs text-gray-500">
-            Fighters:{" "}
+            Forged:{" "}
             <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
-          </span>
-          <span className="text-xs text-gray-500">
-            Burn Rate:{" "}
-            <span style={{ color: "var(--glitch-pink)" }}>1,000</span> PITS
           </span>
           <button
             type="button"
@@ -102,20 +96,15 @@ export default function Home() {
           <GameCanvas />
         </section>
 
-        {/* Arena Log + Leaderboard Sidebar */}
+        {/* Glitch Log Sidebar */}
         <aside
-          className="flex w-80 shrink-0 flex-col gap-4 border-l-4 p-4"
+          className="flex w-80 shrink-0 flex-col border-l-4 p-4"
           style={{
             borderColor: "var(--glitch-purple)",
             backgroundColor: "var(--bg-darker)",
           }}
         >
-          <div className="flex min-h-0 flex-1 flex-col">
-            <GlitchLog />
-          </div>
-          <div className="shrink-0">
-            <Leaderboard />
-          </div>
+          <GlitchLog />
         </aside>
       </div>
 

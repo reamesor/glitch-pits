@@ -1,43 +1,61 @@
-# Glitch Pits – Deploy to GitHub & Vercel
+# Glitch Pits – Deploy (Vercel + Railway)
 
-## 1. Push to GitHub
+Your frontend is on **Vercel** and your real-time socket server must run elsewhere (e.g. **Railway**). Here’s how to get both running and connected.
 
-Create a new repository on GitHub, then run:
+---
 
-```bash
-git remote add origin https://github.com/YOUR_USERNAME/glitch-pits.git
-git push -u origin main
-```
+## 1. Deploy the Socket Server on Railway
 
-Or with SSH:
+1. Go to **[railway.app](https://railway.app)** and sign in (GitHub is easiest).
+2. Click **New Project** → **Deploy from GitHub repo**.
+3. Select your **glitch-pits** repo. If it’s not listed, connect GitHub and grant access to the repo.
+4. After the project is created, click the new **service** (the repo you just added).
+5. Open **Settings** (or the **Variables** tab):
+   - **Root Directory:** set to `socket-server`  
+     (so Railway uses the `socket-server` folder, not the repo root).
+   - **Build Command:** leave empty or set to `npm install`.
+   - **Start Command:** leave as `npm start` (runs `node index.js`).
+6. Add an environment variable (Settings → Variables, or the Variables tab):
+   - **Name:** `CORS_ORIGIN`  
+   - **Value:** your Vercel app URL, e.g. `https://glitch-pits.vercel.app`  
+     (no trailing slash). This lets the browser connect to the socket from your frontend.
+7. In **Settings**, find **Networking** / **Public Networking** and turn on **Generate Domain** (or add a public domain). Railway will give you a URL like:
+   - `https://glitch-pits-production.up.railway.app`
+8. Copy that **public URL** — this is your **Socket Server URL**. You’ll use it in the next step.
 
-```bash
-git remote add origin git@github.com:YOUR_USERNAME/glitch-pits.git
-git push -u origin main
-```
+---
 
-## 2. Deploy to Vercel
+## 2. Point the Frontend to the Socket Server (Vercel)
 
-1. Go to [vercel.com](https://vercel.com) → **Add New Project**
-2. Import your GitHub repo `glitch-pits`
-3. **Do not** add `NEXT_PUBLIC_SOCKET_URL` yet
-4. Deploy (the build will succeed, but real-time features won’t work until step 3)
+1. Go to **[vercel.com](https://vercel.com)** → your **glitch-pits** project.
+2. Open **Settings** → **Environment Variables**.
+3. Add a new variable:
+   - **Name:** `NEXT_PUBLIC_SOCKET_URL`
+   - **Value:** the Railway socket URL from step 1, e.g. `https://glitch-pits-production.up.railway.app`
+   - Apply to **Production** (and Preview if you want).
+4. Save.
+5. Trigger a new deploy: **Deployments** → **⋯** on the latest deployment → **Redeploy** (or push a new commit).  
+   The frontend is built with the new env var, so the app will connect to your Railway socket server.
 
-## 3. Deploy Socket Server (Railway)
+---
 
-1. Go to [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**
-2. Select `glitch-pits`
-3. In **Settings**:
-   - **Root Directory:** `socket-server`
-   - **Build Command:** `npm install` (or leave empty)
-   - **Start Command:** `npm start`
-4. Add variable: `CORS_ORIGIN` = `https://your-app.vercel.app` (your Vercel URL)
-5. Deploy and copy the public URL (e.g. `https://glitch-pits-socket-production.up.railway.app`)
+## 3. Check That It Works
 
-## 4. Connect Vercel to Socket Server
+- Open your Vercel app (e.g. `https://glitch-pits.vercel.app`).
+- You should see **● CONNECTED** in the header when the socket server is reachable.
+- If you see **○ OFFLINE**, check:
+  - Railway service is running and has a **public URL**.
+  - `CORS_ORIGIN` on Railway matches your Vercel URL exactly (no trailing slash).
+  - `NEXT_PUBLIC_SOCKET_URL` on Vercel is the full Railway URL (including `https://`).
+  - You redeployed Vercel after adding the variable.
 
-1. In Vercel: **Project → Settings → Environment Variables**
-2. Add: `NEXT_PUBLIC_SOCKET_URL` = your Railway socket URL
-3. **Redeploy** the Vercel project
+---
 
-Your Glitch Pits app should now be live with real-time gameplay.
+## Summary
+
+| Where   | What to set |
+|--------|-------------|
+| **Railway** | Root Directory: `socket-server`; `CORS_ORIGIN` = your Vercel URL (e.g. `https://glitch-pits.vercel.app`); get the service **public URL**. |
+| **Vercel**  | `NEXT_PUBLIC_SOCKET_URL` = that Railway public URL (e.g. `https://glitch-pits-production.up.railway.app`), then **Redeploy**. |
+
+After that, real-time features (lobby, rumble, lore feed, etc.) will use the socket server on Railway.

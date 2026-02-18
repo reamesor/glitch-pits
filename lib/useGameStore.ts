@@ -3,33 +3,6 @@ import { create } from "zustand";
 const DEFAULT_BALANCE = 5000;
 const FORGE_COST = 1000;
 
-export interface RumbleParticipant {
-  id: string;
-  name: string;
-  clothes?: string;
-  weapon?: string;
-  loreClass?: string;
-  isAlive?: boolean;
-  betAmount?: number;
-}
-
-export interface RumbleState {
-  phase: "idle" | "entries" | "battle" | "finished";
-  participants: RumbleParticipant[];
-  prizePool: number;
-  spectatorPool?: number;
-  winner: RumbleParticipant | null;
-  seedId?: string | null;
-  gameMode?: "duel" | "rumble" | null;
-}
-
-export interface LeaderboardEntry {
-  name: string;
-  amount: number;
-  seedId: string;
-  date: string;
-}
-
 export interface GameState {
   mockBalance: number;
   playerId: string | null;
@@ -38,9 +11,8 @@ export interface GameState {
   characterCount: number;
   glitchLog: Array<{ id: string; type: string; message: string }>;
   treasuryBalance: number;
-  rumbleState: RumbleState | null;
   victoryData: { name: string; amount: number } | null;
-  leaderboard: LeaderboardEntry[];
+  lastBetResult: { won: boolean; payout: number } | null;
 }
 
 interface GameActions {
@@ -50,20 +22,12 @@ interface GameActions {
   setPlayerId: (id: string) => void;
   setPlayerName: (name: string) => void;
   setCharacterCount: (count: number) => void;
-  setRumbleState: (state: RumbleState | null) => void;
   setVictoryData: (data: { name: string; amount: number } | null) => void;
-  setLeaderboard: (entries: LeaderboardEntry[]) => void;
+  setLastBetResult: (data: { won: boolean; payout: number } | null) => void;
   addGlitchLog: (entry: { type: string; message: string }) => void;
   setTreasuryBalance: (amount: number) => void;
   reset: () => void;
 }
-
-const initialRumble: RumbleState = {
-  phase: "idle",
-  participants: [],
-  prizePool: 0,
-  winner: null,
-};
 
 const initialState: GameState = {
   mockBalance: DEFAULT_BALANCE,
@@ -73,9 +37,8 @@ const initialState: GameState = {
   characterCount: 0,
   glitchLog: [],
   treasuryBalance: 0,
-  rumbleState: null,
   victoryData: null,
-  leaderboard: [],
+  lastBetResult: null,
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -104,9 +67,8 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
   setPlayerName: (name) => set({ playerName: name }),
 
   setCharacterCount: (count) => set({ characterCount: count }),
-  setRumbleState: (state) => set({ rumbleState: state }),
   setVictoryData: (data) => set({ victoryData: data }),
-  setLeaderboard: (entries) => set({ leaderboard: entries }),
+  setLastBetResult: (data) => set({ lastBetResult: data }),
 
   addGlitchLog: (entry) =>
     set((state) => ({

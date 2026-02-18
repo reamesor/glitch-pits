@@ -8,6 +8,50 @@ const ARENA_WIDTH = 800;
 const ARENA_HEIGHT = 600;
 const PLAYER_SIZE = 16;
 
+// 16x16 pixel-art character sprite (1 = fill, 0 = transparent) - top-down fighter
+const CHARACTER_SPRITE: number[][] = [
+  [0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0],
+  [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
+  [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0],
+  [0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0],
+  [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
+  [0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0],
+  [0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0],
+];
+const SPRITE_W = 12;
+const SPRITE_H = 10;
+
+function drawCharacter(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  fillColor: string,
+  outlineColor: string,
+  isLocal: boolean
+) {
+  const scale = PLAYER_SIZE / Math.max(SPRITE_W, SPRITE_H);
+  const offsetX = x + (PLAYER_SIZE - SPRITE_W * scale) / 2;
+  const offsetY = y + (PLAYER_SIZE - SPRITE_H * scale) / 2;
+
+  for (let row = 0; row < SPRITE_H; row++) {
+    for (let col = 0; col < SPRITE_W; col++) {
+      if (CHARACTER_SPRITE[row]?.[col] === 1) {
+        ctx.fillStyle = fillColor;
+        ctx.fillRect(offsetX + col * scale, offsetY + row * scale, Math.ceil(scale) + 0.5, Math.ceil(scale) + 0.5);
+      }
+    }
+  }
+
+  if (isLocal) {
+    ctx.strokeStyle = outlineColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, PLAYER_SIZE, PLAYER_SIZE);
+  }
+}
+
 interface Player {
   id: string;
   name: string;
@@ -43,12 +87,23 @@ export function GameCanvas() {
     );
 
     for (const player of players) {
-      ctx.fillStyle = player.id === playerId ? "#00d4aa" : "#ff69b4";
-      ctx.fillRect(player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+      const isLocal = player.id === playerId;
+      const fillColor = isLocal ? "#00d4aa" : "#ff69b4";
+      const outlineColor = isLocal ? "#00ffcc" : "#ff8ec4";
 
-      ctx.strokeStyle = player.id === playerId ? "#00d4aa" : "#ff69b4";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(player.x, player.y, PLAYER_SIZE, PLAYER_SIZE);
+      drawCharacter(ctx, player.x, player.y, fillColor, outlineColor, isLocal);
+
+      // Name label above character
+      ctx.font = "10px 'Press Start 2P', monospace";
+      ctx.textAlign = "center";
+      ctx.fillStyle = isLocal ? "#00d4aa" : "#ff69b4";
+      ctx.strokeStyle = "#000";
+      ctx.lineWidth = 2;
+      const nameText = player.name.slice(0, 8);
+      const textX = player.x + PLAYER_SIZE / 2;
+      const textY = player.y - 4;
+      ctx.strokeText(nameText, textX, textY);
+      ctx.fillText(nameText, textX, textY);
     }
 
     requestAnimationFrame(render);

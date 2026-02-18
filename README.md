@@ -1,6 +1,6 @@
 # Glitch Pits ($PITS)
 
-High-stakes 8-bit Multiplayer "Rumble Royale" with a glitch-horror pixel aesthetic.
+Spectator betting "Rumble Royale" — forge characters, upgrade stats, bet on who wins. Lore-rich text describes what happens in the pit. **Users don't control characters during battle.**
 
 ## Quick Start
 
@@ -11,19 +11,14 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Controls
-
-- **WASD** – Movement
-- **Space** – Attack
-
 ## Game Flow
 
-1. **The Forge** – Burn 1,000 Mock-PITS to enter (start with 5,000)
-2. **Kill-to-Win** – When you kill another player:
-   - 50% of their balance → you
-   - 25% → burned (removed)
-   - 25% → Treasury
-3. **Black Market** – Shop for items; 100% burn on purchase
+1. **The Forge** – Burn 1,000 Mock-PITS to create your character (start with 5,000)
+2. **Upgrades** – Black Market: spend PITS on Attack, Defense, Luck (increases win chance)
+3. **Start Rumble** – When 2+ characters exist
+4. **Bet** – Place PITS on who you think will win
+5. **Run Rumble** – Battle is simulated; lore text streams to Glitch Log
+6. **Winner** gets prize pool; bettors who picked them get 2× their bet
 
 ## Stack
 

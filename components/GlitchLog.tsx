@@ -17,6 +17,7 @@ export function GlitchLog() {
   const getCardStyle = (type: string) => {
     switch (type) {
       case "kill":
+      case "event":
         return {
           borderColor: "var(--glitch-pink)",
           backgroundColor: "rgba(255, 105, 180, 0.08)",
@@ -27,6 +28,19 @@ export function GlitchLog() {
           borderColor: "var(--glitch-teal)",
           backgroundColor: "rgba(0, 212, 170, 0.08)",
           accentColor: "var(--glitch-teal)",
+        };
+      case "winner":
+      case "payout":
+        return {
+          borderColor: "var(--glitch-gold, #ffd700)",
+          backgroundColor: "rgba(255, 215, 0, 0.1)",
+          accentColor: "#ffd700",
+        };
+      case "rumble":
+        return {
+          borderColor: "var(--glitch-purple)",
+          backgroundColor: "rgba(107, 75, 154, 0.15)",
+          accentColor: "var(--glitch-purple)",
         };
       default:
         return {
@@ -40,9 +54,16 @@ export function GlitchLog() {
   const getTypeLabel = (type: string) => {
     switch (type) {
       case "kill":
-        return "DE-REZZED";
+      case "event":
+        return "PIT";
       case "forge":
         return "ENTERED";
+      case "winner":
+        return "WINNER";
+      case "payout":
+        return "PAYOUT";
+      case "rumble":
+        return "RUMBLE";
       case "disconnect":
         return "DISCONNECT";
       default:

@@ -5,6 +5,7 @@ import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { ForgeModal } from "@/components/ForgeModal";
 import { BlackMarketModal } from "@/components/BlackMarketModal";
+import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
@@ -15,10 +16,13 @@ export default function Home() {
   const [showGameHelp, setShowGameHelp] = useState(false);
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
-  const playerCount = useGameStore((s) => s.playerCount);
+  const characterCount = useGameStore((s) => s.characterCount);
+  const rumbleState = useGameStore((s) => s.rumbleState);
   const isForged = useGameStore((s) => s.isForged);
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
+  const victoryData = useGameStore((s) => s.victoryData);
+  const setVictoryData = useGameStore((s) => s.setVictoryData);
 
   const handleForge = (data: { name: string; clothes: string; weapon: string }) => {
     if (!forgeCharacter() || !socket) return;
@@ -59,8 +63,8 @@ export default function Home() {
             {mockBalance.toLocaleString()} Mock-PITS
           </span>
           <span className="text-xs text-gray-500">
-            Players:{" "}
-            <span style={{ color: "var(--glitch-teal)" }}>{playerCount}</span>
+            Fighters:{" "}
+            <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
           <span className="text-xs text-gray-500">
             Burn Rate:{" "}
@@ -115,12 +119,18 @@ export default function Home() {
       {/* Game Help Modal */}
       {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
 
+      {/* Victory Congrats */}
+      {victoryData && (
+        <VictoryCongrats
+          name={victoryData.name}
+          amount={victoryData.amount}
+          onClose={() => setVictoryData(null)}
+        />
+      )}
+
       {/* Black Market Modal */}
       {showBlackMarket && (
-        <BlackMarketModal
-          onClose={() => setShowBlackMarket(false)}
-          mockBalance={mockBalance}
-        />
+        <BlackMarketModal onClose={() => setShowBlackMarket(false)} />
       )}
     </main>
   );

@@ -34,6 +34,7 @@ const app = next({ dev, hostname, port });
 const handle = app.getRequestHandler();
 
 const characters = new Map();
+let totalBurnedAllPits = 0;
 
 app.prepare().then(() => {
   const httpServer = createServer(async (req, res) => {
@@ -51,6 +52,7 @@ app.prepare().then(() => {
 
   io.on("connection", (socket) => {
     socket.emit("characterCount", characters.size);
+    socket.emit("totalBurned", totalBurnedAllPits);
 
     socket.on("forge", (data) => {
       const name = typeof data === "string" ? data : data?.name;
@@ -121,8 +123,11 @@ app.prepare().then(() => {
           message: `${char.name} bet ${amount} PITS (${multiplier}x) and won ${payout} PITS!`,
         });
       } else {
+        totalBurnedAllPits += amount;
         socket.emit("balanceUpdate", { balance: char.balance });
         socket.emit("betResult", { won: false, amount, multiplier, payout: 0 });
+        socket.emit("totalBurned", totalBurnedAllPits);
+        io.emit("totalBurned", totalBurnedAllPits);
         io.emit("glitchLog", {
           type: "rumble",
           message: `${char.name} bet ${amount} PITS (${multiplier}x). House wins.`,

@@ -49,7 +49,7 @@ export function VictoryCongrats({ name, amount, onClose }: VictoryCongratsProps)
             onClick={onClose}
             className="w-full border-4 border-[#ffd700] px-6 py-4 font-pixel text-xs text-[#ffd700] transition hover:bg-[#ffd700]/20"
           >
-            CONTINUE
+            PLAY AGAIN
           </button>
         </div>
       </div>

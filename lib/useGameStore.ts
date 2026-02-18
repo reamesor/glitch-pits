@@ -2,6 +2,15 @@ import { create } from "zustand";
 
 const DEFAULT_BALANCE = 5000;
 const FORGE_COST = 1000;
+const DASHBOARD_STORAGE_PREFIX = "glitch-pits-dashboard-";
+export const WALLET_STORAGE_KEY = "glitch-pits-wallet";
+
+export interface DashboardStats {
+  totalWagered: number;
+  totalWon: number;
+  totalLost: number;
+  upgradeCount: number;
+}
 
 export interface GameState {
   mockBalance: number;
@@ -13,6 +22,9 @@ export interface GameState {
   treasuryBalance: number;
   victoryData: { name: string; amount: number } | null;
   lastBetResult: { won: boolean; payout: number } | null;
+  walletAddress: string | null;
+  dashboardStats: DashboardStats;
+  totalBurnedAllPits: number;
 }
 
 interface GameActions {
@@ -26,7 +38,47 @@ interface GameActions {
   setLastBetResult: (data: { won: boolean; payout: number } | null) => void;
   addGlitchLog: (entry: { type: string; message: string }) => void;
   setTreasuryBalance: (amount: number) => void;
+  setWalletAddress: (address: string | null) => void;
+  setTotalBurnedAllPits: (amount: number) => void;
+  recordBetResult: (wagered: number, won: boolean, payout: number) => void;
+  recordUpgrade: () => void;
   reset: () => void;
+}
+
+const defaultDashboard: DashboardStats = {
+  totalWagered: 0,
+  totalWon: 0,
+  totalLost: 0,
+  upgradeCount: 0,
+};
+
+function loadDashboardFromStorage(address: string): DashboardStats {
+  if (typeof window === "undefined") return defaultDashboard;
+  try {
+    const raw = localStorage.getItem(DASHBOARD_STORAGE_PREFIX + address.toLowerCase());
+    if (!raw) return defaultDashboard;
+    const parsed = JSON.parse(raw) as DashboardStats;
+    return {
+      totalWagered: parsed.totalWagered ?? 0,
+      totalWon: parsed.totalWon ?? 0,
+      totalLost: parsed.totalLost ?? 0,
+      upgradeCount: parsed.upgradeCount ?? 0,
+    };
+  } catch {
+    return defaultDashboard;
+  }
+}
+
+function saveDashboardToStorage(address: string, stats: DashboardStats) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(
+      DASHBOARD_STORAGE_PREFIX + address.toLowerCase(),
+      JSON.stringify(stats)
+    );
+  } catch {
+    // ignore
+  }
 }
 
 const initialState: GameState = {
@@ -39,6 +91,9 @@ const initialState: GameState = {
   treasuryBalance: 0,
   victoryData: null,
   lastBetResult: null,
+  walletAddress: null,
+  dashboardStats: defaultDashboard,
+  totalBurnedAllPits: 0,
 };
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
@@ -80,6 +135,59 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 
   setTreasuryBalance: (amount) =>
     set((state) => ({ treasuryBalance: state.treasuryBalance + amount })),
+
+  setTotalBurnedAllPits: (amount) => set({ totalBurnedAllPits: amount }),
+
+  setWalletAddress: (address) =>
+    set((state) => {
+      const next = { ...state, walletAddress: address || null };
+      if (address) {
+        next.dashboardStats = loadDashboardFromStorage(address);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(WALLET_STORAGE_KEY, address);
+          } catch {
+            // ignore
+          }
+        }
+      } else {
+        next.dashboardStats = defaultDashboard;
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.removeItem(WALLET_STORAGE_KEY);
+          } catch {
+            // ignore
+          }
+        }
+      }
+      return next;
+    }),
+
+  recordBetResult: (wagered, won, payout) =>
+    set((state) => {
+      const stats = {
+        ...state.dashboardStats,
+        totalWagered: state.dashboardStats.totalWagered + wagered,
+        totalWon: state.dashboardStats.totalWon + (won ? payout : 0),
+        totalLost: state.dashboardStats.totalLost + (won ? 0 : wagered),
+      };
+      if (state.walletAddress) {
+        saveDashboardToStorage(state.walletAddress, stats);
+      }
+      return { dashboardStats: stats };
+    }),
+
+  recordUpgrade: () =>
+    set((state) => {
+      const stats = {
+        ...state.dashboardStats,
+        upgradeCount: state.dashboardStats.upgradeCount + 1,
+      };
+      if (state.walletAddress) {
+        saveDashboardToStorage(state.walletAddress, stats);
+      }
+      return { dashboardStats: stats };
+    }),
 
   reset: () => set(initialState),
 }));

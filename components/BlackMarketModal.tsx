@@ -17,9 +17,12 @@ export function BlackMarketModal({ onClose }: BlackMarketModalProps) {
   const mockBalance = useGameStore((s) => s.mockBalance);
   const { socket } = useSocket();
 
+  const recordUpgrade = useGameStore((s) => s.recordUpgrade);
+
   const handleUpgrade = (stat: string, cost: number) => {
     if (!socket || mockBalance < cost) return;
     socket.emit("upgrade", { stat, cost });
+    recordUpgrade();
   };
 
   return (

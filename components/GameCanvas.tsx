@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
 
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
-const LORE_INTERVAL_MS = 1800;
+const LORE_INTERVAL_MS = 1600;
 const RESULT_DISPLAY_MS = 2500;
 const SERVER_TIMEOUT_MS = 6000;
+const MIN_BATTLE_MS = 3000; // Show battle + lore for at least 3s before result
 
 export function GameCanvas() {
   const { socket, connected } = useSocket();
@@ -28,6 +29,7 @@ export function GameCanvas() {
   const [battlePayout, setBattlePayout] = useState(0);
   const [currentLore, setCurrentLore] = useState("");
   const [rumbleOpponent, setRumbleOpponent] = useState("");
+  const battleStartTimeRef = useRef<number>(0);
 
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
@@ -42,17 +44,26 @@ export function GameCanvas() {
     return () => clearInterval(id);
   }, [battlePhase, displayName, rumbleOpponent]);
 
-  // When server sends betResult, show result then return to idle
+  // When betResult arrives, wait for minimum battle time then show result, then idle
   useEffect(() => {
     if (battlePhase !== "fighting" || lastBetResult === null) return;
-    setBattleWon(lastBetResult.won);
-    setBattlePayout(lastBetResult.payout);
-    setBattlePhase("result");
+    const elapsed = Date.now() - battleStartTimeRef.current;
+    const waitMs = Math.max(0, MIN_BATTLE_MS - elapsed);
+
     const t = setTimeout(() => {
-      setBattlePhase("idle");
-    }, RESULT_DISPLAY_MS);
-    return () => clearTimeout(t);
-  }, [battlePhase, lastBetResult]);
+      useGameStore.getState().recordBetResult(battleAmount, lastBetResult.won, lastBetResult.payout);
+      setBattleWon(lastBetResult.won);
+      setBattlePayout(lastBetResult.payout);
+      setBattlePhase("result");
+    }, waitMs);
+
+    const tIdle = setTimeout(() => setBattlePhase("idle"), waitMs + RESULT_DISPLAY_MS);
+
+    return () => {
+      clearTimeout(t);
+      clearTimeout(tIdle);
+    };
+  }, [battlePhase, lastBetResult, battleAmount]);
 
   const runLocalFallback = useCallback(() => {
     const won = Math.random() < 0.5;
@@ -68,13 +79,21 @@ export function GameCanvas() {
   }, [battleAmount, battleMultiplier, setBalance, setLastBetResult]);
 
   const handlePlaceBet = () => {
-    if (!socket || amount < 50 || amount > mockBalance) return;
+    if (amount < 50 || amount > mockBalance || characterCount < 1) return;
+
     setLastBetResult(null);
     setBattleAmount(amount);
     setBattleMultiplier(multiplier);
-    setRumbleOpponent(getRandomOpponentName());
+
+    // Set opponent and first lore line immediately so words show as soon as battle starts
+    const opponent = getRandomOpponentName();
+    setRumbleOpponent(opponent);
+    setCurrentLore(getRandomPitLore(displayName, opponent));
+
+    battleStartTimeRef.current = Date.now();
     setBattlePhase("fighting");
-    socket.emit("placeBet", { amount });
+
+    if (socket) socket.emit("placeBet", { amount });
 
     // If server doesn't respond in time, run local simulation so something always happens
     const timeoutId = setTimeout(() => {
@@ -113,14 +132,17 @@ export function GameCanvas() {
 
           {battlePhase === "fighting" && (
             <>
+              <p className="mb-3 font-pixel text-center text-[8px] uppercase tracking-wider text-gray-500">
+                — Battle simulator —
+              </p>
               <p
-                className="max-w-md animate-pulse text-center font-mono text-[10px] text-gray-400"
+                className="max-w-md animate-pulse text-center font-mono text-[10px] leading-relaxed text-gray-300"
                 key={currentLore}
               >
-                {currentLore}
+                {currentLore || "Entering the Pit…"}
               </p>
-              <p className="mt-6 font-pixel text-[8px] text-gray-500">
-                Battle in progress...
+              <p className="mt-4 font-pixel text-[8px] text-gray-500">
+                Lore feed…
               </p>
             </>
           )}
@@ -210,19 +232,28 @@ export function GameCanvas() {
         </button>
 
         {lastBetResult !== null && battlePhase === "idle" && (
-          <div
-            className={`mt-6 rounded border-2 px-4 py-3 font-pixel text-[10px] ${
-              lastBetResult.won ? "border-[var(--glitch-teal)]" : "border-red-500/80"
-            }`}
-            style={{
-              backgroundColor: lastBetResult.won ? "rgba(0, 212, 170, 0.1)" : "rgba(220, 38, 38, 0.1)",
-            }}
-          >
-            {lastBetResult.won ? (
-              <>YOU WON {lastBetResult.payout} PITS</>
-            ) : (
-              <>HOUSE WINS. Try again.</>
-            )}
+          <div className="mt-6 space-y-3">
+            <div
+              className={`rounded border-2 px-4 py-3 font-pixel text-[10px] ${
+                lastBetResult.won ? "border-[var(--glitch-teal)]" : "border-red-500/80"
+              }`}
+              style={{
+                backgroundColor: lastBetResult.won ? "rgba(0, 212, 170, 0.1)" : "rgba(220, 38, 38, 0.1)",
+              }}
+            >
+              {lastBetResult.won ? (
+                <>YOU WON {lastBetResult.payout} PITS</>
+              ) : (
+                <>HOUSE WINS. Try again.</>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setLastBetResult(null)}
+              className="w-full pixel-btn pixel-btn-accent font-pixel text-[10px]"
+            >
+              REVENGE — PLAY AGAIN
+            </button>
           </div>
         )}
 

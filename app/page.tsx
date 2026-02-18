@@ -9,15 +9,22 @@ import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
+import { ConnectWalletModal } from "@/components/ConnectWalletModal";
+import { DashboardModal } from "@/components/DashboardModal";
+import { WALLET_STORAGE_KEY } from "@/lib/useGameStore";
 
 export default function Home() {
   const [showForge, setShowForge] = useState(true);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [showGameHelp, setShowGameHelp] = useState(false);
+  const [showConnectWallet, setShowConnectWallet] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
   const isForged = useGameStore((s) => s.isForged);
+  const walletAddress = useGameStore((s) => s.walletAddress);
+  const setWalletAddress = useGameStore((s) => s.setWalletAddress);
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const victoryData = useGameStore((s) => s.victoryData);
@@ -35,6 +42,11 @@ export default function Home() {
       setShowForge(true);
     }
   }, [isForged, mockBalance]);
+
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem(WALLET_STORAGE_KEY) : null;
+    if (saved?.trim()) setWalletAddress(saved.trim());
+  }, [setWalletAddress]);
 
   return (
     <main className="relative flex h-screen flex-col">
@@ -79,6 +91,23 @@ export default function Home() {
           >
             BLACK MARKET
           </button>
+          {walletAddress ? (
+            <button
+              type="button"
+              onClick={() => setShowDashboard(true)}
+              className="pixel-btn text-[8px]"
+            >
+              DASHBOARD
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowConnectWallet(true)}
+              className="pixel-btn text-[8px]"
+            >
+              CONNECT WALLET
+            </button>
+          )}
           <span className="text-xs text-gray-500">
             {connected ? (
               <span style={{ color: "var(--glitch-teal)" }}>● CONNECTED</span>
@@ -126,6 +155,14 @@ export default function Home() {
       {/* Black Market Modal */}
       {showBlackMarket && (
         <BlackMarketModal onClose={() => setShowBlackMarket(false)} />
+      )}
+
+      {showConnectWallet && (
+        <ConnectWalletModal onClose={() => setShowConnectWallet(false)} />
+      )}
+
+      {showDashboard && (
+        <DashboardModal onClose={() => setShowDashboard(false)} />
       )}
     </main>
   );

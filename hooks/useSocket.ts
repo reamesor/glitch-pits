@@ -19,6 +19,7 @@ export function useSocket() {
   const setCharacterCount = useGameStore((s) => s.setCharacterCount);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
   const setLastBetResult = useGameStore((s) => s.setLastBetResult);
+  const setTotalBurnedAllPits = useGameStore((s) => s.setTotalBurnedAllPits);
 
   useEffect(() => {
     const s = io(SOCKET_URL, { autoConnect: true });
@@ -51,12 +52,16 @@ export function useSocket() {
       setLastBetResult(data);
     });
 
+    s.on("totalBurned", (amount: number) => {
+      setTotalBurnedAllPits(amount);
+    });
+
     setSocket(s);
     return () => {
       s.disconnect();
       setSocket(null);
     };
-  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setVictoryData, setLastBetResult]);
+  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setVictoryData, setLastBetResult, setTotalBurnedAllPits]);
 
   return { socket, connected };
 }

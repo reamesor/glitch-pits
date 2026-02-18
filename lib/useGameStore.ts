@@ -54,7 +54,7 @@ const defaultDashboard: DashboardStats = {
   upgradeCount: 0,
 };
 
-function loadDashboardFromStorage(address: string): DashboardStats {
+export function loadDashboardFromStorage(address: string): DashboardStats {
   if (typeof window === "undefined") return defaultDashboard;
   try {
     const raw = localStorage.getItem(DASHBOARD_STORAGE_PREFIX + address.toLowerCase());

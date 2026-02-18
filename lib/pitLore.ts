@@ -112,7 +112,7 @@ function pick<T>(arr: T[]): T {
 
 /**
  * Returns a random lore line with {Killer} and {Victim} filled in.
- * Randomly assigns the player's character and the House opponent to Killer or Victim (50/50) so it stays fair and chaotic.
+ * Randomly assigns the player's character and the House opponent to Killer or Victim (even odds) so it stays fair and chaotic.
  */
 export function getRandomPitLore(characterName: string, opponentName?: string): string {
   const raw = pick(ALL_LORE);

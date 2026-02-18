@@ -4,10 +4,10 @@
 
 export const LORE = {
   title: "THE GLITCH PITS",
-  tagline: "Where the House holds the line. You hold the tokens.",
+  tagline: "Stake your PITS. Multiply or burn. No middle ground.",
 
-  vision: "A fair, transparent pit where every round is 50/50: you stake PITS, the House stakes the other side. No hidden odds — gain or burn.",
-  mission: "To make betting simple and readable: one character, one bet, one outcome. Win and your stake is multiplied. Lose and it burns. The utility is in the token: use it to play, upgrade, or walk away.",
+  vision: "A transparent pit: you stake PITS, the House holds the other side. One round, one outcome — win and your stake is multiplied; lose and it burns. No hidden odds.",
+  mission: "One character. One bet. One outcome. Win and your stake multiplies. Lose and it burns. Use PITS to play, upgrade in the Black Market, or walk away.",
 
   sections: [
     {
@@ -20,7 +20,7 @@ export const LORE = {
     },
     {
       heading: "THE PITS",
-      body: "Each Pit is a 50/50 crucible. You forge a gladiator, feed them through the Black Market, then stake PITS on their run. The House fields its own. No script is written in advance; the battle is simulated in real time. Win, and your bet is multiplied. Lose, and the House burns your tokens. That burn feeds the system. That's the deal.",
+      body: "Each Pit is a crucible. You forge a gladiator, feed them through the Black Market, then stake PITS on their run. The House fields its own. No script is written in advance; the battle is simulated in real time. Win, and your bet is multiplied. Lose, and the House burns your tokens. That burn feeds the system. That's the deal.",
     },
     {
       heading: "PITS TOKENS",

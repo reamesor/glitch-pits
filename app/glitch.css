@@ -1,5 +1,20 @@
 /* --- Glitch Pits - CRT + Glitch Aesthetic --- */
 
+/* Custom cursor: hide default pointer/hand everywhere when active */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Cursor glow + pulse when over clickable elements (no hand pointer) */
+@keyframes cursor-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.35); opacity: 0.95; }
+}
+.custom-cursor-dot-inner.custom-cursor-dot--clickable {
+  animation: cursor-pulse 0.6s ease-in-out infinite;
+}
+
 /* 1. The Scanline Overlay (Glitch-Noir: faint CRT) */
 .scanlines {
   position: fixed;

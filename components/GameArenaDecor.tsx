@@ -13,10 +13,10 @@ export function GameArenaDecor() {
     >
       <div className="arena-decor-grid pointer-events-none absolute inset-0 opacity-[0.06]" />
       <p className="relative z-10 font-pixel text-[7px] uppercase tracking-widest text-[var(--glitch-pink)]/80">
-        50/50
+        Stake it
       </p>
       <p className="relative z-10 text-center font-mono text-[8px] leading-tight text-gray-500">
-        Gain or burn
+        Multiply or burn
       </p>
       <div className="relative z-10 flex flex-col items-center gap-3">
         {presets.map((p, i) => (

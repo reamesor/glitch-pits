@@ -168,7 +168,6 @@ export function GameCanvas() {
       <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
         <div className="flex flex-col items-center justify-center">
           <div className="mb-1 flex items-center justify-center gap-1 sm:mb-2">
-            <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
             <h2
               className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
               data-text="THE GLITCH PIT"
@@ -176,6 +175,7 @@ export function GameCanvas() {
             >
               THE GLITCH PIT
             </h2>
+            <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
           </div>
           <div className="game-box mb-2 w-full max-w-xs py-1.5">
             <p className="game-box-label">MATCH</p>
@@ -197,14 +197,26 @@ export function GameCanvas() {
           )}
 
           {battlePhase === "result" && (
-            <p
-              className="text-center font-mono text-[10px] sm:text-xs"
-              style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
-            >
-              {battleWon
-                ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
-                : "House wins."}
-            </p>
+            <>
+              <p
+                className="text-center font-mono text-[10px] sm:text-xs"
+                style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
+              >
+                {battleWon
+                  ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
+                  : "House wins."}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setLastBetResult(null);
+                  setBattlePhase("idle");
+                }}
+                className="mt-4 pixel-btn pixel-btn-accent font-pixel text-[10px] sm:text-xs"
+              >
+                START YOUR REVENGE
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -212,9 +224,9 @@ export function GameCanvas() {
   }
 
   return (
-    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
-      <div className="mb-2 flex shrink-0 flex-wrap items-center justify-center gap-1.5">
-        <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
+    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
+      <div className="flex w-full max-w-lg shrink-0 flex-col gap-1.5">
+      <div className="flex shrink-0 flex-wrap items-center justify-center gap-1.5">
         <h2
           className="font-pixel glitch-text text-center text-xs uppercase sm:text-sm"
           data-text={`BET ON ${displayName.toUpperCase()}`}
@@ -222,12 +234,13 @@ export function GameCanvas() {
         >
           BET ON {displayName.toUpperCase()}
         </h2>
+        <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
       </div>
       <p className="mb-2 shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
-        Select amount, place your bet. Win = bet × multiplier. 50/50.
+        Pick your stake. Place your bet. Multiply or burn.
       </p>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-1.5">
+      <div className="flex flex-col gap-1.5">
         <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2.5 py-2">
           <div>
             <p className="game-box-label">BALANCE</p>
@@ -340,8 +353,9 @@ export function GameCanvas() {
       )}
 
       <p className="mt-1.5 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
-        Your character in the Pit · Payout = bet × multiplier on win
+        Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
       </p>
+      </div>
     </div>
   );
 }

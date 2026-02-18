@@ -27,10 +27,10 @@ export function GameHelp({ onClose }: GameHelpProps) {
 
             <section className="rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-3">
               <h3 className="mb-2 font-pixel text-[10px] text-[var(--glitch-pink)]">
-                WHY IT WORKS — GAIN OR BURN
+                WHY IT WORKS — MULTIPLY OR BURN
               </h3>
               <p className="text-[10px] leading-relaxed">
-                Glitch Pits is a gamble with clear utility. You bet PITS; the House holds the other side. Every round is 50/50. <strong>Win</strong> and you gain (bet × multiplier). <strong>Lose</strong> and your tokens are burned — they leave circulation. No partial refunds. The utility is in the token: use PITS to play, upgrade in the Black Market, or walk away. Simple gain or burn.
+                Glitch Pits is a gamble with clear utility. You bet PITS; the House holds the other side. <strong>Win</strong> and you gain (bet × multiplier). <strong>Lose</strong> and your tokens are burned — they leave circulation. No partial refunds. Use PITS to play, upgrade in the Black Market, or walk away. Multiply or burn.
               </p>
             </section>
 
@@ -56,7 +56,7 @@ export function GameHelp({ onClose }: GameHelpProps) {
                 HOW IT WORKS
               </h3>
               <p className="text-[10px] leading-relaxed">
-                Forge a character (free — you get 1,000 PITS to start). Bet on your character vs the House. Each round is 50/50; win and your bet is multiplied, lose and the House burns your stake. Upgrade in the Black Market. Watch the Glitch Log for lore.
+                Forge a character (free — you get 1,000 PITS to start). Bet on your character vs the House. Win and your bet is multiplied; lose and the House burns your stake. Upgrade in the Black Market. Watch the Glitch Log for lore.
               </p>
             </section>
 
@@ -75,7 +75,7 @@ export function GameHelp({ onClose }: GameHelpProps) {
               </h3>
               <ol className="list-inside list-decimal space-y-1 text-[10px]">
                 <li>Choose bet amount (50–1000 PITS) and see the multiplier</li>
-                <li>PLACE BET — Your character vs the House, 50/50</li>
+                <li>PLACE BET — Your gladiator vs the House. Multiply or burn.</li>
                 <li>Battle is simulated; lore appears in the Glitch Log</li>
                 <li>Win → gain (bet × multiplier). Lose → your PITS are burned</li>
               </ol>

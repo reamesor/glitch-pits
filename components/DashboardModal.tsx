@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useGameStore } from "@/lib/useGameStore";
+import { loadDashboardFromStorage } from "@/lib/useGameStore";
+import type { DashboardStats } from "@/lib/useGameStore";
 import { PixelCharacter } from "@/components/PixelCharacter";
 import { CharacterPicker } from "@/components/CharacterPicker";
 import { getCharacterPreset } from "@/lib/characterPresets";
@@ -12,6 +14,9 @@ interface DashboardModalProps {
 
 export function DashboardModal({ onClose }: DashboardModalProps) {
   const [showPicker, setShowPicker] = useState(false);
+  const [pasteAddress, setPasteAddress] = useState("");
+  const [viewingStats, setViewingStats] = useState<DashboardStats | null>(null);
+  const [copied, setCopied] = useState(false);
   const walletAddress = useGameStore((s) => s.walletAddress);
   const dashboardStats = useGameStore((s) => s.dashboardStats);
   const mockBalance = useGameStore((s) => s.mockBalance);
@@ -43,16 +48,65 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
         <div className="max-h-[70vh] overflow-y-auto p-6">
           {walletAddress ? (
             <>
-              <p className="mb-2 font-mono text-xs text-gray-500 break-all">
-                {walletAddress.slice(0, 10)}…{walletAddress.slice(-8)}
-              </p>
-              <button
-                type="button"
-                onClick={() => setWalletAddress(null)}
-                className="mb-4 text-xs text-gray-500 underline hover:text-gray-400"
-              >
-                Disconnect
-              </button>
+              <div className="mb-2 flex items-center gap-2">
+                <p className="min-w-0 flex-1 font-mono text-xs text-gray-500 break-all">
+                  {walletAddress.slice(0, 10)}…{walletAddress.slice(-8)}
+                </p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      await navigator.clipboard.writeText(walletAddress);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 1500);
+                    } catch {}
+                  }}
+                  className="shrink-0 border-2 border-[#4a4a4a] bg-[var(--bg-card)] px-2 py-1 font-mono text-[10px] hover:border-[var(--glitch-teal)]/50"
+                  title="Copy address"
+                >
+                  {copied ? "Copied" : "Copy"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setWalletAddress(null)}
+                  className="shrink-0 text-xs text-gray-500 underline hover:text-gray-400"
+                >
+                  Disconnect
+                </button>
+              </div>
+              <div className="mb-4 rounded border-2 border-[var(--glitch-pink)]/30 bg-[var(--bg-card)] p-3">
+                <p className="game-box-label mb-2">VIEW ANOTHER ADDRESS</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={pasteAddress}
+                    onChange={(e) => {
+                      setPasteAddress(e.target.value);
+                      setViewingStats(null);
+                    }}
+                    placeholder="Paste address to see its stats"
+                    className="min-w-0 flex-1 border-2 border-[#4a4a4a] bg-[#1a1a1a] px-2 py-1 font-mono text-[10px] text-white placeholder-gray-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const addr = pasteAddress.trim();
+                      if (addr) setViewingStats(loadDashboardFromStorage(addr));
+                    }}
+                    className="shrink-0 pixel-btn text-[9px]"
+                  >
+                    VIEW
+                  </button>
+                </div>
+                {viewingStats !== null && (
+                  <div className="mt-2 grid grid-cols-2 gap-2 border-t border-white/10 pt-2">
+                    <p className="font-mono text-[10px] text-gray-500">Wagered: <span className="text-white">{viewingStats.totalWagered.toLocaleString()}</span></p>
+                    <p className="font-mono text-[10px] text-gray-500">Won: <span className="text-[var(--glitch-teal)]">+{viewingStats.totalWon.toLocaleString()}</span></p>
+                    <p className="font-mono text-[10px] text-gray-500">Lost: <span className="text-red-400">−{viewingStats.totalLost.toLocaleString()}</span></p>
+                    <p className="font-mono text-[10px] text-gray-500">Upgrades: <span className="text-white">{viewingStats.upgradeCount}</span></p>
+                  </div>
+                )}
+              </div>
 
               <div className="game-box mb-4 flex items-center gap-4 border-[var(--glitch-teal)]/40">
                 <div className="flex-shrink-0" style={{ imageRendering: "pixelated" }}>

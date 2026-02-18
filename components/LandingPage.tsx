@@ -2,13 +2,13 @@
 
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { PixelCharacter } from "@/components/PixelCharacter";
+import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import { CHARACTER_PRESETS } from "@/lib/characterPresets";
 
 interface LandingPageProps {
   onEnter: () => void;
   onOpenHelp: () => void;
   onOpenDashboard: () => void;
-  onOpenConnectWallet: () => void;
   hasWallet: boolean;
 }
 
@@ -27,7 +27,6 @@ export function LandingPage({
   onEnter,
   onOpenHelp,
   onOpenDashboard,
-  onOpenConnectWallet,
   hasWallet,
 }: LandingPageProps) {
   return (
@@ -57,13 +56,7 @@ export function LandingPage({
               DASHBOARD
             </button>
           ) : (
-            <button
-              type="button"
-              onClick={onOpenConnectWallet}
-              className="font-mono text-[10px] text-[var(--glitch-teal)] transition hover:opacity-90 sm:text-xs"
-            >
-              CONNECT WALLET
-            </button>
+            <ConnectWalletButton />
           )}
         </nav>
       </header>
@@ -97,7 +90,7 @@ export function LandingPage({
             <GlitchPitsLogo size="xl" />
           </h1>
           <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
-            Where the House holds the line. You hold the tokens.
+            Stake your PITS. Multiply or burn. No middle ground.
           </p>
           {/* Mememator-style Enter: teal border, clear CTA */}
           <button
@@ -113,7 +106,7 @@ export function LandingPage({
       {/* Footer - DGB style, compact */}
       <footer className="relative z-20 flex shrink-0 items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
         <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
-          ৲ 50/50 · Gain or burn
+          ৲ All in. Win or burn.
         </span>
         <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
           Where are your gods now?

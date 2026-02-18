@@ -10,9 +10,11 @@ import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
 import { GameArenaDecor } from "@/components/GameArenaDecor";
-import { ConnectWalletModal } from "@/components/ConnectWalletModal";
 import { ConnectToEnterModal } from "@/components/ConnectToEnterModal";
 import { DashboardModal } from "@/components/DashboardModal";
+import { WalletSync } from "@/components/WalletSync";
+import { ConnectWalletButton } from "@/components/ConnectWalletButton";
+import { WalletCopyIcon } from "@/components/WalletCopyIcon";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
@@ -21,7 +23,6 @@ export default function Home() {
   const [showForge, setShowForge] = useState(true);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [showGameHelp, setShowGameHelp] = useState(false);
-  const [showConnectWallet, setShowConnectWallet] = useState(false);
   const [showConnectToEnter, setShowConnectToEnter] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const { socket, connected } = useSocket();
@@ -32,6 +33,7 @@ export default function Home() {
   const setWalletAddress = useGameStore((s) => s.setWalletAddress);
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
   const setBalance = useGameStore((s) => s.setBalance);
+  const addToBalance = useGameStore((s) => s.addToBalance);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const victoryData = useGameStore((s) => s.victoryData);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
@@ -57,7 +59,7 @@ export default function Home() {
     setPlayerName(data.name);
     if (data.characterId != null) setSelectedCharacterId(data.characterId);
     socket.emit("forge", { name: data.name, clothes: data.clothes, weapon: data.weapon });
-    setBalance(1000); // 1000 PITS reward for creating a character, added to balance
+    addToBalance(1000); // +1000 PITS for entering the pit with a new character (initial 1000 + 1000 = 2000)
     setShowForge(false);
   };
 
@@ -76,43 +78,32 @@ export default function Home() {
     if (!walletAddress) setShowConnectToEnter(true);
   };
 
-  const handleConnectedThenEnter = () => {
-    setShowConnectWallet(false);
-    setShowConnectToEnter(false);
-    // View switches to app automatically once walletAddress is set
-  };
+  // When wallet connects (e.g. from ConnectToEnterModal), close that modal
+  useEffect(() => {
+    if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
+  }, [walletAddress, showConnectToEnter]);
 
   if (!walletAddress) {
     return (
       <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
+        <WalletSync />
         <LandingPage
           onEnter={handleEnterPits}
           onOpenHelp={() => setShowGameHelp(true)}
           onOpenDashboard={() => setShowDashboard(true)}
-          onOpenConnectWallet={() => setShowConnectWallet(true)}
           hasWallet={!!walletAddress}
         />
         {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
         {showBlackMarket && <BlackMarketModal onClose={() => setShowBlackMarket(false)} />}
         {showDashboard && <DashboardModal onClose={() => setShowDashboard(false)} />}
-        {showConnectToEnter && (
-          <ConnectToEnterModal
-            onConnect={() => setShowConnectWallet(true)}
-            onClose={() => setShowConnectToEnter(false)}
-          />
-        )}
-        {showConnectWallet && (
-          <ConnectWalletModal
-            onClose={() => setShowConnectWallet(false)}
-            onConnected={showConnectToEnter ? handleConnectedThenEnter : undefined}
-          />
-        )}
+        {showConnectToEnter && <ConnectToEnterModal onClose={() => setShowConnectToEnter(false)} />}
       </main>
     );
   }
 
   return (
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
+      <WalletSync />
       <div className="bg-static" />
       {/* Top Bar */}
       <header
@@ -158,21 +149,18 @@ export default function Home() {
               BLACK MARKET
             </button>
             {walletAddress ? (
-              <button
-                type="button"
-                onClick={() => setShowDashboard(true)}
-                className="pixel-btn text-[9px]"
-              >
-                DASHBOARD
-              </button>
+              <>
+                <WalletCopyIcon address={walletAddress} />
+                <button
+                  type="button"
+                  onClick={() => setShowDashboard(true)}
+                  className="pixel-btn text-[9px]"
+                >
+                  DASHBOARD
+                </button>
+              </>
             ) : (
-              <button
-                type="button"
-                onClick={() => setShowConnectWallet(true)}
-                className="pixel-btn text-[9px]"
-              >
-                CONNECT WALLET
-              </button>
+              <ConnectWalletButton />
             )}
           </div>
 
@@ -190,7 +178,7 @@ export default function Home() {
       <div className="flex min-h-0 flex-1 flex-col gap-1 p-1.5 sm:flex-row sm:gap-2 sm:p-2">
         <section className="arena-section flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden sm:flex-row">
           <GameArenaDecor />
-          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)]">
+          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)] px-4 py-3 sm:px-6 sm:py-4">
             <GameCanvas />
           </div>
         </section>
@@ -221,10 +209,6 @@ export default function Home() {
       {/* Black Market Modal */}
       {showBlackMarket && (
         <BlackMarketModal onClose={() => setShowBlackMarket(false)} />
-      )}
-
-      {showConnectWallet && (
-        <ConnectWalletModal onClose={() => setShowConnectWallet(false)} />
       )}
 
       {showDashboard && (

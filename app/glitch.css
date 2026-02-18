@@ -288,18 +288,33 @@
 
 @keyframes pixel-blink {
   0%,
-  45%,
-  55%,
+  40%,
+  60%,
   100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.75;
+  }
+}
+
+/* Idle “breathing” glow for pixel characters */
+@keyframes pixel-glow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.15);
   }
 }
 
 .animate-pixel-float {
   animation: pixel-float 2.5s ease-in-out infinite;
+}
+
+.animate-pixel-idle {
+  animation: pixel-float 2.5s ease-in-out infinite, pixel-blink 2s ease-in-out infinite, pixel-glow 2.5s ease-in-out infinite;
 }
 
 .animate-pixel-blink {

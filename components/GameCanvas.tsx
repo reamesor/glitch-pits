@@ -21,6 +21,7 @@ export function GameCanvas() {
   const characterCount = useGameStore((s) => s.characterCount);
   const lastBetResult = useGameStore((s) => s.lastBetResult);
   const playerName = useGameStore((s) => s.playerName);
+  const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
   const setBalance = useGameStore((s) => s.setBalance);
   const setLastBetResult = useGameStore((s) => s.setLastBetResult);
 
@@ -167,7 +168,7 @@ export function GameCanvas() {
       >
         <div className="flex flex-col items-center justify-center">
           <div className="mb-3 flex items-center gap-2">
-            <PixelCharacter animated />
+            <PixelCharacter characterId={selectedCharacterId} animated />
             <h2
               className="font-pixel glitch-text text-center text-xs uppercase"
               data-text="THE GLITCH PIT"
@@ -175,7 +176,7 @@ export function GameCanvas() {
             >
               THE GLITCH PIT
             </h2>
-            <PixelCharacter animated />
+            <PixelCharacter characterId={selectedCharacterId} animated />
           </div>
             <div className="game-box mb-4 w-full max-w-xs">
             <p className="game-box-label">MATCH</p>
@@ -236,7 +237,7 @@ export function GameCanvas() {
       style={{ minHeight: 420 }}
     >
       <div className="mb-5 flex items-center justify-center gap-3">
-        <PixelCharacter animated />
+        <PixelCharacter characterId={selectedCharacterId} animated />
         <h2
           className="font-pixel glitch-text text-center text-sm uppercase sm:text-base"
           data-text="BET ON YOUR CHARACTER"
@@ -244,7 +245,7 @@ export function GameCanvas() {
         >
           BET ON YOUR CHARACTER
         </h2>
-        <PixelCharacter animated />
+        <PixelCharacter characterId={selectedCharacterId} animated />
       </div>
       <p className="mb-6 text-center font-mono text-xs text-gray-400">
         Select amount, place your bet. Win = bet × multiplier. 50/50.

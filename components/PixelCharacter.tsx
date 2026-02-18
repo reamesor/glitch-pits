@@ -1,45 +1,43 @@
 "use client";
 
+import { getCharacterPreset } from "@/lib/characterPresets";
+
 interface PixelCharacterProps {
+  characterId?: string;
   className?: string;
   animated?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
-/** 6x8 pixel grid: 0=transparent, 1=teal, 2=pink, 3=dark */
-const PIXEL_MAP = [
-  [0, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1],
-  [0, 2, 2, 3, 2, 2],
-  [1, 2, 3, 3, 3, 2],
-  [1, 1, 3, 3, 3, 1],
-  [1, 1, 1, 3, 1, 1],
-  [0, 1, 1, 1, 1, 0],
-  [0, 0, 1, 1, 1, 0],
-];
+const SIZE_MAP = { sm: "h-1.5 w-1.5", md: "h-2 w-2", lg: "h-2.5 w-2.5" };
 
-const PIXEL_COLORS: Record<number, string> = {
-  0: "transparent",
-  1: "var(--glitch-teal)",
-  2: "var(--glitch-pink)",
-  3: "#2a2a2a",
-};
+export function PixelCharacter({
+  characterId = "0",
+  className = "",
+  animated = true,
+  size = "md",
+}: PixelCharacterProps) {
+  const preset = getCharacterPreset(characterId);
+  const cellClass = SIZE_MAP[size];
 
-export function PixelCharacter({ className = "", animated = true }: PixelCharacterProps) {
   return (
     <div
-      className={`inline-flex flex-col ${animated ? "animate-pixel-float" : ""} ${className}`}
+      className={`inline-flex flex-col ${animated ? "animate-pixel-idle" : ""} ${className}`}
       style={{ imageRendering: "pixelated" }}
       aria-hidden
     >
-      {PIXEL_MAP.map((row, y) => (
+      {preset.map.map((row, y) => (
         <div key={y} className="flex">
           {row.map((cell, x) => (
             <div
               key={`${y}-${x}`}
-              className="h-2 w-2 flex-shrink-0"
+              className={`${cellClass} flex-shrink-0`}
               style={{
-                backgroundColor: PIXEL_COLORS[cell],
-                boxShadow: cell ? `0 0 6px ${PIXEL_COLORS[cell]}50` : "none",
+                backgroundColor: preset.colors[cell] ?? "transparent",
+                boxShadow:
+                  cell && preset.colors[cell] !== "transparent"
+                    ? `0 0 ${size === "lg" ? 8 : 6}px ${preset.colors[cell]}50`
+                    : "none",
               }}
             />
           ))}

@@ -1,18 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { PixelCharacter } from "@/components/PixelCharacter";
+import { CharacterPicker } from "@/components/CharacterPicker";
+import { getCharacterPreset } from "@/lib/characterPresets";
 
 interface DashboardModalProps {
   onClose: () => void;
 }
 
 export function DashboardModal({ onClose }: DashboardModalProps) {
+  const [showPicker, setShowPicker] = useState(false);
   const walletAddress = useGameStore((s) => s.walletAddress);
   const dashboardStats = useGameStore((s) => s.dashboardStats);
   const mockBalance = useGameStore((s) => s.mockBalance);
   const totalBurnedAllPits = useGameStore((s) => s.totalBurnedAllPits);
   const setWalletAddress = useGameStore((s) => s.setWalletAddress);
+  const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
+  const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
+  const playerName = useGameStore((s) => s.playerName);
+  const preset = getCharacterPreset(selectedCharacterId);
 
   const net = dashboardStats.totalWon - dashboardStats.totalLost;
 
@@ -21,7 +29,7 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
       <div className="w-full max-w-lg rounded-xl border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] shadow-[0_0_60px_rgba(255,105,180,0.15)]">
         <div className="flex items-center justify-between border-b-2 border-[var(--glitch-pink)]/30 px-4 py-3">
           <div className="flex items-center gap-2">
-            <PixelCharacter animated={false} />
+            <PixelCharacter characterId={selectedCharacterId} animated={false} size="sm" />
             <span className="font-pixel text-xs text-white">DASHBOARD</span>
           </div>
           <button
@@ -45,6 +53,38 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
               >
                 Disconnect
               </button>
+
+              <div className="game-box mb-4 flex items-center gap-4 border-[var(--glitch-teal)]/40">
+                <div className="flex-shrink-0" style={{ imageRendering: "pixelated" }}>
+                  <PixelCharacter characterId={selectedCharacterId} animated size="lg" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="game-box-label">PROFILE</p>
+                  <p className="font-mono text-base font-semibold text-white">
+                    {playerName || "Gladiator"}
+                  </p>
+                  <p className="font-mono text-xs text-gray-500">{preset.name}</p>
+                  <button
+                    type="button"
+                    onClick={() => setShowPicker((v) => !v)}
+                    className="mt-1 font-pixel text-[9px] text-[var(--glitch-teal)] hover:underline"
+                  >
+                    {showPicker ? "HIDE PICKER" : "CHANGE CHARACTER"}
+                  </button>
+                </div>
+              </div>
+
+              {showPicker && (
+                <div className="mb-4">
+                  <CharacterPicker
+                    selectedId={selectedCharacterId}
+                    onSelect={(id) => {
+                      setSelectedCharacterId(id);
+                      setShowPicker(false);
+                    }}
+                  />
+                </div>
+              )}
 
               <div className="game-box mb-4">
                 <p className="game-box-label">CURRENT TOKENS (IN-GAME)</p>

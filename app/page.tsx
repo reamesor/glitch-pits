@@ -11,7 +11,7 @@ import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
 import { ConnectWalletModal } from "@/components/ConnectWalletModal";
 import { DashboardModal } from "@/components/DashboardModal";
-import { WALLET_STORAGE_KEY } from "@/lib/useGameStore";
+import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
 export default function Home() {
   const [showForge, setShowForge] = useState(true);
@@ -29,8 +29,14 @@ export default function Home() {
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const victoryData = useGameStore((s) => s.victoryData);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
+  const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const prevBalanceRef = useRef(mockBalance);
   const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
+
+  useEffect(() => {
+    const saved = typeof window !== "undefined" ? localStorage.getItem(CHARACTER_STORAGE_KEY) : null;
+    if (saved != null) setSelectedCharacterId(saved);
+  }, [setSelectedCharacterId]);
 
   useEffect(() => {
     if (mockBalance > prevBalanceRef.current) {
@@ -40,10 +46,11 @@ export default function Home() {
     prevBalanceRef.current = mockBalance;
   }, [mockBalance]);
 
-  const handleForge = (data: { name: string; clothes: string; weapon: string }) => {
+  const handleForge = (data: { name: string; clothes: string; weapon: string; characterId?: string }) => {
     if (!forgeCharacter() || !socket) return;
     setPlayerName(data.name);
-    socket.emit("forge", data);
+    if (data.characterId != null) setSelectedCharacterId(data.characterId);
+    socket.emit("forge", { name: data.name, clothes: data.clothes, weapon: data.weapon });
     setShowForge(false);
   };
 

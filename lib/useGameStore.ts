@@ -3,6 +3,7 @@ import { create } from "zustand";
 const STARTING_TOKENS = 1000; // Imaginary tokens when joiner enters a character
 const DASHBOARD_STORAGE_PREFIX = "glitch-pits-dashboard-";
 export const WALLET_STORAGE_KEY = "glitch-pits-wallet";
+export const CHARACTER_STORAGE_KEY = "glitch-pits-character";
 
 export interface DashboardStats {
   totalWagered: number;
@@ -24,6 +25,7 @@ export interface GameState {
   walletAddress: string | null;
   dashboardStats: DashboardStats;
   totalBurnedAllPits: number;
+  selectedCharacterId: string;
 }
 
 interface GameActions {
@@ -41,6 +43,7 @@ interface GameActions {
   setTotalBurnedAllPits: (amount: number) => void;
   recordBetResult: (wagered: number, won: boolean, payout: number) => void;
   recordUpgrade: () => void;
+  setSelectedCharacterId: (id: string) => void;
   reset: () => void;
 }
 
@@ -93,10 +96,23 @@ const initialState: GameState = {
   walletAddress: null,
   dashboardStats: defaultDashboard,
   totalBurnedAllPits: 0,
+  selectedCharacterId: "0",
 };
+
+function loadSelectedCharacterId(): string {
+  if (typeof window === "undefined") return "0";
+  try {
+    const raw = localStorage.getItem(CHARACTER_STORAGE_KEY);
+    if (raw && /^[0-9]+$/.test(raw)) return raw;
+  } catch {
+    // ignore
+  }
+  return "0";
+}
 
 export const useGameStore = create<GameState & GameActions>((set) => ({
   ...initialState,
+  selectedCharacterId: typeof window !== "undefined" ? loadSelectedCharacterId() : "0",
 
   setBalance: (balance) => set({ mockBalance: balance }),
 
@@ -184,6 +200,17 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
       }
       return { dashboardStats: stats };
     }),
+
+  setSelectedCharacterId: (id) => {
+    set({ selectedCharacterId: id });
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem(CHARACTER_STORAGE_KEY, id);
+      } catch {
+        // ignore
+      }
+    }
+  },
 
   reset: () => set(initialState),
 }));

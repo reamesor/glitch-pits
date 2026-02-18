@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { WindowedModal } from "./WindowedModal";
+import { CharacterPicker } from "./CharacterPicker";
 
 const CLOTHES_OPTIONS = [
   { id: "vest", label: "Vest", color: "#4a4a6a" },
@@ -17,11 +18,13 @@ const WEAPON_OPTIONS = [
 ];
 
 interface ForgeModalProps {
-  onForge: (data: { name: string; clothes: string; weapon: string }) => void;
+  onForge: (data: { name: string; clothes: string; weapon: string; characterId?: string }) => void;
   connected?: boolean;
 }
 
 export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
+  const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
+  const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const [name, setName] = useState("");
   const [clothes, setClothes] = useState("vest");
   const [weapon, setWeapon] = useState("sword");
@@ -34,6 +37,7 @@ export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
       name: name.trim() || `Player_${Math.random().toString(36).slice(2, 8)}`,
       clothes,
       weapon,
+      characterId: selectedCharacterId,
     });
   };
 
@@ -104,6 +108,8 @@ export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
                 ))}
               </div>
             </div>
+
+            <CharacterPicker selectedId={selectedCharacterId} onSelect={setSelectedCharacterId} />
 
             <button
               type="submit"

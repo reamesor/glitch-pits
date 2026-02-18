@@ -27,9 +27,9 @@ export function useSocket() {
     s.on("connect", () => setConnected(true));
     s.on("disconnect", () => setConnected(false));
 
-    s.on("spawned", (data: { id: string; balance: number }) => {
+    s.on("spawned", (data: { id: string; balance?: number }) => {
       setPlayerId(data.id);
-      setBalance(data.balance);
+      // Keep client balance (2000 after forge). Ignore server balance so it doesn't overwrite to 4000.
     });
 
     s.on("glitchLog", (data: { type: string; message: string }) => {

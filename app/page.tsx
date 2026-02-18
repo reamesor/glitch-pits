@@ -14,7 +14,6 @@ import { ConnectToEnterModal } from "@/components/ConnectToEnterModal";
 import { DashboardModal } from "@/components/DashboardModal";
 import { WalletSync } from "@/components/WalletSync";
 import { ConnectWalletButton } from "@/components/ConnectWalletButton";
-import { WalletCopyIcon } from "@/components/WalletCopyIcon";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
@@ -149,16 +148,13 @@ export default function Home() {
               BLACK MARKET
             </button>
             {walletAddress ? (
-              <>
-                <WalletCopyIcon address={walletAddress} />
-                <button
-                  type="button"
-                  onClick={() => setShowDashboard(true)}
-                  className="pixel-btn text-[9px]"
-                >
-                  DASHBOARD
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => setShowDashboard(true)}
+                className="pixel-btn text-[9px]"
+              >
+                DASHBOARD
+              </button>
             ) : (
               <ConnectWalletButton />
             )}

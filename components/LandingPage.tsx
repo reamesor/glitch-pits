@@ -13,23 +13,16 @@ interface LandingPageProps {
   hasWallet: boolean;
 }
 
-const FLOATING_CHARS = [
-  { id: CHARACTER_PRESETS[0].id, position: "top-left" },
-  { id: CHARACTER_PRESETS[1].id, position: "top-right" },
-  { id: CHARACTER_PRESETS[3].id, position: "bottom-left" },
-  { id: CHARACTER_PRESETS[4].id, position: "bottom-right" },
-  { id: CHARACTER_PRESETS[5].id, position: "mid-left" },
-  { id: CHARACTER_PRESETS[6].id, position: "mid-right" },
-];
-
-const positionClasses: Record<string, string> = {
-  "top-left": "left-[8%] top-[18%]",
-  "top-right": "right-[10%] top-[20%]",
-  "bottom-left": "left-[12%] bottom-[22%]",
-  "bottom-right": "right-[8%] bottom-[18%]",
-  "mid-left": "left-[5%] top-1/2 -translate-y-1/2",
-  "mid-right": "right-[5%] top-1/2 -translate-y-1/2",
-};
+/* Scattered positions for Mememator-style background characters (all presets) */
+const FLOATING_CHARS = CHARACTER_PRESETS.map((preset, i) => {
+  const positions = [
+    "left-[6%] top-[12%]", "right-[8%] top-[14%]", "left-[15%] top-[28%]", "right-[12%] top-[25%]",
+    "left-[8%] bottom-[28%]", "right-[6%] bottom-[22%]", "left-[18%] bottom-[15%]", "right-[14%] bottom-[30%]",
+    "left-[3%] top-[45%]", "right-[4%] top-[55%]", "left-[10%] top-[70%]", "right-[9%] top-[75%]",
+    "left-[22%] top-[8%]", "right-[20%] top-[10%]", "left-[25%] bottom-[8%]", "right-[22%] bottom-[12%]",
+  ];
+  return { id: preset.id, position: positions[i % positions.length], scale: i % 3 === 0 ? "scale-100" : i % 3 === 1 ? "scale-125" : "scale-75", delay: i * 0.35 };
+});
 
 export function LandingPage({
   onEnter,
@@ -40,24 +33,27 @@ export function LandingPage({
   hasWallet,
 }: LandingPageProps) {
   return (
-    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-darker)]">
-      {/* Top nav - minimal like DGB */}
-      <header className="flex shrink-0 items-center justify-between px-6 py-4">
+    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#050505]">
+      {/* Mememator-style starfield background */}
+      <div className="landing-starfield pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+
+      {/* Top nav - minimal like DGB / COLORS */}
+      <header className="relative z-20 flex shrink-0 items-center justify-between px-4 py-3 sm:px-6">
         <div className="opacity-90">
           <GlitchPitsLogo size="sm" />
         </div>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={onOpenHelp}
-            className="font-mono text-xs text-gray-400 transition hover:text-white"
+            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
           >
             HELP
           </button>
           <button
             type="button"
             onClick={onOpenBlackMarket}
-            className="font-mono text-xs text-gray-400 transition hover:text-white"
+            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
           >
             BLACK MARKET
           </button>
@@ -65,7 +61,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onOpenDashboard}
-              className="font-mono text-xs text-gray-400 transition hover:text-white"
+              className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
             >
               DASHBOARD
             </button>
@@ -73,7 +69,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onOpenConnectWallet}
-              className="font-mono text-xs text-[var(--glitch-teal)] transition hover:opacity-90"
+              className="font-mono text-[10px] text-[var(--glitch-teal)] transition hover:opacity-90 sm:text-xs"
             >
               CONNECT WALLET
             </button>
@@ -81,14 +77,14 @@ export function LandingPage({
         </nav>
       </header>
 
-      {/* Center: big title + floating characters */}
+      {/* Center: COLORS-style glow + title + Mememator-style Enter */}
       <div className="relative flex flex-1 flex-col items-center justify-center px-4">
-        {/* Floating pixel characters - interactive, DGB-style */}
-        {FLOATING_CHARS.map(({ id, position }, i) => (
+        {/* Scattered pixel characters - Mememator-style, interactive */}
+        {FLOATING_CHARS.map(({ id, position, scale, delay }) => (
           <div
             key={`${id}-${position}`}
-            className={`landing-character absolute ${positionClasses[position]}`}
-            style={{ animationDelay: `${i * 0.5}s` }}
+            className={`landing-character absolute ${position} ${scale}`}
+            style={{ animationDelay: `${delay}s` }}
             role="img"
             aria-label={CHARACTER_PRESETS.find((p) => p.id === id)?.name ?? "Character"}
           >
@@ -96,38 +92,42 @@ export function LandingPage({
               characterId={id}
               animated
               size="lg"
-              className="scale-150 sm:scale-[2] md:scale-[2.5]"
+              className="scale-100 sm:scale-125"
             />
           </div>
         ))}
 
-        {/* Main title */}
-        <div className="relative z-10 flex flex-col items-center gap-4">
+        {/* COLORS-style neon streak behind title */}
+        <div className="landing-neon-streak" aria-hidden />
+
+        {/* Main title + tagline - DGB bold, Mememator clarity */}
+        <div className="relative z-10 flex flex-col items-center gap-3">
           <h1 className="text-center">
             <GlitchPitsLogo size="xl" />
           </h1>
-          <p className="max-w-md text-center font-mono text-sm text-gray-500 sm:text-base">
+          <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
             Where the House holds the line. You hold the tokens.
           </p>
+          {/* Mememator-style Enter: teal border, clear CTA */}
           <button
             type="button"
             onClick={onEnter}
-            className="pixel-btn pixel-btn-accent pixel-btn-interactive mt-4 font-pixel text-xs sm:text-sm"
+            className="mt-2 rounded-full border-2 border-[var(--glitch-teal)] bg-black/60 px-8 py-3 font-mono text-sm font-medium text-white transition hover:bg-[var(--glitch-teal)]/20 hover:shadow-[0_0_24px_rgba(0,212,170,0.3)] sm:text-base"
           >
-            ENTER THE PITS
+            ENTER
           </button>
         </div>
       </div>
 
-      {/* Footer - DGB style */}
-      <footer className="flex shrink-0 items-center justify-between border-t border-white/10 px-6 py-4">
-        <span className="font-mono text-[10px] text-gray-600 sm:text-xs">
-          ৲ 50/50 · Bet. Win or burn.
+      {/* Footer - DGB style, compact */}
+      <footer className="relative z-20 flex shrink-0 items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
+        <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
+          ৲ 50/50 · Gain or burn
         </span>
-        <span className="font-mono text-[10px] text-gray-600 sm:text-xs">
+        <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
           Where are your gods now?
         </span>
-        <span className="font-mono text-[10px] uppercase tracking-wider text-gray-600 sm:text-xs">
+        <span className="font-mono text-[9px] uppercase tracking-wider text-gray-600 sm:text-[10px]">
           Glitch Pits
         </span>
       </footer>

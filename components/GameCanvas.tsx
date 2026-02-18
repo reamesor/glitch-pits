@@ -1,27 +1,154 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
+import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
 
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
+const LORE_INTERVAL_MS = 1800;
+const RESULT_DISPLAY_MS = 2500;
+const SERVER_TIMEOUT_MS = 6000;
 
 export function GameCanvas() {
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
   const lastBetResult = useGameStore((s) => s.lastBetResult);
+  const playerName = useGameStore((s) => s.playerName);
+  const setBalance = useGameStore((s) => s.setBalance);
+  const setLastBetResult = useGameStore((s) => s.setLastBetResult);
+
   const [amount, setAmount] = useState(100);
+  const [battlePhase, setBattlePhase] = useState<"idle" | "fighting" | "result">("idle");
+  const [battleAmount, setBattleAmount] = useState(0);
+  const [battleMultiplier, setBattleMultiplier] = useState(0);
+  const [battleWon, setBattleWon] = useState(false);
+  const [battlePayout, setBattlePayout] = useState(0);
+  const [currentLore, setCurrentLore] = useState("");
+  const [rumbleOpponent, setRumbleOpponent] = useState("");
 
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
+  const displayName = playerName || "Warrior";
+
+  // Cycle lore during battle (one opponent name per rumble for consistent glitch story)
+  useEffect(() => {
+    if (battlePhase !== "fighting") return;
+    const next = () => setCurrentLore(getRandomPitLore(displayName, rumbleOpponent));
+    next();
+    const id = setInterval(next, LORE_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [battlePhase, displayName, rumbleOpponent]);
+
+  // When server sends betResult, show result then return to idle
+  useEffect(() => {
+    if (battlePhase !== "fighting" || lastBetResult === null) return;
+    setBattleWon(lastBetResult.won);
+    setBattlePayout(lastBetResult.payout);
+    setBattlePhase("result");
+    const t = setTimeout(() => {
+      setBattlePhase("idle");
+    }, RESULT_DISPLAY_MS);
+    return () => clearTimeout(t);
+  }, [battlePhase, lastBetResult]);
+
+  const runLocalFallback = useCallback(() => {
+    const won = Math.random() < 0.5;
+    const payout = won ? Math.floor(battleAmount * battleMultiplier) : 0;
+    setLastBetResult({ won, payout });
+    const balance = useGameStore.getState().mockBalance;
+    if (won) {
+      setBalance(balance - battleAmount + payout);
+    } else {
+      setBalance(balance - battleAmount);
+    }
+    // useEffect will switch to result then idle when lastBetResult is set
+  }, [battleAmount, battleMultiplier, setBalance, setLastBetResult]);
 
   const handlePlaceBet = () => {
     if (!socket || amount < 50 || amount > mockBalance) return;
-    useGameStore.getState().setLastBetResult(null);
+    setLastBetResult(null);
+    setBattleAmount(amount);
+    setBattleMultiplier(multiplier);
+    setRumbleOpponent(getRandomOpponentName());
+    setBattlePhase("fighting");
     socket.emit("placeBet", { amount });
+
+    // If server doesn't respond in time, run local simulation so something always happens
+    const timeoutId = setTimeout(() => {
+      if (useGameStore.getState().lastBetResult !== null) return; // server already replied
+      runLocalFallback();
+    }, SERVER_TIMEOUT_MS);
+
+    const unsub = useGameStore.subscribe((state) => {
+      if (state.lastBetResult !== null) {
+        clearTimeout(timeoutId);
+        unsub();
+      }
+    });
   };
+
+  if (battlePhase === "fighting" || battlePhase === "result") {
+    return (
+      <div
+        className="relative overflow-hidden rounded-lg border-2 bg-black"
+        style={{ borderColor: "rgba(255, 105, 180, 0.4)" }}
+      >
+        <div
+          className="flex flex-col items-center justify-center p-8"
+          style={{ minHeight: 400, backgroundColor: "var(--bg-dark)" }}
+        >
+          <h2
+            className="font-pixel glitch-text mb-4 text-center text-xs uppercase"
+            data-text="THE GLITCH PIT"
+            style={{ color: "var(--glitch-pink)" }}
+          >
+            THE GLITCH PIT
+          </h2>
+          <p className="mb-2 font-pixel text-center text-[10px]" style={{ color: "var(--glitch-teal)" }}>
+            {displayName} vs {rumbleOpponent || "…"}
+          </p>
+
+          {battlePhase === "fighting" && (
+            <>
+              <p
+                className="max-w-md animate-pulse text-center font-mono text-[10px] text-gray-400"
+                key={currentLore}
+              >
+                {currentLore}
+              </p>
+              <p className="mt-6 font-pixel text-[8px] text-gray-500">
+                Battle in progress...
+              </p>
+            </>
+          )}
+
+          {battlePhase === "result" && (
+            <div
+              className={`mt-4 rounded border-2 px-6 py-4 font-pixel text-center text-sm ${
+                battleWon ? "border-[var(--glitch-teal)]" : "border-red-500/80"
+              }`}
+              style={{
+                backgroundColor: battleWon ? "rgba(0, 212, 170, 0.15)" : "rgba(220, 38, 38, 0.15)",
+              }}
+            >
+              <p style={{ color: battleWon ? "var(--glitch-teal)" : "#f87171" }}>
+                {battleWon ? "VICTORY" : "DEFEAT"}
+              </p>
+              <p className="mt-2 text-[10px] text-gray-300">
+                {battleWon ? `+${battlePayout} PITS` : "House wins."}
+              </p>
+            </div>
+          )}
+        </div>
+        <div className="absolute bottom-2 left-2 font-pixel text-[8px] text-gray-500">
+          Your character in the Pit
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
@@ -76,13 +203,13 @@ export function GameCanvas() {
         <button
           type="button"
           onClick={handlePlaceBet}
-          disabled={!connected || amount > mockBalance || amount < 50 || characterCount < 1}
+          disabled={amount > mockBalance || amount < 50 || characterCount < 1}
           className="pixel-btn pixel-btn-accent"
         >
           PLACE BET ({amount} PITS)
         </button>
 
-        {lastBetResult !== null && (
+        {lastBetResult !== null && battlePhase === "idle" && (
           <div
             className={`mt-6 rounded border-2 px-4 py-3 font-pixel text-[10px] ${
               lastBetResult.won ? "border-[var(--glitch-teal)]" : "border-red-500/80"
@@ -101,7 +228,7 @@ export function GameCanvas() {
 
         {!connected && (
           <p className="mt-6 font-pixel text-[8px] text-gray-500">
-            Connect to place bets (see DEPLOY.md for socket server).
+            Offline mode: battle runs locally. Connect for real payouts.
           </p>
         )}
         {connected && characterCount < 1 && (

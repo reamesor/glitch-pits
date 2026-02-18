@@ -9,23 +9,20 @@ import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
+import { GameArenaDecor } from "@/components/GameArenaDecor";
 import { ConnectWalletModal } from "@/components/ConnectWalletModal";
+import { ConnectToEnterModal } from "@/components/ConnectToEnterModal";
 import { DashboardModal } from "@/components/DashboardModal";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
-const LANDING_SEEN_KEY = "glitch-pits-landing-seen";
-
 export default function Home() {
-  const [showLanding, setShowLanding] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return !sessionStorage.getItem(LANDING_SEEN_KEY);
-  });
   const [showForge, setShowForge] = useState(true);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
   const [showGameHelp, setShowGameHelp] = useState(false);
   const [showConnectWallet, setShowConnectWallet] = useState(false);
+  const [showConnectToEnter, setShowConnectToEnter] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
@@ -34,6 +31,7 @@ export default function Home() {
   const walletAddress = useGameStore((s) => s.walletAddress);
   const setWalletAddress = useGameStore((s) => s.setWalletAddress);
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
+  const setBalance = useGameStore((s) => s.setBalance);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const victoryData = useGameStore((s) => s.victoryData);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
@@ -59,6 +57,7 @@ export default function Home() {
     setPlayerName(data.name);
     if (data.characterId != null) setSelectedCharacterId(data.characterId);
     socket.emit("forge", { name: data.name, clothes: data.clothes, weapon: data.weapon });
+    setBalance(1000); // 1000 PITS reward for creating a character, added to balance
     setShowForge(false);
   };
 
@@ -74,21 +73,21 @@ export default function Home() {
   }, [setWalletAddress]);
 
   const handleEnterPits = () => {
-    setShowLanding(false);
-    try {
-      sessionStorage.setItem(LANDING_SEEN_KEY, "1");
-    } catch {
-      // ignore
-    }
+    if (!walletAddress) setShowConnectToEnter(true);
   };
 
-  if (showLanding) {
+  const handleConnectedThenEnter = () => {
+    setShowConnectWallet(false);
+    setShowConnectToEnter(false);
+    // View switches to app automatically once walletAddress is set
+  };
+
+  if (!walletAddress) {
     return (
       <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
         <LandingPage
           onEnter={handleEnterPits}
           onOpenHelp={() => setShowGameHelp(true)}
-          onOpenBlackMarket={() => setShowBlackMarket(true)}
           onOpenDashboard={() => setShowDashboard(true)}
           onOpenConnectWallet={() => setShowConnectWallet(true)}
           hasWallet={!!walletAddress}
@@ -96,7 +95,18 @@ export default function Home() {
         {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
         {showBlackMarket && <BlackMarketModal onClose={() => setShowBlackMarket(false)} />}
         {showDashboard && <DashboardModal onClose={() => setShowDashboard(false)} />}
-        {showConnectWallet && <ConnectWalletModal onClose={() => setShowConnectWallet(false)} />}
+        {showConnectToEnter && (
+          <ConnectToEnterModal
+            onConnect={() => setShowConnectWallet(true)}
+            onClose={() => setShowConnectToEnter(false)}
+          />
+        )}
+        {showConnectWallet && (
+          <ConnectWalletModal
+            onClose={() => setShowConnectWallet(false)}
+            onConnected={showConnectToEnter ? handleConnectedThenEnter : undefined}
+          />
+        )}
       </main>
     );
   }
@@ -110,7 +120,7 @@ export default function Home() {
         style={{ backgroundColor: "var(--bg-darker)" }}
       >
         <h1>
-          <GlitchPitsLogo size="md" />
+          <GlitchPitsLogo size="lg" />
         </h1>
 
         <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 md:gap-6">
@@ -178,10 +188,13 @@ export default function Home() {
 
       {/* Main Content: fit viewport, no scroll */}
       <div className="flex min-h-0 flex-1 flex-col gap-1 p-1.5 sm:flex-row sm:gap-2 sm:p-2">
-        <section className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden">
-          <GameCanvas />
+        <section className="arena-section flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden sm:flex-row">
+          <GameArenaDecor />
+          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)]">
+            <GameCanvas />
+          </div>
         </section>
-        <aside className="flex max-h-[30vh] shrink-0 flex-col sm:max-h-none sm:w-48 lg:w-60">
+        <aside className="flex max-h-[30vh] shrink-0 flex-col sm:max-h-none sm:w-48 lg:w-56">
           <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="min-h-0 flex-1 overflow-auto">
               <GlitchLog />

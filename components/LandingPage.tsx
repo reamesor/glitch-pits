@@ -7,7 +7,6 @@ import { CHARACTER_PRESETS } from "@/lib/characterPresets";
 interface LandingPageProps {
   onEnter: () => void;
   onOpenHelp: () => void;
-  onOpenBlackMarket: () => void;
   onOpenDashboard: () => void;
   onOpenConnectWallet: () => void;
   hasWallet: boolean;
@@ -27,7 +26,6 @@ const FLOATING_CHARS = CHARACTER_PRESETS.map((preset, i) => {
 export function LandingPage({
   onEnter,
   onOpenHelp,
-  onOpenBlackMarket,
   onOpenDashboard,
   onOpenConnectWallet,
   hasWallet,
@@ -49,13 +47,6 @@ export function LandingPage({
             className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
           >
             HELP
-          </button>
-          <button
-            type="button"
-            onClick={onOpenBlackMarket}
-            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
-          >
-            BLACK MARKET
           </button>
           {hasWallet ? (
             <button

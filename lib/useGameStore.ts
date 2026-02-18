@@ -110,9 +110,21 @@ function loadSelectedCharacterId(): string {
   return "0";
 }
 
+function loadWalletFromStorage(): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(WALLET_STORAGE_KEY);
+    if (raw?.trim()) return raw.trim();
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 export const useGameStore = create<GameState & GameActions>((set) => ({
   ...initialState,
   selectedCharacterId: typeof window !== "undefined" ? loadSelectedCharacterId() : "0",
+  walletAddress: typeof window !== "undefined" ? loadWalletFromStorage() : null,
 
   setBalance: (balance) => set({ mockBalance: balance }),
 

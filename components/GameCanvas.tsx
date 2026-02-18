@@ -165,9 +165,9 @@ export function GameCanvas() {
 
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
-      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-3">
+      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
         <div className="flex flex-col items-center justify-center">
-          <div className="mb-1 flex items-center gap-1 sm:mb-2">
+          <div className="mb-1 flex items-center justify-center gap-1 sm:mb-2">
             <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
             <h2
               className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
@@ -176,7 +176,6 @@ export function GameCanvas() {
             >
               THE GLITCH PIT
             </h2>
-            <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
           </div>
           <div className="game-box mb-2 w-full max-w-xs py-1.5">
             <p className="game-box-label">MATCH</p>
@@ -213,38 +212,37 @@ export function GameCanvas() {
   }
 
   return (
-    <div className="relative flex h-full max-h-full w-full max-w-xl flex-col overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-1.5 shadow-[0_0_20px_rgba(255,105,180,0.1)] sm:rounded-xl sm:p-2">
-      <div className="mb-1 flex shrink-0 flex-wrap items-center justify-center gap-1">
-        <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
+    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
+      <div className="mb-2 flex shrink-0 flex-wrap items-center justify-center gap-1.5">
+        <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
         <h2
-          className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
+          className="font-pixel glitch-text text-center text-xs uppercase sm:text-sm"
           data-text={`BET ON ${displayName.toUpperCase()}`}
           style={{ color: "var(--g-blue)" }}
         >
           BET ON {displayName.toUpperCase()}
         </h2>
-        <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
       </div>
-      <p className="mb-1.5 shrink-0 text-center font-mono text-[9px] text-gray-400">
+      <p className="mb-2 shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
         Select amount, place your bet. Win = bet × multiplier. 50/50.
       </p>
 
       <div className="flex min-h-0 flex-1 flex-col gap-1.5">
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2 py-1.5">
+        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2.5 py-2">
           <div>
             <p className="game-box-label">BALANCE</p>
-            <p className="font-pixel text-sm animate-pulse-glow" style={{ color: "var(--glitch-teal)" }}>
+            <p className="font-pixel text-base animate-pulse-glow sm:text-lg" style={{ color: "var(--glitch-teal)" }}>
               {mockBalance.toLocaleString()} PITS
             </p>
           </div>
-          <div className="flex flex-wrap items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1.5">
             {BET_AMOUNTS.map((a) => (
               <button
                 key={a}
                 type="button"
                 onClick={() => setAmount(a)}
                 disabled={a > mockBalance}
-                className={`border-2 px-1.5 py-1 font-pixel text-[7px] transition-all sm:text-[8px] hover:scale-105 ${
+                className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:text-[9px] hover:scale-105 ${
                   amount === a
                     ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_8px_rgba(255,105,180,0.4)]"
                     : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
@@ -255,7 +253,7 @@ export function GameCanvas() {
             ))}
           </div>
         </div>
-        <p className="shrink-0 text-center font-mono text-[8px] text-gray-500">
+        <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
           Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span>
         </p>
 
@@ -263,21 +261,21 @@ export function GameCanvas() {
           type="button"
           onClick={handlePlaceBet}
           disabled={autobetRunning || amount > mockBalance || amount < 50 || characterCount < 1}
-          className="pixel-btn pixel-btn-accent pixel-btn-interactive w-full shrink-0 font-pixel text-[9px]"
+          className="pixel-btn pixel-btn-accent pixel-btn-interactive w-full shrink-0 font-pixel text-[10px] sm:text-xs"
         >
           PLACE BET ({amount} PITS)
         </button>
 
-        <div className="game-box shrink-0 py-1">
+        <div className="game-box shrink-0 py-1.5">
           <p className="game-box-label">AUTOBET</p>
-          <div className="mb-1 flex flex-wrap gap-0.5">
+          <div className="mb-1 flex flex-wrap gap-1">
             {AUTOBET_OPTIONS.map((n) => (
               <button
                 key={n}
                 type="button"
                 onClick={() => setAutobetLimit(n)}
                 disabled={autobetRunning}
-                className={`border-2 px-1 py-0.5 font-pixel text-[7px] transition-colors sm:text-[8px] ${
+                className={`border-2 px-1.5 py-1 font-pixel text-[8px] transition-colors sm:text-[9px] ${
                   autobetLimit === n
                     ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20"
                     : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
@@ -287,7 +285,7 @@ export function GameCanvas() {
               </button>
             ))}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <button
               type="button"
               onClick={startAutobet}
@@ -297,7 +295,7 @@ export function GameCanvas() {
                 amount < 50 ||
                 characterCount < 1
               }
-              className="pixel-btn pixel-btn-interactive flex-1 text-[8px]"
+              className="pixel-btn pixel-btn-interactive flex-1 text-[9px]"
             >
               START
             </button>
@@ -305,7 +303,7 @@ export function GameCanvas() {
               type="button"
               onClick={stopAutobet}
               disabled={!autobetRunning}
-              className="pixel-btn flex-1 border-red-500/50 text-[8px] text-red-400 disabled:opacity-50"
+              className="pixel-btn flex-1 border-red-500/50 text-[9px] text-red-400 disabled:opacity-50"
             >
               STOP
             </button>
@@ -341,7 +339,7 @@ export function GameCanvas() {
         <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character first.</p>
       )}
 
-      <p className="mt-1 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+      <p className="mt-1.5 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
         Your character in the Pit · Payout = bet × multiplier on win
       </p>
     </div>

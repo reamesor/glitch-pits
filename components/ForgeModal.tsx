@@ -46,7 +46,7 @@ export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
       <div className="w-full max-w-md">
         <WindowedModal title="THE FORGE" closable={false}>
           <p className="mb-4 text-center text-base text-gray-400">
-            Enter a character to get <strong>1,000</strong> imaginary tokens to play. Free.
+            Create your gladiator — name them, pick clothes and weapon — then get <strong>1,000 PITS</strong> added to your balance to play. Free.
           </p>
           {!connected && (
             <p className="mb-2 text-center text-sm text-amber-400">

@@ -7,9 +7,11 @@ import { useGameStore } from "@/lib/useGameStore";
 
 interface ConnectWalletModalProps {
   onClose: () => void;
+  /** Called when a wallet is connected (adapter or paste). Use to e.g. close and proceed to forge. */
+  onConnected?: () => void;
 }
 
-export function ConnectWalletModal({ onClose }: ConnectWalletModalProps) {
+export function ConnectWalletModal({ onClose, onConnected }: ConnectWalletModalProps) {
   const setWalletAddress = useGameStore((s) => s.setWalletAddress);
   const [input, setInput] = useState("");
   const { publicKey, connected } = useWallet();
@@ -17,16 +19,18 @@ export function ConnectWalletModal({ onClose }: ConnectWalletModalProps) {
   useEffect(() => {
     if (connected && publicKey) {
       setWalletAddress(publicKey.toBase58());
+      onConnected?.();
     } else if (!connected) {
       setWalletAddress(null);
     }
-  }, [connected, publicKey, setWalletAddress]);
+  }, [connected, publicKey, setWalletAddress, onConnected]);
 
   const handleConnectPaste = () => {
     const addr = input.trim();
     if (!addr) return;
     setWalletAddress(addr);
     setInput("");
+    onConnected?.();
     onClose();
   };
 

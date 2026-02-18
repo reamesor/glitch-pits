@@ -240,6 +240,22 @@
   text-transform: uppercase;
 }
 
+/* Arena decorative side panel grid */
+.arena-decor-grid {
+  background-image: linear-gradient(rgba(255, 105, 180, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 105, 180, 0.15) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+/* Main arena section: subtle center glow so it doesn’t feel empty */
+.arena-section {
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 50%,
+    rgba(255, 105, 180, 0.04) 0%,
+    transparent 60%
+  );
+}
+
 /* Glow pulse for balance / important numbers */
 @keyframes pulse-glow {
   0%,

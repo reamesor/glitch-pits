@@ -32,22 +32,22 @@ export function VictoryCongrats({ name, amount, onClose }: VictoryCongratsProps)
           >
             🏆 YOU WON 🏆
           </p>
-          <p className="mb-6 text-center text-sm text-white">
+          <p className="mb-6 text-center text-base text-white">
             Bet vs House — payout
           </p>
           <p
-            className="glitch-text mb-8 text-center text-lg"
+            className="glitch-text mb-8 text-center text-xl font-semibold sm:text-2xl"
             style={{ color: "#ffd700" }}
           >
             {amount.toLocaleString()} PITS
           </p>
-          <p className="mb-6 text-center text-xs text-gray-500">
+          <p className="mb-6 text-center text-sm text-gray-500">
             — Where are your gods now? —
           </p>
           <button
             type="button"
             onClick={onClose}
-            className="w-full border-4 border-[#ffd700] px-6 py-4 font-pixel text-xs text-[#ffd700] transition hover:bg-[#ffd700]/20"
+            className="w-full border-4 border-[#ffd700] px-6 py-4 font-pixel text-sm text-[#ffd700] transition hover:bg-[#ffd700]/20"
           >
             PLAY AGAIN
           </button>

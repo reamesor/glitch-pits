@@ -2,14 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;600;700&display=swap");
 
-/* --- Glitch Pits Global Styles (Glitch-Noir) --- */
+/* --- Glitch Pits: bolder, larger, more interactive --- */
 :root {
-  /* Spec: Glitch-Noir chromatic aberration */
   --g-red: #ff00c1;
   --g-blue: #00fff9;
-  /* Existing palette */
   --glitch-pink: #ff69b4;
   --glitch-teal: #00d4aa;
   --glitch-orange: #ff8c42;
@@ -18,17 +16,23 @@
   --glitch-blue: #4a90d9;
   --bg-dark: #0a0a0a;
   --bg-darker: #060606;
+  --bg-card: #111111;
   --window-blue: #3d6aa2;
   --window-blue-dark: #2d4a72;
   --glitch-red: var(--g-red);
   --glitch-green: var(--glitch-teal);
+  --text-primary: #f0f0f0;
+  --text-muted: #888;
 }
 
 body {
-  background-color: var(--bg-dark);
-  color: #fff;
-  font-family: "Courier New", Courier, monospace;
+  background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255, 105, 180, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 50% at 80% 50%, rgba(0, 212, 170, 0.04) 0%, transparent 50%),
+    var(--bg-dark);
+  color: var(--text-primary);
+  font-family: "JetBrains Mono", "Courier New", monospace;
   overflow: hidden;
+  font-size: 15px;
 }
 
 .font-pixel {

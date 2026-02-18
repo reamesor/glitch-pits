@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { ForgeModal } from "@/components/ForgeModal";
@@ -29,6 +29,16 @@ export default function Home() {
   const setPlayerName = useGameStore((s) => s.setPlayerName);
   const victoryData = useGameStore((s) => s.victoryData);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
+  const prevBalanceRef = useRef(mockBalance);
+  const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
+
+  useEffect(() => {
+    if (mockBalance > prevBalanceRef.current) {
+      setBalanceJustUpdated(true);
+      setTimeout(() => setBalanceJustUpdated(false), 1500);
+    }
+    prevBalanceRef.current = mockBalance;
+  }, [mockBalance]);
 
   const handleForge = (data: { name: string; clothes: string; weapon: string }) => {
     if (!forgeCharacter() || !socket) return;
@@ -38,10 +48,10 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (!isForged && mockBalance >= 1000) {
+    if (!isForged) {
       setShowForge(true);
     }
-  }, [isForged, mockBalance]);
+  }, [isForged]);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(WALLET_STORAGE_KEY) : null;
@@ -53,87 +63,94 @@ export default function Home() {
       <div className="bg-static" />
       {/* Top Bar */}
       <header
-        className="flex shrink-0 items-center justify-between border-b-4 px-6 py-3"
-        style={{
-          borderColor: "var(--glitch-purple)",
-          backgroundColor: "var(--bg-darker)",
-        }}
+        className="flex shrink-0 items-center justify-between border-b-2 border-[var(--glitch-pink)]/50 px-6 py-4 shadow-[0_4px_30px_rgba(255,105,180,0.12)]"
+        style={{ backgroundColor: "var(--bg-darker)" }}
       >
         <h1
-          className="font-pixel glitch-text text-sm"
+          className="font-pixel glitch-text text-base sm:text-lg"
           data-text="GLITCH PITS"
           style={{ color: "var(--glitch-pink)" }}
         >
           GLITCH PITS
         </h1>
-        <div className="flex items-center gap-6">
-          <span
-            className="font-pixel text-xs"
-            style={{ color: "var(--glitch-teal)" }}
+
+        <div className="flex items-center gap-4 sm:gap-8">
+          <div
+            className="rounded-lg border-2 border-[var(--glitch-teal)]/50 bg-[var(--bg-card)] px-5 py-2.5 text-center shadow-[0_0_20px_rgba(0,212,170,0.15)]"
+            title="Live balance — updates when you win or lose"
           >
-            {mockBalance.toLocaleString()} Mock-PITS
+            <p className="font-mono text-[10px] uppercase tracking-wider text-gray-500">Balance</p>
+            <p
+              className={`font-pixel text-xl sm:text-2xl ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
+              style={{ color: "var(--glitch-teal)" }}
+            >
+              {mockBalance.toLocaleString()}
+            </p>
+            <p className="font-mono text-[9px] text-gray-500">PITS</p>
+          </div>
+
+          <span className="hidden font-mono text-sm text-gray-500 sm:inline">
+            Forged: <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
-          <span className="text-xs text-gray-500">
-            Forged:{" "}
-            <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
-          </span>
-          <button
-            type="button"
-            onClick={() => setShowGameHelp(true)}
-            className="pixel-btn text-[8px]"
-          >
-            HELP
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowBlackMarket(true)}
-            className="pixel-btn text-[8px]"
-          >
-            BLACK MARKET
-          </button>
-          {walletAddress ? (
+
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => setShowDashboard(true)}
-              className="pixel-btn text-[8px]"
+              onClick={() => setShowGameHelp(true)}
+              className="pixel-btn text-[9px]"
             >
-              DASHBOARD
+              HELP
             </button>
-          ) : (
             <button
               type="button"
-              onClick={() => setShowConnectWallet(true)}
-              className="pixel-btn text-[8px]"
+              onClick={() => setShowBlackMarket(true)}
+              className="pixel-btn text-[9px]"
             >
-              CONNECT WALLET
+              BLACK MARKET
             </button>
-          )}
-          <span className="text-xs text-gray-500">
-            {connected ? (
-              <span style={{ color: "var(--glitch-teal)" }}>● CONNECTED</span>
+            {walletAddress ? (
+              <button
+                type="button"
+                onClick={() => setShowDashboard(true)}
+                className="pixel-btn text-[9px]"
+              >
+                DASHBOARD
+              </button>
             ) : (
-              <span style={{ color: "var(--glitch-pink)" }}>○ OFFLINE</span>
+              <button
+                type="button"
+                onClick={() => setShowConnectWallet(true)}
+                className="pixel-btn text-[9px]"
+              >
+                CONNECT WALLET
+              </button>
+            )}
+          </div>
+
+          <span className="font-mono text-sm">
+            {connected ? (
+              <span className="text-[var(--glitch-teal)]">● CONNECTED</span>
+            ) : (
+              <span className="text-[var(--glitch-pink)]">○ OFFLINE</span>
             )}
           </span>
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      {/* Main Content - COLORS-style layout */}
+      <div className="flex flex-1 overflow-hidden gap-4 p-4">
         {/* Game Arena (Center) */}
-        <section className="flex flex-1 items-center justify-center p-4">
+        <section className="flex flex-1 items-center justify-center min-w-0">
           <GameCanvas />
         </section>
 
-        {/* Glitch Log Sidebar */}
-        <aside
-          className="flex w-80 shrink-0 flex-col border-l-4 p-4"
-          style={{
-            borderColor: "var(--glitch-purple)",
-            backgroundColor: "var(--bg-darker)",
-          }}
-        >
-          <GlitchLog />
+        {/* Glitch Log - box dashboard */}
+        <aside className="flex w-80 shrink-0 flex-col">
+          <div className="game-box flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="min-h-0 flex-1 overflow-auto">
+              <GlitchLog />
+            </div>
+          </div>
         </aside>
       </div>
 

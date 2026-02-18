@@ -10,8 +10,7 @@ const dev = process.env.NODE_ENV !== "production";
 const hostname = "localhost";
 const port = 3000;
 
-const DEFAULT_BALANCE = 5000;
-const FORGE_COST = 1000;
+const STARTING_TOKENS = 1000; // Imaginary tokens when joiner enters a character
 const BET_MIN = 50;
 const LORE_CLASSES = ["The Overclocked", "The Virus", "The Null", "The Glitch", "The Fork", "The Stack", "The Kernel"];
 
@@ -69,12 +68,12 @@ app.prepare().then(() => {
         attack: 5,
         defense: 5,
         luck: 5,
-        balance: DEFAULT_BALANCE - FORGE_COST,
+        balance: STARTING_TOKENS,
       });
 
       socket.emit("spawned", {
         id: socket.id,
-        balance: DEFAULT_BALANCE - FORGE_COST,
+        balance: STARTING_TOKENS,
         clothes,
         weapon,
       });

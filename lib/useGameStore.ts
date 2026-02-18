@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
-const DEFAULT_BALANCE = 5000;
-const FORGE_COST = 1000;
+const STARTING_TOKENS = 1000; // Imaginary tokens when joiner enters a character
 const DASHBOARD_STORAGE_PREFIX = "glitch-pits-dashboard-";
 export const WALLET_STORAGE_KEY = "glitch-pits-wallet";
 
@@ -82,7 +81,7 @@ function saveDashboardToStorage(address: string, stats: DashboardStats) {
 }
 
 const initialState: GameState = {
-  mockBalance: DEFAULT_BALANCE,
+  mockBalance: STARTING_TOKENS,
   playerId: null,
   playerName: "",
   isForged: false,
@@ -107,12 +106,9 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
   forgeCharacter: () => {
     let success = false;
     set((state) => {
-      if (state.mockBalance < FORGE_COST || state.isForged) return state;
+      if (state.isForged) return state;
       success = true;
-      return {
-        mockBalance: state.mockBalance - FORGE_COST,
-        isForged: true,
-      };
+      return { isForged: true };
     });
     return success;
   },

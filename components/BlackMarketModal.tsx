@@ -56,7 +56,7 @@ export function BlackMarketModal({ onClose }: BlackMarketModalProps) {
               className="mb-6 font-pixel text-center text-xs"
               style={{ color: "var(--glitch-teal)" }}
             >
-              Balance: {mockBalance.toLocaleString()} Mock-PITS
+              Balance: {mockBalance.toLocaleString()} tokens
             </p>
 
             <div className="space-y-3">

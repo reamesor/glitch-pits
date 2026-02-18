@@ -90,7 +90,7 @@ export function GlitchLog() {
   return (
     <div className="flex h-full flex-col">
       <h3
-        className="font-pixel glitch-text mb-3 border-b-4 border-[#4a4a4a] pb-2 text-xs"
+        className="font-pixel glitch-text mb-3 border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm"
         data-text="GLITCH LOG"
         style={{ color: "var(--glitch-teal)" }}
       >
@@ -105,7 +105,7 @@ export function GlitchLog() {
             className="border-4 border-dashed border-[#4a4a4a] p-4 text-center"
             style={{ imageRendering: "pixelated" }}
           >
-            <p className="font-mono text-[10px] text-gray-600">
+            <p className="font-mono text-xs text-gray-500">
               Awaiting transmissions...
             </p>
           </div>
@@ -125,7 +125,7 @@ export function GlitchLog() {
               >
                 {/* Avatar/icon placeholder */}
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center border-2 font-pixel text-[8px]"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded border-2 font-pixel text-[9px]"
                   style={{
                     borderColor: style.accentColor,
                     color: style.accentColor,
@@ -136,12 +136,12 @@ export function GlitchLog() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <span
-                    className="font-pixel text-[8px] uppercase"
+                    className="font-pixel text-[9px] uppercase"
                     style={{ color: style.accentColor }}
                   >
                     {getTypeLabel(entry.type)}
                   </span>
-                  <p className="mt-1 font-mono text-[10px] leading-tight text-gray-300">
+                  <p className="mt-1 font-mono text-xs leading-snug text-gray-300">
                     {entry.message}
                   </p>
                 </div>

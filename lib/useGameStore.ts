@@ -43,14 +43,18 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
   addToBalance: (amount) =>
     set((state) => ({ mockBalance: state.mockBalance + amount })),
 
-  forgeCharacter: () =>
+  forgeCharacter: () => {
+    let success = false;
     set((state) => {
       if (state.mockBalance < FORGE_COST || state.isForged) return state;
+      success = true;
       return {
         mockBalance: state.mockBalance - FORGE_COST,
         isForged: true,
       };
-    }),
+    });
+    return success;
+  },
 
   setPlayerId: (id) => set({ playerId: id }),
 

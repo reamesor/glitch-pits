@@ -36,7 +36,10 @@ app.prepare().then(() => {
   const players = new Map();
 
   io.on("connection", (socket) => {
-    socket.on("forge", (playerName) => {
+    socket.on("forge", (data) => {
+      const playerName = typeof data === "string" ? data : data?.name;
+      const clothes = typeof data === "object" ? (data.clothes || "vest") : "vest";
+      const weapon = typeof data === "object" ? (data.weapon || "sword") : "sword";
       const balance = DEFAULT_BALANCE;
       const x = Math.random() * (ARENA_WIDTH - PLAYER_SIZE);
       const y = Math.random() * (ARENA_HEIGHT - PLAYER_SIZE);
@@ -49,6 +52,9 @@ app.prepare().then(() => {
         balance: balance - FORGE_COST,
         lastAttack: 0,
         isAlive: true,
+        facing: "down",
+        clothes,
+        weapon,
       });
 
       const otherPlayers = Array.from(players.entries())
@@ -60,6 +66,9 @@ app.prepare().then(() => {
           y: p.y,
           balance: p.balance,
           isAlive: p.isAlive,
+          facing: p.facing || "down",
+          clothes: p.clothes || "vest",
+          weapon: p.weapon || "sword",
         }));
 
       socket.emit("spawned", {
@@ -67,6 +76,8 @@ app.prepare().then(() => {
         balance: balance - FORGE_COST,
         x,
         y,
+        clothes,
+        weapon,
       });
       socket.emit("players", otherPlayers);
 
@@ -76,6 +87,9 @@ app.prepare().then(() => {
         x,
         y,
         balance: balance - FORGE_COST,
+        facing: "down",
+        clothes,
+        weapon,
       });
 
       io.emit("glitchLog", {
@@ -92,16 +106,30 @@ app.prepare().then(() => {
 
       let { x, y } = player;
       const speed = 4;
+      let facing = player.facing || "down";
 
-      if (data.left) x = Math.max(0, x - speed);
-      if (data.right) x = Math.min(ARENA_WIDTH - PLAYER_SIZE, x + speed);
-      if (data.up) y = Math.max(0, y - speed);
-      if (data.down) y = Math.min(ARENA_HEIGHT - PLAYER_SIZE, y + speed);
+      if (data.left) {
+        x = Math.max(0, x - speed);
+        facing = "left";
+      }
+      if (data.right) {
+        x = Math.min(ARENA_WIDTH - PLAYER_SIZE, x + speed);
+        facing = "right";
+      }
+      if (data.up) {
+        y = Math.max(0, y - speed);
+        facing = "up";
+      }
+      if (data.down) {
+        y = Math.min(ARENA_HEIGHT - PLAYER_SIZE, y + speed);
+        facing = "down";
+      }
 
       player.x = x;
       player.y = y;
+      player.facing = facing;
 
-      io.emit("playerMoved", { id: socket.id, x, y });
+      io.emit("playerMoved", { id: socket.id, x, y, facing });
     });
 
     socket.on("attack", () => {

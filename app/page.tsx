@@ -5,12 +5,14 @@ import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { ForgeModal } from "@/components/ForgeModal";
 import { BlackMarketModal } from "@/components/BlackMarketModal";
+import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
 
 export default function Home() {
   const [showForge, setShowForge] = useState(true);
   const [showBlackMarket, setShowBlackMarket] = useState(false);
+  const [showGameHelp, setShowGameHelp] = useState(false);
   const { socket, connected } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const playerCount = useGameStore((s) => s.playerCount);
@@ -18,10 +20,10 @@ export default function Home() {
   const forgeCharacter = useGameStore((s) => s.forgeCharacter);
   const setPlayerName = useGameStore((s) => s.setPlayerName);
 
-  const handleForge = (playerName: string) => {
+  const handleForge = (data: { name: string; clothes: string; weapon: string }) => {
     if (!forgeCharacter() || !socket) return;
-    setPlayerName(playerName);
-    socket.emit("forge", playerName);
+    setPlayerName(data.name);
+    socket.emit("forge", data);
     setShowForge(false);
   };
 
@@ -66,6 +68,13 @@ export default function Home() {
           </span>
           <button
             type="button"
+            onClick={() => setShowGameHelp(true)}
+            className="pixel-btn text-[8px]"
+          >
+            HELP
+          </button>
+          <button
+            type="button"
             onClick={() => setShowBlackMarket(true)}
             className="pixel-btn text-[8px]"
           >
@@ -101,7 +110,10 @@ export default function Home() {
       </div>
 
       {/* Forge Modal */}
-      {showForge && <ForgeModal onForge={handleForge} />}
+      {showForge && <ForgeModal onForge={handleForge} connected={connected} />}
+
+      {/* Game Help Modal */}
+      {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
 
       {/* Black Market Modal */}
       {showBlackMarket && (

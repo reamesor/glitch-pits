@@ -1,6 +1,7 @@
 "use client";
 
 import { WindowedModal } from "./WindowedModal";
+import { LORE } from "@/lib/lore";
 
 interface GameHelpProps {
   onClose: () => void;
@@ -12,6 +13,23 @@ export function GameHelp({ onClose }: GameHelpProps) {
       <div className="w-full max-w-lg">
         <WindowedModal title="GAME GUIDE" onClose={onClose}>
           <div className="space-y-4 font-mono text-xs text-gray-300">
+            <section className="rounded border-2 border-[var(--glitch-pink)]/30 bg-[var(--bg-card)] p-3">
+              <h3 className="mb-2 font-pixel text-[10px] text-[var(--glitch-pink)]">
+                LORE — THE GLITCH PITS
+              </h3>
+              <p className="mb-2 text-[10px] leading-relaxed text-gray-400">
+                {LORE.tagline}
+              </p>
+              {LORE.sections.map((s) => (
+                <div key={s.heading} className="mb-3">
+                  <h4 className="mb-1 font-pixel text-[9px] text-[var(--glitch-teal)]">
+                    {s.heading}
+                  </h4>
+                  <p className="text-[10px] leading-relaxed">{s.body}</p>
+                </div>
+              ))}
+            </section>
+
             <section>
               <h3 className="mb-2 font-pixel text-[10px] text-[var(--glitch-pink)]">
                 HOW IT WORKS

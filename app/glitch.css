@@ -128,20 +128,20 @@
   }
 }
 
-/* 3. Chunky Pixel Buttons - larger, bolder, more interactive */
+/* 3. Pixel Buttons - compact for fit-to-viewport */
 .pixel-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-family: "Press Start 2P", monospace;
-  font-size: 11px;
-  padding: 14px 24px;
-  border: 3px solid #4a4a4a;
+  font-size: 9px;
+  padding: 8px 14px;
+  border: 2px solid #4a4a4a;
   background: #2a2a2a;
   color: #fff;
   image-rendering: pixelated;
   box-shadow:
-    4px 4px 0 #1a1a1a,
+    3px 3px 0 #1a1a1a,
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
 }
@@ -168,11 +168,11 @@
   border-color: var(--glitch-pink);
   background: linear-gradient(180deg, var(--glitch-pink) 0%, #e0559a 100%);
   color: #fff;
-  font-size: 12px;
-  padding: 16px 28px;
+  font-size: 10px;
+  padding: 10px 18px;
   box-shadow:
-    4px 4px 0 var(--glitch-purple),
-    0 0 30px rgba(255, 105, 180, 0.25),
+    3px 3px 0 var(--glitch-purple),
+    0 0 20px rgba(255, 105, 180, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
@@ -216,27 +216,27 @@
 
 /* Card/box panels (COLORS layout) */
 .game-box {
-  border: 3px solid rgba(255, 105, 180, 0.55);
+  border: 2px solid rgba(255, 105, 180, 0.5);
   background: var(--bg-card);
-  border-radius: 10px;
-  padding: 1.25rem 1.5rem;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
   box-shadow:
-    0 0 24px rgba(255, 105, 180, 0.12),
+    0 0 16px rgba(255, 105, 180, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
   transition: box-shadow 0.2s, border-color 0.2s;
 }
 
 .game-box:hover {
-  box-shadow: 0 0 32px rgba(255, 105, 180, 0.22);
-  border-color: rgba(255, 105, 180, 0.7);
+  box-shadow: 0 0 24px rgba(255, 105, 180, 0.18);
+  border-color: rgba(255, 105, 180, 0.65);
 }
 
 .game-box-label {
   font-family: "Press Start 2P", monospace;
-  font-size: 9px;
-  letter-spacing: 0.08em;
+  font-size: 8px;
+  letter-spacing: 0.06em;
   color: var(--text-muted);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.25rem;
   text-transform: uppercase;
 }
 
@@ -327,4 +327,44 @@
   box-shadow:
     6px 6px 0 var(--glitch-purple),
     0 4px 20px rgba(255, 105, 180, 0.35);
+}
+
+/* --- Glitch Pits animated logo --- */
+@keyframes logo-glitch {
+  0%, 90%, 100% {
+    transform: translate(0, 0);
+    text-shadow: 0 0 12px rgba(255, 105, 180, 0.6);
+  }
+  92% {
+    transform: translate(-2px, 1px);
+    text-shadow: 2px 0 0 var(--glitch-red), -2px 0 0 var(--glitch-blue);
+  }
+  94% {
+    transform: translate(2px, -1px);
+    text-shadow: -2px 0 0 var(--glitch-blue), 2px 0 0 var(--glitch-teal);
+  }
+  96% {
+    transform: translate(-1px, 2px);
+    text-shadow: 0 2px 0 var(--glitch-pink), 0 -2px 0 var(--glitch-teal);
+  }
+  98% {
+    transform: translate(1px, -2px);
+    text-shadow: 0 0 16px rgba(255, 105, 180, 0.9);
+  }
+}
+
+@keyframes logo-glow-pulse {
+  0%, 100% {
+    filter: brightness(1);
+    opacity: 1;
+  }
+  50% {
+    filter: brightness(1.1);
+    opacity: 0.95;
+  }
+}
+
+.glitch-pits-logo {
+  animation: logo-glitch 4s ease-in-out infinite, logo-glow-pulse 3s ease-in-out infinite;
+  display: inline-block;
 }

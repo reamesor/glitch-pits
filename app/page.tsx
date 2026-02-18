@@ -11,6 +11,7 @@ import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
 import { ConnectWalletModal } from "@/components/ConnectWalletModal";
 import { DashboardModal } from "@/components/DashboardModal";
+import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
 export default function Home() {
@@ -66,41 +67,37 @@ export default function Home() {
   }, [setWalletAddress]);
 
   return (
-    <main className="relative flex h-screen flex-col">
+    <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
       <div className="bg-static" />
       {/* Top Bar */}
       <header
-        className="flex shrink-0 items-center justify-between border-b-2 border-[var(--glitch-pink)]/50 px-6 py-4 shadow-[0_4px_30px_rgba(255,105,180,0.12)]"
+        className="flex shrink-0 flex-wrap items-center justify-between gap-1.5 border-b-2 border-[var(--glitch-pink)]/50 px-2 py-1.5 shadow-[0_4px_20px_rgba(255,105,180,0.1)] sm:px-4 sm:py-2"
         style={{ backgroundColor: "var(--bg-darker)" }}
       >
-        <h1
-          className="font-pixel glitch-text text-base sm:text-lg"
-          data-text="GLITCH PITS"
-          style={{ color: "var(--glitch-pink)" }}
-        >
-          GLITCH PITS
+        <h1>
+          <GlitchPitsLogo size="md" />
         </h1>
 
-        <div className="flex items-center gap-4 sm:gap-8">
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 md:gap-6">
           <div
-            className="rounded-lg border-2 border-[var(--glitch-teal)]/50 bg-[var(--bg-card)] px-5 py-2.5 text-center shadow-[0_0_20px_rgba(0,212,170,0.15)]"
+            className="rounded border-2 border-[var(--glitch-teal)]/50 bg-[var(--bg-card)] px-2 py-0.5 text-center shadow-[0_0_10px_rgba(0,212,170,0.12)] sm:px-3 sm:py-1"
             title="Live balance — updates when you win or lose"
           >
-            <p className="font-mono text-[10px] uppercase tracking-wider text-gray-500">Balance</p>
+            <p className="font-mono text-[7px] uppercase tracking-wider text-gray-500 sm:text-[9px]">Balance</p>
             <p
-              className={`font-pixel text-xl sm:text-2xl ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
+              className={`font-pixel text-sm sm:text-lg md:text-xl ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
               style={{ color: "var(--glitch-teal)" }}
             >
               {mockBalance.toLocaleString()}
             </p>
-            <p className="font-mono text-[9px] text-gray-500">PITS</p>
+            <p className="font-mono text-[7px] text-gray-500 sm:text-[8px]">PITS</p>
           </div>
 
-          <span className="hidden font-mono text-sm text-gray-500 sm:inline">
+          <span className="hidden font-mono text-xs text-gray-500 md:inline">
             Forged: <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setShowGameHelp(true)}
@@ -134,7 +131,7 @@ export default function Home() {
             )}
           </div>
 
-          <span className="font-mono text-sm">
+          <span className="font-mono text-[10px] sm:text-sm">
             {connected ? (
               <span className="text-[var(--glitch-teal)]">● CONNECTED</span>
             ) : (
@@ -144,16 +141,13 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content - COLORS-style layout */}
-      <div className="flex flex-1 overflow-hidden gap-4 p-4">
-        {/* Game Arena (Center) */}
-        <section className="flex flex-1 items-center justify-center min-w-0">
+      {/* Main Content: fit viewport, no scroll */}
+      <div className="flex min-h-0 flex-1 flex-col gap-1 p-1.5 sm:flex-row sm:gap-2 sm:p-2">
+        <section className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden">
           <GameCanvas />
         </section>
-
-        {/* Glitch Log - box dashboard */}
-        <aside className="flex w-80 shrink-0 flex-col">
-          <div className="game-box flex h-full min-h-0 flex-1 flex-col overflow-hidden">
+        <aside className="flex max-h-[30vh] shrink-0 flex-col sm:max-h-none sm:w-48 lg:w-60">
+          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="min-h-0 flex-1 overflow-auto">
               <GlitchLog />
             </div>

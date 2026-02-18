@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import "./glitch.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   description: "High-stakes 8-bit Multiplayer Rumble Royale",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -16,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased min-h-screen bg-[var(--bg-dark)] text-white">
+      <body className="antialiased h-full min-h-0 bg-[var(--bg-dark)] text-white">
         <SolanaProvider>
           {children}
           <div className="scanlines" />

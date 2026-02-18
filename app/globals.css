@@ -25,14 +25,21 @@
   --text-muted: #888;
 }
 
+html {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
+  height: 100%;
+  min-height: 0;
   background: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255, 105, 180, 0.06) 0%, transparent 50%),
     radial-gradient(ellipse 80% 50% at 80% 50%, rgba(0, 212, 170, 0.04) 0%, transparent 50%),
     var(--bg-dark);
   color: var(--text-primary);
   font-family: "JetBrains Mono", "Courier New", monospace;
   overflow: hidden;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .font-pixel {

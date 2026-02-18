@@ -44,8 +44,9 @@ export function useSocket() {
       setCharacterCount(count);
     });
 
-    s.on("youWon", (data: { name: string; amount: number }) => {
-      setVictoryData(data);
+    s.on("youWon", (_data: { name: string; amount: number }) => {
+      // Post-game is handled by in-canvas result + single START REVENGE only
+      // setVictoryData(data);
     });
 
     s.on("betResult", (data: { won: boolean; payout: number }) => {

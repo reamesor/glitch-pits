@@ -162,34 +162,31 @@ export function GameCanvas() {
 
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
-      <div
-        className="relative overflow-hidden rounded-xl border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-6 shadow-[0_0_40px_rgba(255,105,180,0.12)]"
-        style={{ minHeight: 420 }}
-      >
+      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-3">
         <div className="flex flex-col items-center justify-center">
-          <div className="mb-3 flex items-center gap-2">
-            <PixelCharacter characterId={selectedCharacterId} animated />
+          <div className="mb-1 flex items-center gap-1 sm:mb-2">
+            <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
             <h2
-              className="font-pixel glitch-text text-center text-xs uppercase"
+              className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
               data-text="THE GLITCH PIT"
               style={{ color: "var(--glitch-pink)" }}
             >
               THE GLITCH PIT
             </h2>
-            <PixelCharacter characterId={selectedCharacterId} animated />
+            <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
           </div>
-            <div className="game-box mb-4 w-full max-w-xs">
+          <div className="game-box mb-2 w-full max-w-xs py-1.5">
             <p className="game-box-label">MATCH</p>
-            <p className="font-mono text-center text-sm" style={{ color: "var(--glitch-teal)" }}>
+            <p className="font-mono text-center text-[10px] sm:text-xs" style={{ color: "var(--glitch-teal)" }}>
               {displayName} vs {rumbleOpponent || "…"}
             </p>
           </div>
 
           {battlePhase === "fighting" && (
-            <div className="game-box w-full max-w-md">
+            <div className="game-box w-full max-w-md py-1.5">
               <p className="game-box-label">BATTLE SIMULATOR</p>
               <p
-                className="min-h-[3.5rem] animate-pulse text-center font-mono text-xs leading-relaxed text-gray-300"
+                className="min-h-[2rem] animate-pulse text-center font-mono text-[9px] leading-relaxed text-gray-300 sm:text-[10px]"
                 key={currentLore}
               >
                 {currentLore || "Entering the Pit…"}
@@ -199,30 +196,23 @@ export function GameCanvas() {
 
           {battlePhase === "result" && (
             <>
-              <div
-                className={`game-box w-full max-w-sm ${
-                  battleWon ? "border-[var(--glitch-teal)]/60" : "border-red-500/50"
-                }`}
-                style={{
-                  backgroundColor: battleWon ? "rgba(0, 212, 170, 0.12)" : "rgba(220, 38, 38, 0.12)",
-                }}
+              <p
+                className="text-center font-mono text-[10px] sm:text-xs"
+                style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
               >
-                <p className="game-box-label">RESULT</p>
-                <p className="font-pixel text-center text-lg sm:text-xl" style={{ color: battleWon ? "var(--glitch-teal)" : "#f87171" }}>
-                  {battleWon ? "VICTORY" : "DEFEAT"}
-                </p>
-                <p className="mt-3 text-center font-mono text-base font-semibold text-gray-200">
-                  {battleWon
-                    ? `+${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
-                    : "House wins."}
-                </p>
-              </div>
+                {battleWon
+                  ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
+                  : "House wins."}
+              </p>
               <button
                 type="button"
-                onClick={() => setBattlePhase("idle")}
-                className="mt-4 w-full pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[10px]"
+                onClick={() => {
+                  setLastBetResult(null);
+                  setBattlePhase("idle");
+                }}
+                className="mt-2 w-full pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[9px] sm:text-[10px]"
               >
-                BACK — PLAY AGAIN
+                START REVENGE
               </button>
             </>
           )}
@@ -232,155 +222,149 @@ export function GameCanvas() {
   }
 
   return (
-    <div
-      className="relative overflow-hidden rounded-xl border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-6 shadow-[0_0_40px_rgba(255,105,180,0.12)]"
-      style={{ minHeight: 420 }}
-    >
-      <div className="mb-5 flex items-center justify-center gap-3">
-        <PixelCharacter characterId={selectedCharacterId} animated />
+    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-3">
+      <div className="mb-1 flex shrink-0 flex-wrap items-center justify-center gap-1 sm:mb-2">
+        <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
         <h2
-          className="font-pixel glitch-text text-center text-sm uppercase sm:text-base"
+          className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
           data-text="BET ON YOUR CHARACTER"
           style={{ color: "var(--g-blue)" }}
         >
           BET ON YOUR CHARACTER
         </h2>
-        <PixelCharacter characterId={selectedCharacterId} animated />
+        <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
       </div>
-      <p className="mb-6 text-center font-mono text-xs text-gray-400">
+      <p className="mb-2 shrink-0 text-center font-mono text-[9px] text-gray-400 sm:text-[10px]">
         Select amount, place your bet. Win = bet × multiplier. 50/50.
       </p>
 
-      <div className="game-box mb-4">
-        <p className="game-box-label">BALANCE (TOKENS)</p>
-        <p className="font-pixel text-xl animate-pulse-glow sm:text-2xl" style={{ color: "var(--glitch-teal)" }}>
-          {mockBalance.toLocaleString()}
-        </p>
-      </div>
-
-      <div className="game-box mb-4">
-        <p className="game-box-label">BET AMOUNT · MULTIPLIER</p>
-        <div className="flex flex-wrap justify-center gap-2">
-          {BET_AMOUNTS.map((a) => (
-            <button
-              key={a}
-              type="button"
-              onClick={() => setAmount(a)}
-              disabled={a > mockBalance}
-              className={`border-2 p-3 font-pixel text-[9px] transition-all hover:scale-105 ${
-                amount === a
-                  ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_12px_rgba(255,105,180,0.4)]"
-                  : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
-              }`}
-            >
-              {a} → {getMultiplierForAmount(a)}x
-            </button>
-          ))}
+      <div className="grid min-h-0 flex-1 grid-cols-1 gap-2 md:grid-cols-2 md:gap-2">
+        <div className="flex min-h-0 flex-col gap-2">
+          <div className="game-box shrink-0 py-1.5">
+            <p className="game-box-label">BALANCE (TOKENS)</p>
+            <p className="font-pixel text-base animate-pulse-glow sm:text-lg" style={{ color: "var(--glitch-teal)" }}>
+              {mockBalance.toLocaleString()}
+            </p>
+          </div>
+          <div className="game-box min-h-0 shrink py-1.5">
+            <p className="game-box-label">BET AMOUNT · MULTIPLIER</p>
+            <div className="flex flex-wrap justify-center gap-1">
+              {BET_AMOUNTS.map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => setAmount(a)}
+                  disabled={a > mockBalance}
+                  className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:p-2 sm:text-[9px] hover:scale-105 ${
+                    amount === a
+                      ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_12px_rgba(255,105,180,0.4)]"
+                      : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
+                  }`}
+                >
+                  {a} → {getMultiplierForAmount(a)}x
+                </button>
+              ))}
+            </div>
+            <p className="mt-0.5 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+              Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} tokens</span>
+            </p>
+          </div>
         </div>
-        <p className="mt-2 text-center font-mono text-xs text-gray-500">
-          Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} tokens</span>
-        </p>
-      </div>
 
-      <button
-        type="button"
-        onClick={handlePlaceBet}
-        disabled={autobetRunning || amount > mockBalance || amount < 50 || characterCount < 1}
-        className="pixel-btn pixel-btn-accent pixel-btn-interactive mb-6 w-full font-pixel text-[11px]"
-      >
-        PLACE BET ({amount} tokens)
-      </button>
-
-      <div className="game-box">
-        <p className="game-box-label">AUTOBET</p>
-        <div className="mb-2 flex flex-wrap gap-1">
-          {AUTOBET_OPTIONS.map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => setAutobetLimit(n)}
-              disabled={autobetRunning}
-              className={`border-2 px-2 py-1.5 font-pixel text-[9px] transition-colors ${
-                autobetLimit === n
-                  ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20"
-                  : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
-              }`}
-            >
-              {n < 0 ? "Unlimited" : `${n} bets`}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
+        <div className="flex min-h-0 flex-col gap-2">
           <button
             type="button"
-            onClick={startAutobet}
-            disabled={
-              autobetRunning ||
-              amount > mockBalance ||
-              amount < 50 ||
-              characterCount < 1
-            }
-            className="pixel-btn pixel-btn-interactive flex-1 text-[9px]"
+            onClick={handlePlaceBet}
+            disabled={autobetRunning || amount > mockBalance || amount < 50 || characterCount < 1}
+            className="pixel-btn pixel-btn-accent pixel-btn-interactive w-full shrink-0 font-pixel text-[9px] sm:text-[10px]"
           >
-            START
+            PLACE BET ({amount} tokens)
           </button>
-            <button
-              type="button"
-              onClick={stopAutobet}
-              disabled={!autobetRunning}
-              className="pixel-btn flex-1 border-red-500/50 text-[9px] text-red-400 disabled:opacity-50"
-            >
-              STOP
-            </button>
-        </div>
-          {autobetRunning && (
-            <p className="mt-2 font-mono text-xs text-gray-400">
-              Running… {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : ""}
-            </p>
-          )}
-      </div>
 
-        {lastBetResult !== null && battlePhase === "idle" && (
-          <div className="mt-6 space-y-3">
+          <div className="game-box min-h-0 shrink py-1.5">
+            <p className="game-box-label">AUTOBET</p>
+            <div className="mb-1 flex flex-wrap gap-1">
+              {AUTOBET_OPTIONS.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setAutobetLimit(n)}
+                  disabled={autobetRunning}
+                  className={`border-2 px-1.5 py-1 font-pixel text-[8px] transition-colors sm:px-2 sm:py-1.5 sm:text-[9px] ${
+                    autobetLimit === n
+                      ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20"
+                      : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
+                  }`}
+                >
+                  {n < 0 ? "Unlimited" : `${n} bets`}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={startAutobet}
+                disabled={
+                  autobetRunning ||
+                  amount > mockBalance ||
+                  amount < 50 ||
+                  characterCount < 1
+                }
+                className="pixel-btn pixel-btn-interactive flex-1 text-[8px] sm:text-[9px]"
+              >
+                START
+              </button>
+              <button
+                type="button"
+                onClick={stopAutobet}
+                disabled={!autobetRunning}
+                className="pixel-btn flex-1 border-red-500/50 text-[8px] text-red-400 disabled:opacity-50 sm:text-[9px]"
+              >
+                STOP
+              </button>
+            </div>
+            {autobetRunning && (
+              <p className="mt-0.5 font-mono text-[9px] text-gray-400 sm:text-[10px]">
+                Running… {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : ""}
+              </p>
+            )}
+          </div>
+
+          {lastBetResult !== null && battlePhase === "idle" && (
             <div
-              className={`game-box ${lastBetResult.won ? "border-[var(--glitch-teal)]/60" : "border-red-500/50"}`}
-              style={{
-                backgroundColor: lastBetResult.won ? "rgba(0, 212, 170, 0.08)" : "rgba(220, 38, 38, 0.08)",
-              }}
+              className={`flex flex-col gap-2 rounded border-2 py-2 px-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
             >
-              <p className="game-box-label">LAST RESULT</p>
-              <p className="font-mono text-sm font-semibold">
+              <p className="font-mono text-xs font-semibold sm:text-sm">
                 {lastBetResult.won ? (
-                  <span style={{ color: "var(--glitch-teal)" }}>YOU WON {lastBetResult.payout} PITS</span>
+                  <span style={{ color: "var(--glitch-teal)" }}>LAST RESULT: YOU WON {lastBetResult.payout} PITS</span>
                 ) : (
-                  <span className="text-red-400">HOUSE WINS. Try again.</span>
+                  <span className="text-red-400">LAST RESULT: HOUSE WINS. Try again.</span>
                 )}
               </p>
+              <button
+                type="button"
+                onClick={() => setLastBetResult(null)}
+                className="shrink-0 pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[10px] sm:text-[11px]"
+              >
+                START REVENGE
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => setLastBetResult(null)}
-              className="w-full pixel-btn pixel-btn-accent pixel-btn-interactive font-pixel text-[11px]"
-            >
-              REVENGE — PLAY AGAIN
-            </button>
-          </div>
-        )}
-
-        {!connected && (
-          <p className="mt-6 font-mono text-xs text-gray-500">
-            Offline mode: battle runs locally. Connect for real payouts.
-          </p>
-        )}
-        {connected && characterCount < 1 && (
-          <p className="mt-4 font-mono text-xs text-gray-500">Forge a character first.</p>
-        )}
-
-        <div className="mt-5 flex justify-center">
-          <span className="font-mono text-xs text-gray-500">
-            Your character in the Pit · Payout = bet × multiplier on win
-          </span>
+          )}
         </div>
       </div>
-    );
+
+      {!connected && (
+        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">
+          Offline mode: battle runs locally. Connect for real payouts.
+        </p>
+      )}
+      {connected && characterCount < 1 && (
+        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character first.</p>
+      )}
+
+      <p className="mt-1 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+        Your character in the Pit · Payout = bet × multiplier on win
+      </p>
+    </div>
+  );
 }

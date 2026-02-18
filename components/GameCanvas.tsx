@@ -34,13 +34,13 @@ export function GameCanvas() {
       >
         <h2
           className="font-pixel glitch-text mb-2 text-center text-xs uppercase"
-          data-text="BET VS HOUSE"
+          data-text="BET ON YOUR CHARACTER"
           style={{ color: "var(--g-blue)" }}
         >
-          BET VS HOUSE
+          BET ON YOUR CHARACTER
         </h2>
         <p className="mb-6 text-center font-mono text-[10px] text-gray-400">
-          Place your bet. Win = bet × multiplier. 50/50. Higher bet = higher multiplier.
+          Your character fights in the Glitch Pit. No other players needed — just place your bet. Win = bet × multiplier. 50/50.
         </p>
 
         <p className="mb-4 font-pixel text-center text-xs" style={{ color: "var(--glitch-teal)" }}>
@@ -110,7 +110,7 @@ export function GameCanvas() {
       </div>
 
       <div className="absolute bottom-2 left-2 font-pixel text-[8px] text-gray-500">
-        Bettor vs House · Payout = bet × multiplier on win
+        Your character in the Pit · Payout = bet × multiplier on win
       </div>
     </div>
   );

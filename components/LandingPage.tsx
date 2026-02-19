@@ -34,10 +34,7 @@ export function LandingPage({
       <div className="landing-starfield pointer-events-none absolute inset-0 opacity-60" aria-hidden />
 
       {/* Top nav - minimal like DGB / COLORS */}
-      <header className="relative z-20 flex shrink-0 items-center justify-between px-4 py-3 sm:px-6">
-        <div className="opacity-90">
-          <GlitchPitsLogo size="sm" />
-        </div>
+      <header className="relative z-20 flex shrink-0 items-center justify-end px-4 py-3 sm:px-6">
         <nav className="flex items-center gap-3 sm:gap-4">
           <button
             type="button"

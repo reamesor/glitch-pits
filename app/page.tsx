@@ -39,6 +39,7 @@ export default function Home() {
   const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const prevBalanceRef = useRef(mockBalance);
   const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
+  const [showLandingView, setShowLandingView] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(CHARACTER_STORAGE_KEY) : null;
@@ -75,6 +76,7 @@ export default function Home() {
 
   const handleEnterPits = () => {
     if (!walletAddress) setShowConnectToEnter(true);
+    else setShowLandingView(false); // from landing, go into the Pits
   };
 
   // When wallet connects (e.g. from ConnectToEnterModal), close that modal
@@ -82,7 +84,7 @@ export default function Home() {
     if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
   }, [walletAddress, showConnectToEnter]);
 
-  if (!walletAddress) {
+  if (!walletAddress || showLandingView) {
     return (
       <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
         <WalletSync />
@@ -107,7 +109,14 @@ export default function Home() {
       {/* Top Bar — slick glass header */}
       <header className="app-header flex shrink-0 items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-2.5">
         <h1 className="shrink-0">
-          <GlitchPitsLogo size="lg" />
+          <button
+            type="button"
+            onClick={() => setShowLandingView(true)}
+            className="focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)] rounded"
+            title="Back to landing"
+          >
+            <GlitchPitsLogo size="lg" />
+          </button>
         </h1>
 
         <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4">

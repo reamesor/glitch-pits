@@ -6,6 +6,7 @@ import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
 import { playResultSound } from "@/lib/resultSound";
+import { startBattleSound, stopBattleSound } from "@/lib/battleSound";
 import { PixelCharacter } from "@/components/PixelCharacter";
 
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
@@ -46,6 +47,12 @@ export function GameCanvas() {
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
   const displayName = playerName || "Warrior";
+
+  // Battle-phase sound: start when fighting, stop when leaving
+  useEffect(() => {
+    if (battlePhase === "fighting") startBattleSound();
+    return () => stopBattleSound();
+  }, [battlePhase]);
 
   // Cycle lore during battle (one opponent name per rumble for consistent glitch story)
   useEffect(() => {

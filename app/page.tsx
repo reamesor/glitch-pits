@@ -16,6 +16,7 @@ import { WalletSync } from "@/components/WalletSync";
 import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
 export default function Home() {
@@ -104,46 +105,44 @@ export default function Home() {
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
       <WalletSync />
       <div className="bg-static" />
-      {/* Top Bar */}
-      <header
-        className="flex shrink-0 flex-wrap items-center justify-between gap-1.5 border-b-2 border-[var(--glitch-pink)]/50 px-2 py-1.5 shadow-[0_4px_20px_rgba(255,105,180,0.1)] sm:px-4 sm:py-2"
-        style={{ backgroundColor: "var(--bg-darker)" }}
-      >
-        <h1>
+      {/* Top Bar — slick glass header */}
+      <header className="app-header flex shrink-0 items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-2.5">
+        <h1 className="shrink-0">
           <GlitchPitsLogo size="lg" />
         </h1>
 
-        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-4 md:gap-6">
+        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4">
           <div
-            className="rounded border-2 border-[var(--glitch-teal)]/50 bg-[var(--bg-card)] px-2 py-0.5 text-center shadow-[0_0_10px_rgba(0,212,170,0.12)] sm:px-3 sm:py-1"
+            className="app-header-balance rounded-lg px-3 py-1.5 text-center sm:px-4 sm:py-2"
             title="Live balance — updates when you win or lose"
           >
-            <p className="font-mono text-[7px] uppercase tracking-wider text-gray-500 sm:text-[9px]">Balance</p>
+            <p className="font-mono text-[8px] uppercase tracking-widest text-gray-500 sm:text-[9px]">Balance</p>
             <p
-              className={`font-pixel text-sm sm:text-lg md:text-xl ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
+              className={`font-pixel text-base sm:text-lg md:text-xl tabular-nums ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
               style={{ color: "var(--glitch-teal)" }}
             >
               {mockBalance.toLocaleString()}
             </p>
-            <p className="font-mono text-[7px] text-gray-500 sm:text-[8px]">PITS</p>
+            <p className="font-mono text-[8px] font-medium uppercase tracking-wider text-gray-500 sm:text-[9px]">PITS</p>
           </div>
 
-          <span className="hidden font-mono text-xs text-gray-500 md:inline">
-            Forged: <span style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
+          <span className="hidden font-mono text-[10px] text-gray-500 md:inline">
+            Forged: <span className="font-semibold" style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <BackgroundMusic />
             <button
               type="button"
               onClick={() => setShowGameHelp(true)}
-              className="pixel-btn text-[9px]"
+              className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
             >
               HELP
             </button>
             <button
               type="button"
               onClick={() => setShowBlackMarket(true)}
-              className="pixel-btn text-[9px]"
+              className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
             >
               BLACK MARKET
             </button>
@@ -151,7 +150,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setShowDashboard(true)}
-                className="pixel-btn text-[9px]"
+                className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
               >
                 DASHBOARD
               </button>
@@ -160,12 +159,8 @@ export default function Home() {
             )}
           </div>
 
-          <span className="font-mono text-[10px] sm:text-sm">
-            {connected ? (
-              <span className="text-[var(--glitch-teal)]">● CONNECTED</span>
-            ) : (
-              <span className="text-[var(--glitch-pink)]">○ OFFLINE</span>
-            )}
+          <span className={`app-header-status font-mono ${connected ? "connected" : "offline"}`}>
+            {connected ? "● CONNECTED" : "○ OFFLINE"}
           </span>
         </div>
       </header>

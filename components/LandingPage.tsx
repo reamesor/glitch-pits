@@ -2,7 +2,7 @@
 
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { PixelCharacter } from "@/components/PixelCharacter";
-import { ConnectWalletButton } from "@/components/ConnectWalletButton";
+import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { CHARACTER_PRESETS } from "@/lib/characterPresets";
 
 interface LandingPageProps {
@@ -40,6 +40,7 @@ export function LandingPage({
           <GlitchPitsLogo size="sm" />
         </div>
         <nav className="flex items-center gap-3 sm:gap-4">
+          <BackgroundMusic />
           <button
             type="button"
             onClick={onOpenHelp}
@@ -47,7 +48,7 @@ export function LandingPage({
           >
             HELP
           </button>
-          {hasWallet ? (
+          {hasWallet && (
             <button
               type="button"
               onClick={onOpenDashboard}
@@ -55,8 +56,6 @@ export function LandingPage({
             >
               DASHBOARD
             </button>
-          ) : (
-            <ConnectWalletButton />
           )}
         </nav>
       </header>

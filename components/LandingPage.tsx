@@ -1,8 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { PixelCharacter } from "@/components/PixelCharacter";
 import { CHARACTER_PRESETS } from "@/lib/characterPresets";
+import { startLandingSound, stopLandingSound } from "@/lib/landingSound";
+
+const LANDING_SOUND_MUTED_KEY = "glitch-pits-landing-sound-muted";
 
 interface LandingPageProps {
   onEnter: () => void;
@@ -28,6 +32,31 @@ export function LandingPage({
   onOpenDashboard,
   hasWallet,
 }: LandingPageProps) {
+  const [muted, setMuted] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem(LANDING_SOUND_MUTED_KEY) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    if (!muted) startLandingSound();
+    else stopLandingSound();
+    return () => stopLandingSound();
+  }, [muted]);
+
+  const toggleMute = () => {
+    setMuted((m) => {
+      const next = !m;
+      try {
+        localStorage.setItem(LANDING_SOUND_MUTED_KEY, next ? "1" : "0");
+      } catch {}
+      return next;
+    });
+  };
+
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#050505]">
       {/* Mememator-style starfield background */}
@@ -36,6 +65,14 @@ export function LandingPage({
       {/* Top nav - minimal like DGB / COLORS */}
       <header className="relative z-20 flex shrink-0 items-center justify-end px-4 py-3 sm:px-6">
         <nav className="flex items-center gap-3 sm:gap-4">
+          <button
+            type="button"
+            onClick={toggleMute}
+            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
+            title={muted ? "Unmute landing sound" : "Mute landing sound"}
+          >
+            {muted ? "SOUND OFF" : "SOUND ON"}
+          </button>
           <button
             type="button"
             onClick={onOpenHelp}

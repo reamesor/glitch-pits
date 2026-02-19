@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <rect width="32" height="32" rx="4" fill="#0a080c"/>
+  <!-- Glitch character (id: 0) — 6×8 grid, 4px per cell, centered -->
+  <g transform="translate(4, 2)">
+    <!-- row 0 -->
+    <rect x="8" y="0" width="4" height="4" fill="#00d4aa"/><rect x="12" y="0" width="4" height="4" fill="#00d4aa"/><rect x="16" y="0" width="4" height="4" fill="#00d4aa"/>
+    <!-- row 1 -->
+    <rect x="4" y="4" width="4" height="4" fill="#00d4aa"/><rect x="8" y="4" width="4" height="4" fill="#00d4aa"/><rect x="12" y="4" width="4" height="4" fill="#00d4aa"/><rect x="16" y="4" width="4" height="4" fill="#00d4aa"/><rect x="20" y="4" width="4" height="4" fill="#00d4aa"/>
+    <!-- row 2 -->
+    <rect x="8" y="8" width="4" height="4" fill="#ff69b4"/><rect x="12" y="8" width="4" height="4" fill="#ff69b4"/><rect x="16" y="8" width="4" height="4" fill="#2a2a2a"/><rect x="20" y="8" width="4" height="4" fill="#ff69b4"/><rect x="24" y="8" width="4" height="4" fill="#ff69b4"/>
+    <!-- row 3 -->
+    <rect x="4" y="12" width="4" height="4" fill="#00d4aa"/><rect x="8" y="12" width="4" height="4" fill="#ff69b4"/><rect x="12" y="12" width="4" height="4" fill="#2a2a2a"/><rect x="16" y="12" width="4" height="4" fill="#2a2a2a"/><rect x="20" y="12" width="4" height="4" fill="#2a2a2a"/><rect x="24" y="12" width="4" height="4" fill="#ff69b4"/>
+    <!-- row 4 -->
+    <rect x="4" y="16" width="4" height="4" fill="#00d4aa"/><rect x="8" y="16" width="4" height="4" fill="#00d4aa"/><rect x="12" y="16" width="4" height="4" fill="#2a2a2a"/><rect x="16" y="16" width="4" height="4" fill="#2a2a2a"/><rect x="20" y="16" width="4" height="4" fill="#2a2a2a"/><rect x="24" y="16" width="4" height="4" fill="#00d4aa"/>
+    <!-- row 5 -->
+    <rect x="4" y="20" width="4" height="4" fill="#00d4aa"/><rect x="8" y="20" width="4" height="4" fill="#00d4aa"/><rect x="12" y="20" width="4" height="4" fill="#00d4aa"/><rect x="16" y="20" width="4" height="4" fill="#2a2a2a"/><rect x="20" y="20" width="4" height="4" fill="#00d4aa"/><rect x="24" y="20" width="4" height="4" fill="#00d4aa"/>
+    <!-- row 6 -->
+    <rect x="8" y="24" width="4" height="4" fill="#00d4aa"/><rect x="12" y="24" width="4" height="4" fill="#00d4aa"/><rect x="16" y="24" width="4" height="4" fill="#00d4aa"/><rect x="20" y="24" width="4" height="4" fill="#00d4aa"/>
+    <!-- row 7 -->
+    <rect x="8" y="28" width="4" height="4" fill="#00d4aa"/><rect x="12" y="28" width="4" height="4" fill="#00d4aa"/><rect x="16" y="28" width="4" height="4" fill="#00d4aa"/>
+  </g>
+</svg>

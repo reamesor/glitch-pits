@@ -9,6 +9,9 @@ import { ClickSoundHandler } from "@/components/ClickSoundHandler";
 export const metadata: Metadata = {
   title: "Glitch Pits | $PITS",
   description: "High-stakes 8-bit Multiplayer Rumble Royale",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export const viewport: Viewport = {

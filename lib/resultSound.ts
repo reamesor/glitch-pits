@@ -40,23 +40,24 @@ export function playResultSound(won: boolean): void {
       osc.stop(t0 + noteLen);
     });
   } else {
-    // Lose: retro "wrong" / miss — two descending error beeps (square, no low rumble)
-    const freqs = [440, 320]; // A4 then E4
+    // Lose: longer retro arcade "game over" / defeat — descending 4-note phrase (square, chiptune)
+    const freqs = [392, 329.63, 261.63, 196]; // G4, E4, C4, G3 — descending "sad" motif
+    const noteLen = 0.2;
+    const gap = 0.06;
     freqs.forEach((freq, i) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = "square";
       osc.frequency.value = freq;
-      const t0 = now + i * 0.28;
-      const len = 0.22;
+      const t0 = now + i * (noteLen + gap);
       g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(0.15, t0 + 0.02);
-      g.gain.linearRampToValueAtTime(0.08, t0 + len * 0.4);
-      g.gain.exponentialRampToValueAtTime(0.001, t0 + len);
+      g.gain.linearRampToValueAtTime(0.18, t0 + 0.02);
+      g.gain.linearRampToValueAtTime(0.1, t0 + noteLen * 0.5);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + noteLen);
       osc.connect(g);
       g.connect(masterGain);
       osc.start(t0);
-      osc.stop(t0 + len);
+      osc.stop(t0 + noteLen);
     });
   }
 }

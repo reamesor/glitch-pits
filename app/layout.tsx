@@ -4,6 +4,7 @@ import "./glitch.css";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { SolanaProvider } from "@/components/SolanaProvider";
 import { CustomCursor } from "@/components/CustomCursor";
+import { ClickSoundHandler } from "@/components/ClickSoundHandler";
 
 export const metadata: Metadata = {
   title: "Glitch Pits | $PITS",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased h-full min-h-0 bg-[var(--bg-dark)] text-white">
         <CustomCursor />
+        <ClickSoundHandler />
         <SolanaProvider>
           {children}
           <div className="scanlines" />

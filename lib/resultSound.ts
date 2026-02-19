@@ -1,5 +1,5 @@
 /**
- * Procedural win/lose result sounds (Web Audio). Plays once when result is shown.
+ * Procedural win/lose result sounds (Web Audio). Retro / arcade vibe, matches site aesthetic.
  */
 
 let audioContext: AudioContext | null = null;
@@ -15,38 +15,48 @@ export function playResultSound(won: boolean): void {
   if (!ctx) return;
 
   const now = ctx.currentTime;
-  const gainNode = ctx.createGain();
-  gainNode.connect(ctx.destination);
+  const masterGain = ctx.createGain();
+  masterGain.connect(ctx.destination);
+  masterGain.gain.value = 0.35;
 
   if (won) {
-    // Win: short ascending two-note chime (teal / positive)
-    const freqs = [392, 523.25];
+    // Win: arcade victory arpeggio — ascending 4-note chime (square, chiptune feel)
+    const freqs = [261.63, 329.63, 392, 523.25]; // C4, E4, G4, C5
+    const noteLen = 0.18;
+    const gap = 0.04;
     freqs.forEach((freq, i) => {
       const osc = ctx.createOscillator();
       const g = ctx.createGain();
       osc.type = "square";
       osc.frequency.value = freq;
-      g.gain.setValueAtTime(0, now + i * 0.12);
-      g.gain.linearRampToValueAtTime(0.12, now + i * 0.12 + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.12 + 0.2);
+      const t0 = now + i * (noteLen + gap);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.2, t0 + 0.02);
+      g.gain.linearRampToValueAtTime(0.12, t0 + noteLen * 0.5);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + noteLen);
       osc.connect(g);
-      g.connect(gainNode);
-      osc.start(now + i * 0.12);
-      osc.stop(now + i * 0.12 + 0.2);
+      g.connect(masterGain);
+      osc.start(t0);
+      osc.stop(t0 + noteLen);
     });
   } else {
-    // Lose: short low "blip" (neutral / burn)
-    const osc = ctx.createOscillator();
-    const g = ctx.createGain();
-    osc.type = "sawtooth";
-    osc.frequency.setValueAtTime(120, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.15);
-    g.gain.setValueAtTime(0, now);
-    g.gain.linearRampToValueAtTime(0.08, now + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
-    osc.connect(g);
-    g.connect(gainNode);
-    osc.start(now);
-    osc.stop(now + 0.2);
+    // Lose: retro "wrong" / miss — two descending error beeps (square, no low rumble)
+    const freqs = [440, 320]; // A4 then E4
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.value = freq;
+      const t0 = now + i * 0.28;
+      const len = 0.22;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.15, t0 + 0.02);
+      g.gain.linearRampToValueAtTime(0.08, t0 + len * 0.4);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + len);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(t0);
+      osc.stop(t0 + len);
+    });
   }
 }

@@ -5,6 +5,7 @@ import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
+import { playResultSound } from "@/lib/resultSound";
 import { PixelCharacter } from "@/components/PixelCharacter";
 
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
@@ -37,7 +38,10 @@ export function GameCanvas() {
   const [autobetRunning, setAutobetRunning] = useState(false);
   const [autobetLimit, setAutobetLimit] = useState<number>(10);
   const [autobetDone, setAutobetDone] = useState(0);
+  const [autobetSessionProfit, setAutobetSessionProfit] = useState(0); // running P&L this session (PITS)
   const previousPhaseRef = useRef<"idle" | "fighting" | "result">("idle");
+  const autobetRunningRef = useRef(false);
+  autobetRunningRef.current = autobetRunning;
 
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
@@ -70,6 +74,10 @@ export function GameCanvas() {
       setBattleWon(lastBetResult.won);
       setBattlePayout(payout);
       setBattlePhase("result");
+      playResultSound(lastBetResult.won);
+      if (autobetRunningRef.current) {
+        setAutobetSessionProfit((p) => p + (lastBetResult.won ? payout : -battleAmount));
+      }
     }, waitMs);
 
     const tIdle = setTimeout(() => {
@@ -158,6 +166,7 @@ export function GameCanvas() {
   const startAutobet = () => {
     setAutobetRunning(true);
     setAutobetDone(0);
+    setAutobetSessionProfit(0);
     handlePlaceBet();
   };
 
@@ -166,6 +175,19 @@ export function GameCanvas() {
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
       <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
+        {autobetRunning && (
+          <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-center gap-3 border-b border-[var(--glitch-pink)]/30 bg-black/50 px-2 py-1.5 font-mono text-[9px]">
+            <span className="text-gray-400">
+              Bet <span className="tabular-nums text-white">{autobetDone + 1}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}</span>
+            </span>
+            <span className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}>
+              Session {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
+            </span>
+            <span className="text-gray-500">
+              {battlePhase === "fighting" ? "Fighting…" : "Result"}
+            </span>
+          </div>
+        )}
         <div className="flex flex-col items-center justify-center">
           <div className="mb-1 flex items-center justify-center gap-1 sm:mb-2">
             <h2
@@ -322,9 +344,28 @@ export function GameCanvas() {
             </button>
           </div>
           {autobetRunning && (
-            <p className="mt-0.5 font-mono text-[8px] text-gray-400">
-              {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " …"}
-            </p>
+            <div className="mt-1 space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-1.5 py-1 font-mono text-[8px]">
+              <p className="flex justify-between gap-2 text-gray-300">
+                <span>Completed</span>
+                <span className="tabular-nums">
+                  {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}
+                </span>
+              </p>
+              <p className="flex justify-between gap-2">
+                <span className="text-gray-500">Session</span>
+                <span
+                  className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}
+                >
+                  {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
+                </span>
+              </p>
+              <p className="flex justify-between gap-2 text-gray-500">
+                <span>Status</span>
+                <span className="text-gray-400">
+                  {battlePhase === "idle" ? "Next in 0.6s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
+                </span>
+              </p>
+            </div>
           )}
         </div>
 

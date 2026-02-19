@@ -16,7 +16,6 @@ import { WalletSync } from "@/components/WalletSync";
 import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
-import { BackgroundMusic } from "@/components/BackgroundMusic";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
 
 export default function Home() {
@@ -131,7 +130,6 @@ export default function Home() {
           </span>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <BackgroundMusic />
             <button
               type="button"
               onClick={() => setShowGameHelp(true)}

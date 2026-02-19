@@ -210,6 +210,13 @@ export default function Home() {
       {showDashboard && (
         <DashboardModal onClose={() => setShowDashboard(false)} />
       )}
+
+      {/* Footer watermark */}
+      <footer className="flex shrink-0 justify-center border-t border-white/10 px-4 py-2">
+        <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">
+          created by reamesor
+        </span>
+      </footer>
     </main>
   );
 }

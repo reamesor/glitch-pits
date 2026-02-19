@@ -111,8 +111,8 @@ export function LandingPage({
         <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
           Where are your gods now?
         </span>
-        <span className="font-mono text-[9px] uppercase tracking-wider text-gray-600 sm:text-[10px]">
-          Glitch Pits
+        <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">
+          Glitch Pits · created by reamesor
         </span>
       </footer>
     </div>

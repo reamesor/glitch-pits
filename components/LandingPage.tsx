@@ -70,7 +70,7 @@ export function LandingPage({
           <button
             type="button"
             onClick={toggleMute}
-            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
+            className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
             title={muted ? "Unmute landing sound" : "Mute landing sound"}
           >
             {muted ? "SOUND OFF" : "SOUND ON"}
@@ -78,7 +78,7 @@ export function LandingPage({
           <button
             type="button"
             onClick={onOpenHelp}
-            className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
+            className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
           >
             HELP
           </button>
@@ -86,7 +86,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onOpenDashboard}
-              className="font-mono text-[10px] text-gray-400 transition hover:text-white sm:text-xs"
+              className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
             >
               DASHBOARD
             </button>
@@ -125,31 +125,36 @@ export function LandingPage({
           <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
             Stake your PITS. Multiply or burn. No middle ground.
           </p>
-          {/* Try demo first (no wallet) · or enter with wallet */}
-          <div className="mt-3 flex flex-col items-center gap-3 sm:gap-4">
-            <p className="text-center font-mono text-[10px] text-gray-500 sm:text-xs">
-              New? Try the demo first — no wallet required.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              {onEnterFunMode && (
+          {/* CTAs: same-size buttons; demo hint in hover tooltip */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            {onEnterFunMode && (
+              <div className="relative group">
                 <button
                   type="button"
                   onClick={onEnterFunMode}
-                  className="pixel-btn pixel-btn-accent pixel-btn-interactive px-4 py-2 font-pixel text-[8px] sm:text-[9px]"
+                  className="landing-cta-accent pixel-btn pixel-btn-accent min-w-[180px] px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
                   title="Play with virtual PITS, no wallet connection"
                 >
                   TRY DEMO (FUN MODE)
                 </button>
-              )}
-              <button
-                type="button"
-                onClick={onEnter}
-                className="pixel-btn pixel-btn-interactive px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
-                title="Connect wallet to play with real PITS"
-              >
-                ENTER WITH WALLET
-              </button>
-            </div>
+                <div
+                  role="tooltip"
+                  className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] px-3 py-2 font-mono text-[10px] text-gray-300 opacity-0 shadow-[0_0_20px_rgba(255,105,180,0.2)] transition-opacity duration-200 group-hover:opacity-100 sm:text-xs"
+                  style={{ width: "max-content", maxWidth: "min(260px, 90vw)" }}
+                >
+                  New? Try the demo first — no wallet required.
+                  <span className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-8 border-transparent border-t-[var(--bg-darker)]" style={{ marginTop: "2px" }} aria-hidden />
+                </div>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={onEnter}
+              className="landing-cta-wallet pixel-btn min-w-[180px] px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
+              title="Connect wallet to play with real PITS"
+            >
+              ENTER WITH WALLET
+            </button>
           </div>
         </div>
       </div>

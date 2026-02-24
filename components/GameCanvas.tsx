@@ -12,6 +12,7 @@ import { playJackpotSound } from "@/lib/jackpotSound";
 import { PixelCharacter } from "@/components/PixelCharacter";
 import { JackpotMoment } from "@/components/JackpotMoment";
 
+const MIN_BET_PITS = 50;
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
 const AUTOBET_OPTIONS = [5, 10, 20, 50, 100, -1] as const; // -1 = unlimited
 const LORE_INTERVAL_MS = 1600;
@@ -56,12 +57,12 @@ export function GameCanvas() {
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
   const displayName = playerName || "Warrior";
-  const canPlaceBet = (characterCount >= 1 || !!walletAddress) && amount >= 50 && amount <= mockBalance && !autobetRunning;
+  const canPlaceBet = (characterCount >= 1 || !!walletAddress) && amount >= MIN_BET_PITS && amount <= mockBalance && !autobetRunning;
 
   const handleCustomAmountBlur = () => {
     const parsed = parseInt(customAmountStr.replace(/\D/g, ""), 10);
     if (!Number.isNaN(parsed)) {
-      const clamped = Math.min(mockBalance, Math.max(50, parsed));
+      const clamped = Math.min(mockBalance, Math.max(MIN_BET_PITS, parsed));
       setAmount(clamped);
     }
     setCustomAmountStr("");
@@ -156,7 +157,7 @@ export function GameCanvas() {
 
   const handlePlaceBet = useCallback(() => {
     const canBet = characterCount >= 1 || !!walletAddress;
-    if (amount < 50 || amount > mockBalance || !canBet) return;
+    if (amount < MIN_BET_PITS || amount > mockBalance || !canBet) return;
 
     const betAmount = amount;
     const betMultiplier = multiplier;
@@ -264,15 +265,32 @@ export function GameCanvas() {
           )}
 
           {battlePhase === "result" && (
-            <>
-              <p
-                className="text-center font-mono text-[10px] sm:text-xs"
-                style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
-              >
-                {battleWon
-                  ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
-                  : "House wins."}
-              </p>
+            <div
+              className="mx-auto w-full max-w-sm rounded-xl border-2 px-4 py-5 sm:py-6"
+              style={{
+                background: battleWon
+                  ? "linear-gradient(180deg, rgba(0,212,170,0.12) 0%, rgba(20,12,28,0.95) 50%)"
+                  : "linear-gradient(180deg, rgba(60,60,60,0.2) 0%, rgba(20,12,28,0.95) 50%)",
+                borderColor: battleWon ? "rgba(0,212,170,0.5)" : "rgba(255,255,255,0.15)",
+                boxShadow: battleWon
+                  ? "0 0 24px rgba(0,212,170,0.2), inset 0 1px 0 rgba(255,255,255,0.08)"
+                  : "0 0 16px rgba(0,0,0,0.3)",
+              }}
+            >
+              {jackpotPayout != null ? (
+                <p className="text-center font-pixel text-[10px] sm:text-xs uppercase" style={{ color: "var(--glitch-gold)" }}>
+                  Jackpot round
+                </p>
+              ) : (
+                <p
+                  className="text-center font-mono text-[10px] sm:text-xs"
+                  style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
+                >
+                  {battleWon
+                    ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
+                    : "House wins."}
+                </p>
+              )}
               <button
                 type="button"
                 onClick={() => {
@@ -283,7 +301,7 @@ export function GameCanvas() {
               >
                 START YOUR REVENGE
               </button>
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -340,26 +358,31 @@ export function GameCanvas() {
               ))}
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">
-              Or custom:{" "}
+          <div className="game-box shrink-0 py-3">
+            <p className="game-box-label mb-2">CUSTOM BET</p>
+            <p className="mb-2 font-mono text-[9px] text-gray-400 sm:text-[10px]">
+              Min <strong className="text-white">{MIN_BET_PITS} PITS</strong> · Max <strong className="text-white">{mockBalance.toLocaleString()} PITS</strong>
             </p>
-            <input
-              type="text"
-              inputMode="numeric"
-              min={50}
-              max={mockBalance}
-              value={customAmountStr !== "" ? customAmountStr : BET_AMOUNTS.includes(amount) ? "" : String(amount)}
-              onChange={(e) => setCustomAmountStr(e.target.value.replace(/\D/g, ""))}
-              onBlur={handleCustomAmountBlur}
-              onKeyDown={(e) => e.key === "Enter" && handleCustomAmountBlur()}
-              placeholder={String(amount)}
-              className="w-20 border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2 py-1 font-mono text-[10px] tabular-nums text-white placeholder-gray-500 focus:border-[var(--glitch-pink)] focus:outline-none"
-            />
-            <span className="font-mono text-[9px] text-gray-500">PITS</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                type="text"
+                inputMode="numeric"
+                value={customAmountStr !== "" ? customAmountStr : BET_AMOUNTS.includes(amount) ? "" : String(amount)}
+                onChange={(e) => setCustomAmountStr(e.target.value.replace(/\D/g, ""))}
+                onBlur={handleCustomAmountBlur}
+                onKeyDown={(e) => e.key === "Enter" && handleCustomAmountBlur()}
+                placeholder={String(amount)}
+                className="w-28 border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] px-3 py-2 font-mono text-base tabular-nums text-white placeholder-gray-500 focus:border-[var(--glitch-pink)] focus:outline-none sm:w-32 sm:px-4 sm:py-2.5 sm:text-lg"
+                aria-label="Custom bet amount in PITS"
+              />
+              <span className="font-mono text-xs text-gray-500 sm:text-sm">PITS</span>
+            </div>
+            <p className="mt-2 font-mono text-[10px] sm:text-xs text-gray-400">
+              Your bet uses the <strong className="text-[var(--glitch-teal)]">{getMultiplierForAmount(amount)}×</strong> tier → win <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> if you win.
+            </p>
           </div>
-          <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
-            Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> ({getMultiplierForAmount(amount)}x)
+          <p className="shrink-0 text-center font-mono text-[10px] font-semibold sm:text-xs">
+            Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> ({getMultiplierForAmount(amount)}× multiplier)
           </p>
 
           <button

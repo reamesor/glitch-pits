@@ -496,6 +496,54 @@
   transform: scale(1.15);
 }
 
+/* Landing: main CTA buttons – more visible and interactive */
+@keyframes landing-cta-glow {
+  0%, 100% { box-shadow: 3px 3px 0 var(--glitch-purple), 0 0 24px rgba(255, 105, 180, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+  50% { box-shadow: 3px 3px 0 var(--glitch-purple), 0 0 32px rgba(255, 105, 180, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
+}
+
+.landing-cta-accent {
+  animation: landing-cta-glow 2.5s ease-in-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.landing-cta-accent:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow:
+    8px 8px 0 var(--glitch-purple),
+    0 0 48px rgba(255, 105, 180, 0.55),
+    0 0 80px rgba(255, 105, 180, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  filter: brightness(1.08);
+  animation: none;
+}
+.landing-cta-accent:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 2px 2px 0 var(--glitch-purple), 0 0 16px rgba(255, 105, 180, 0.3);
+}
+
+.landing-cta-wallet {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.landing-cta-wallet:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.04);
+  border-color: rgba(0, 212, 170, 0.6);
+  box-shadow:
+    6px 6px 0 #1a1a1a,
+    0 0 28px rgba(0, 212, 170, 0.3),
+    0 0 48px rgba(255, 105, 180, 0.15);
+  background: #353535;
+}
+.landing-cta-wallet:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 2px 2px 0 #1a1a1a;
+}
+
+/* Landing: header nav buttons – clearer hover */
+.landing-nav-btn:hover {
+  text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+  color: #fff;
+}
+
 /* Landing: starfield (Mememator-style) */
 .landing-starfield {
   background-image: radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.4), transparent),

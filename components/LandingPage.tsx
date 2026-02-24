@@ -163,7 +163,7 @@ export function LandingPage({
           Where are your gods now?
         </span>
         <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">
-          Glitch Pits · created by reamesor
+          Glitch Pits · Try demo above · reamesor
         </span>
       </footer>
     </div>

@@ -11,7 +11,6 @@ import { soundManager } from "@/lib/soundManager";
 import { musicManager } from "@/lib/musicManager";
 import { PixelCharacter } from "@/components/PixelCharacter";
 import { FeatureInfoIcon } from "@/components/FeatureInfoIcon";
-import { JackpotMoment } from "@/components/JackpotMoment";
 
 const MIN_BET_PITS = 50;
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
@@ -47,7 +46,9 @@ export function GameCanvas() {
   const [autobetLimit, setAutobetLimit] = useState<number>(10);
   const [autobetDone, setAutobetDone] = useState(0);
   const [autobetSessionProfit, setAutobetSessionProfit] = useState(0); // running P&L this session (PITS)
-  const [jackpotPayout, setJackpotPayout] = useState<number | null>(null); // BIG WIN moment
+  const [winEffectActive, setWinEffectActive] = useState(false);
+  const [balanceBounceActive, setBalanceBounceActive] = useState(false);
+  const [bigWinVignetteActive, setBigWinVignetteActive] = useState(false);
   const previousPhaseRef = useRef<"idle" | "fighting" | "result">("idle");
   const autobetRunningRef = useRef(false);
   autobetRunningRef.current = autobetRunning;
@@ -109,12 +110,16 @@ export function GameCanvas() {
         if (lastBetResult.won) musicManager.duckForWin();
         else musicManager.duckForLoss();
       }, 90);
-      const isJackpot =
-        lastBetResult.won &&
-        (payout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER);
-      if (isJackpot) {
-        playJackpotSound();
-        setJackpotPayout(payout);
+      if (lastBetResult.won) {
+        setWinEffectActive(true);
+        setTimeout(() => setWinEffectActive(false), 2000);
+        setBalanceBounceActive(true);
+        setTimeout(() => setBalanceBounceActive(false), 4500);
+        if (payout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER) {
+          playJackpotSound();
+          setBigWinVignetteActive(true);
+          setTimeout(() => setBigWinVignetteActive(false), 1500);
+        }
       }
       if (autobetRunningRef.current) {
         setAutobetSessionProfit((p) => p + (lastBetResult.won ? payout : -battleAmount));
@@ -220,7 +225,7 @@ export function GameCanvas() {
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
       <>
-      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
+      <div className={`relative flex min-h-0 w-full max-w-4xl flex-col items-center justify-center overflow-y-auto overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-2 sm:p-4 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
         {autobetRunning && (
           <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[10px] sm:gap-3 sm:text-xs">
             <span className="text-gray-400">
@@ -273,31 +278,25 @@ export function GameCanvas() {
 
           {battlePhase === "result" && (
             <div
-              className="mx-auto flex w-full max-w-sm flex-col items-center rounded-xl border-2 px-4 py-5 text-center sm:py-6"
+              className={`mx-auto flex w-full max-w-sm flex-col items-center rounded-xl border-2 px-4 py-5 text-center sm:py-6 ${battleWon ? "win-border-pulse" : ""}`}
               style={{
                 background: battleWon
                   ? "linear-gradient(180deg, rgba(0,212,170,0.12) 0%, rgba(20,12,28,0.95) 50%)"
                   : "linear-gradient(180deg, rgba(60,60,60,0.2) 0%, rgba(20,12,28,0.95) 50%)",
-                borderColor: battleWon ? "rgba(0,212,170,0.5)" : "rgba(255,255,255,0.15)",
+                borderColor: battleWon ? "rgba(245,197,24,0.7)" : "rgba(255,255,255,0.15)",
                 boxShadow: battleWon
-                  ? "0 0 24px rgba(0,212,170,0.2), inset 0 1px 0 rgba(255,255,255,0.08)"
+                  ? "0 0 24px rgba(245,197,24,0.3), inset 0 1px 0 rgba(255,255,255,0.08)"
                   : "0 0 16px rgba(0,0,0,0.3)",
               }}
             >
-              {jackpotPayout != null ? (
-                <p className="text-center font-pixel text-[10px] sm:text-xs uppercase" style={{ color: "var(--glitch-gold)" }}>
-                  Jackpot round
-                </p>
-              ) : (
-                <p
-                  className="text-center font-mono text-[10px] sm:text-xs"
-                  style={{ color: battleWon ? "var(--glitch-teal)" : "#9ca3af" }}
-                >
-                  {battleWon
-                    ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
-                    : "House wins."}
-                </p>
-              )}
+              <p
+                className={`text-center font-mono text-[10px] sm:text-xs ${battleWon ? "win-result-gold" : ""}`}
+                style={!battleWon ? { color: "#9ca3af" } : undefined}
+              >
+                {battleWon
+                  ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
+                  : "House wins."}
+              </p>
               <div className="mt-4 flex w-full justify-center">
                 <button
                   type="button"
@@ -307,23 +306,20 @@ export function GameCanvas() {
                   }}
                   className="pixel-btn pixel-btn-accent font-pixel text-[10px] sm:text-xs"
                 >
-                  START YOUR REVENGE
+                  NEXT BET
                 </button>
               </div>
             </div>
           )}
         </div>
       </div>
-      {jackpotPayout != null && (
-        <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />
-      )}
       </>
     );
   }
 
   return (
-    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2 shadow-[0_0_24px_rgba(255,105,180,0.15),0_0_40px_rgba(0,212,170,0.05)] sm:rounded-xl sm:p-3">
-      <div className="flex w-full max-w-lg shrink-0 flex-col items-center gap-2.5">
+    <div className={`relative flex min-h-0 w-full max-w-4xl flex-col items-center justify-center overflow-y-auto overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.15),0_0_40px_rgba(0,212,170,0.05)] sm:rounded-xl sm:p-4 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
+        <div className="flex w-full max-w-lg min-w-0 shrink-0 flex-col items-center gap-2 sm:gap-2.5">
         <div className="bet-on-header">
           <div className="flex items-center gap-1.5">
             <h2 className="bet-on-header-title">
@@ -350,7 +346,7 @@ export function GameCanvas() {
         <div className="flex w-full flex-col items-center gap-2.5">
           <div className="flex w-full shrink-0 flex-col items-center gap-1.5 rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-3 py-2.5">
             <p className="game-box-label text-center">BALANCE</p>
-            <p className="font-pixel text-center text-base animate-pulse-glow sm:text-lg" style={{ color: "var(--glitch-teal)" }}>
+            <p className={`font-pixel text-center text-base sm:text-lg ${balanceBounceActive ? "balance-win-bounce" : "animate-pulse-glow"}`} style={{ color: "var(--glitch-teal)" }}>
               {mockBalance.toLocaleString()} PITS
             </p>
             <div className="flex flex-wrap items-center justify-center gap-1.5">
@@ -477,9 +473,9 @@ export function GameCanvas() {
             <div
               className={`w-full shrink-0 rounded border-2 py-2 px-3 text-center ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
             >
-              <p className="font-mono text-[10px] font-semibold sm:text-xs">
+              <p className={`font-mono text-[10px] font-semibold sm:text-xs ${lastBetResult.won ? "win-result-gold" : ""}`}>
                 {lastBetResult.won ? (
-                  <span style={{ color: "var(--glitch-teal)" }}>WON {lastBetResult.payout} PITS</span>
+                  <span>WON {lastBetResult.payout} PITS</span>
                 ) : (
                   <span className="text-red-400">HOUSE WINS</span>
                 )}
@@ -495,13 +491,10 @@ export function GameCanvas() {
           <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">Forge a character to customize your gladiator (optional).</p>
         )}
 
-        <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
+        <p className="w-full max-w-full shrink-0 px-2 text-center font-mono text-[10px] text-gray-400 sm:px-0 sm:text-xs" style={{ overflowWrap: "break-word" }}>
           Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
         </p>
       </div>
-      {jackpotPayout != null && (
-        <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />
-      )}
     </div>
   );
 }

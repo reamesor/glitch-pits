@@ -1,5 +1,24 @@
 /* --- Glitch Pits - CRT + Glitch Aesthetic --- */
 
+/* Mobile: safe area (notched devices) and prevent overflow */
+@supports (padding: env(safe-area-inset-top)) {
+  .app-header {
+    padding-left: calc(0.75rem + env(safe-area-inset-left));
+    padding-right: calc(0.75rem + env(safe-area-inset-right));
+  }
+  @media (min-width: 640px) {
+    .app-header {
+      padding-left: calc(1.5rem + env(safe-area-inset-left));
+      padding-right: calc(1.5rem + env(safe-area-inset-right));
+    }
+  }
+  main { padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (max-width: 639px) {
+  .arena-decor .daily-spin-panel,
+  .arena-decor .snake-panel { max-width: 100%; }
+}
+
 /* Custom cursor: hide default pointer/hand everywhere when active */
 .custom-cursor-active,
 .custom-cursor-active * {
@@ -413,7 +432,7 @@
   justify-content: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.5rem 1rem 0.5rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 1.25rem;
   margin-bottom: 0.5rem;
   border-radius: 8px;
   border: none;
@@ -444,10 +463,48 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 6px 10px 6px 6px;
   border-radius: 6px;
   border: none;
   background: #0a0a0a;
+}
+
+/* Inline win effects — no popup: golden border pulse on result area (~2s) */
+@keyframes win-border-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(245, 197, 24, 0.4), 0 0 24px rgba(245, 197, 24, 0.2); border-color: rgba(245, 197, 24, 0.6); }
+  50% { box-shadow: 0 0 24px rgba(245, 197, 24, 0.8), 0 0 48px rgba(245, 197, 24, 0.35); border-color: rgba(245, 197, 24, 0.95); }
+}
+.win-border-pulse {
+  animation: win-border-pulse 0.6s ease-in-out 3;
+  border-width: 2px;
+  border-style: solid;
+}
+
+/* Balance number: quick scale-up bounce + briefly gold */
+@keyframes balance-win-bounce {
+  0% { transform: scale(1); color: var(--glitch-teal); }
+  20% { transform: scale(1.2); color: #f5c518; }
+  40% { transform: scale(1.08); color: #f5c518; }
+  70% { color: #f5c518; }
+  100% { transform: scale(1); color: var(--glitch-teal); }
+}
+.balance-win-bounce {
+  animation: balance-win-bounce 2s ease-out forwards;
+}
+
+/* Win result text in gold */
+.win-result-gold {
+  color: #f5c518 !important;
+  text-shadow: 0 0 12px rgba(245, 197, 24, 0.6), 0 0 24px rgba(245, 197, 24, 0.3);
+}
+
+/* Big win (500+ PITS): screen-edge vignette glow, fades out 1.5s */
+@keyframes win-vignette-fade {
+  0% { box-shadow: inset 0 0 80px 20px rgba(245, 197, 24, 0.25); }
+  100% { box-shadow: inset 0 0 80px 20px rgba(245, 197, 24, 0); }
+}
+.win-vignette {
+  animation: win-vignette-fade 1.5s ease-out forwards;
 }
 
 /* Arena decorative side panel grid */

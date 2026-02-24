@@ -71,7 +71,7 @@ export function WindowedModal({
         </div>
       </div>
       {/* Content */}
-      <div className="p-6">{children}</div>
+      <div className="p-3 sm:p-6">{children}</div>
     </div>
   );
 }

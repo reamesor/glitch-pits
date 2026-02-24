@@ -14,7 +14,7 @@ export function CharacterPicker({ selectedId, onSelect, compact = false }: Chara
     <div className="flex flex-col gap-2">
       <p className="text-center font-pixel text-[9px] text-gray-400 sm:text-[10px]">PICK YOUR AVATAR</p>
       <div
-        className="grid grid-cols-4 gap-1.5 sm:grid-cols-5 sm:gap-2"
+        className="grid min-w-0 grid-cols-4 gap-1.5 sm:grid-cols-5 sm:gap-2"
         style={{ imageRendering: "pixelated" }}
       >
         {CHARACTER_PRESETS.map((preset) => (

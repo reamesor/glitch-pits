@@ -137,10 +137,11 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
 
   return (
     <div className="daily-spin-panel w-full rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
-      <div className="panel-title-row mb-2 flex items-center justify-between">
-        <div className="flex items-center gap-1.5">
-          <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
-          <FeatureInfoIcon
+      <div className="panel-title-row w-full overflow-visible">
+        <div className="mb-2 flex w-full items-center justify-between border-b-2 border-[var(--glitch-teal)]/40 pb-2">
+          <div className="flex items-center gap-1.5">
+            <span className="font-pixel glitch-text inline-block text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
+            <FeatureInfoIcon
             ariaLabel="How Daily Spin works"
             content={
               <>
@@ -155,6 +156,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
             CLOSE
           </button>
         )}
+        </div>
       </div>
       {!canSpin ? (
         <div className="py-3 text-center">

@@ -28,42 +28,45 @@ export function JackpotMoment({ payout, onDone, durationMs = 2800 }: JackpotMome
 
   return (
     <div
-      className="fixed inset-0 z-[99] flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 z-[99] flex items-center justify-center p-4 sm:p-6"
+      style={{ backgroundColor: "rgba(0,0,0,0.82)" }}
       aria-live="polite"
+      role="dialog"
+      aria-modal="true"
     >
-      {/* Flash overlay */}
+      {/* Flash: subtle, doesn’t obscure content behind */}
       <div
-        className={`absolute inset-0 transition-opacity duration-300 ${
-          flash ? "opacity-90" : "opacity-0"
+        className={`pointer-events-none absolute inset-0 transition-opacity duration-300 ${
+          flash ? "opacity-100" : "opacity-0"
         }`}
         style={{
-          background: "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(255,215,0,0.4) 0%, rgba(255,105,180,0.2) 50%, transparent 70%)",
+          background: "radial-gradient(ellipse 70% 70% at 50% 50%, rgba(255,215,0,0.25) 0%, rgba(255,105,180,0.12) 40%, transparent 70%)",
         }}
       />
-      {/* Jackpot card — color square background */}
+      {/* Jackpot card — contained so it doesn’t overlap; clear layer above scrim */}
       <div
-        className="relative font-pixel text-center jackpot-pop-in rounded-lg border-4 px-8 py-6 sm:px-10 sm:py-8"
+        className="relative z-10 font-pixel text-center jackpot-pop-in w-full max-w-xs rounded-lg border-2 px-6 py-5 sm:max-w-sm sm:px-8 sm:py-6"
         style={{
-          background: "linear-gradient(145deg, rgba(20,12,28,0.96) 0%, rgba(40,20,50,0.98) 100%)",
+          background: "linear-gradient(145deg, rgba(16,10,22,0.98) 0%, rgba(32,18,42,0.98) 100%)",
           borderColor: "var(--glitch-gold)",
-          boxShadow: "0 0 0 2px rgba(255,105,180,0.5), 0 0 40px rgba(255,215,0,0.25), inset 0 0 60px rgba(255,215,0,0.06)",
+          boxShadow: "0 0 0 1px rgba(255,105,180,0.4), 0 0 32px rgba(255,215,0,0.2), 0 8px 32px rgba(0,0,0,0.5)",
         }}
       >
         <p
-          className="glitch-text text-xl sm:text-2xl md:text-3xl uppercase tracking-wider mb-1"
+          className="glitch-text mb-1 text-lg sm:text-xl md:text-2xl uppercase tracking-wider"
           data-text="BIG WIN"
           style={{
             color: "var(--glitch-gold)",
-            textShadow: "0 0 20px rgba(255,215,0,0.8), 0 0 40px rgba(255,105,180,0.4)",
+            textShadow: "0 0 16px rgba(255,215,0,0.7), 0 0 24px rgba(255,105,180,0.3)",
           }}
         >
           BIG WIN
         </p>
         <p
-          className="text-2xl sm:text-3xl md:text-4xl tabular-nums font-bold"
+          className="text-xl sm:text-2xl md:text-3xl tabular-nums font-bold"
           style={{
             color: "var(--glitch-teal)",
-            textShadow: "0 0 16px rgba(0,212,170,0.9)",
+            textShadow: "0 0 12px rgba(0,212,170,0.8)",
           }}
         >
           +{payout.toLocaleString()} PITS

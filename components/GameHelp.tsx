@@ -27,12 +27,12 @@ export function GameHelp({ onClose }: GameHelpProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-      <div className="flex h-[85vh] w-full max-w-2xl flex-col">
-        <WindowedModal title="GAME GUIDE" onClose={onClose} className="flex max-h-full flex-col">
-          <div className="flex max-h-[75vh] flex-col gap-4 overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-2 sm:p-4">
+      <div className="flex h-[90dvh] w-full max-w-2xl flex-col min-h-0">
+        <WindowedModal title="GAME GUIDE" onClose={onClose} className="flex max-h-full flex-col min-h-0">
+          <div className="flex max-h-[75vh] flex-col gap-3 overflow-hidden sm:gap-4">
             {/* Navigation */}
-            <div className="flex flex-wrap gap-2 border-b-2 border-[var(--glitch-pink)]/30 pb-3">
+            <div className="flex flex-wrap gap-1.5 border-b-2 border-[var(--glitch-pink)]/30 pb-2 sm:gap-2 sm:pb-3">
               {SECTIONS.map(({ id, label }) => (
                 <button
                   key={id}
@@ -48,8 +48,8 @@ export function GameHelp({ onClose }: GameHelpProps) {
             {/* Scrollable content */}
             <div
               ref={scrollRef}
-              className="flex-1 space-y-6 overflow-y-auto pr-1 font-mono"
-              style={{ maxHeight: "min(60vh, 400px)" }}
+              className="flex-1 space-y-4 overflow-y-auto overflow-x-hidden pr-1 font-mono sm:space-y-6"
+              style={{ maxHeight: "min(55vh, 400px)" }}
             >
               <section data-section="quick" className="rounded border-2 border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-4">
                 <h3 className="mb-2 font-pixel text-sm text-[var(--glitch-teal)]">Quick Start</h3>

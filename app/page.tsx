@@ -151,7 +151,7 @@ export default function Home() {
       <WalletSync />
       <div className="bg-static" />
       {/* Top Bar — logo left, nav right */}
-      <header className="app-header relative flex shrink-0 items-center justify-between gap-6 px-4 py-3 sm:gap-8 sm:px-6 sm:py-4">
+      <header className="app-header relative flex shrink-0 flex-wrap items-center justify-between gap-2 px-3 py-2.5 sm:gap-6 sm:px-6 sm:py-4 md:gap-8">
         <h1 className="header-logo z-10 shrink-0">
           <button
             type="button"
@@ -163,7 +163,7 @@ export default function Home() {
           </button>
         </h1>
 
-        <div className="z-10 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
+        <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-3">
           <div className="flex items-center gap-1.5">
             <button
               type="button"
@@ -216,15 +216,15 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content: equal gaps and symmetric side panels */}
-      <div className="flex min-h-0 flex-1 flex-col gap-2 p-2 sm:flex-row sm:gap-4 sm:p-4">
-        <section className="arena-section flex min-h-0 min-w-0 flex-1 items-stretch gap-2 overflow-hidden sm:flex-row sm:gap-4">
+      {/* Main Content: no horizontal scroll; content visible and evenly spaced */}
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overflow-x-hidden p-3 sm:flex-row sm:gap-4 sm:p-4">
+        <section className="arena-section flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-visible sm:flex-row sm:gap-4">
           <GameArenaDecor />
-          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)] px-3 py-2 sm:px-5 sm:py-3">
+          <div className="flex min-h-[260px] min-w-0 flex-1 items-center justify-center overflow-visible bg-[var(--bg-dark)] px-3 py-3 sm:min-h-0 sm:px-4 sm:py-3">
             <GameCanvas />
           </div>
         </section>
-        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-64 lg:w-72">
+        <aside className="flex min-h-0 shrink-0 flex-col gap-3 sm:w-64 sm:gap-4 lg:w-72">
           <div className="game-box shrink-0 px-3 py-3 sm:px-4 sm:py-4">
             <CharacterPicker
               selectedId={selectedCharacterId}
@@ -232,7 +232,7 @@ export default function Home() {
               compact
             />
           </div>
-          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
+          <div className="game-box flex min-h-[160px] min-w-0 flex-1 flex-col overflow-hidden px-3 py-3 sm:min-h-0 sm:px-4 sm:py-4">
             <div className="min-h-0 flex-1 overflow-hidden">
               <GlitchPopper />
             </div>
@@ -265,7 +265,7 @@ export default function Home() {
       )}
 
       {/* Footer watermark — update version when you deploy to confirm live */}
-      <footer className="flex shrink-0 justify-center border-t border-white/10 px-4 py-2">
+      <footer className="flex shrink-0 justify-center border-t border-white/10 px-3 py-2 sm:px-4">
         <span className="font-mono text-[10px] text-gray-400 sm:text-xs">
           created by reamesor <span className="text-gray-500">· v2</span>
         </span>

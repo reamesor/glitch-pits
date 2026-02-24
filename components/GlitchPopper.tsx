@@ -111,19 +111,21 @@ export function GlitchPopper() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="panel-title-row mb-2 flex items-center gap-1.5">
-        <h3
-          className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm"
-          data-text="GLITCH POPPER"
-          style={{ color: "#00ffff" }}
-        >
-          GLITCH POPPER
-        </h3>
-        <FeatureInfoIcon
+      <div className="panel-title-row w-full overflow-visible">
+        <div className="mb-2 flex w-full items-center gap-1.5 border-b-2 border-[var(--glitch-teal)]/40 pb-2">
+          <h3
+            className="font-pixel glitch-text inline-block text-sm"
+            data-text="GLITCH POPPER"
+            style={{ color: "#00ffff" }}
+          >
+            GLITCH POPPER
+          </h3>
+          <FeatureInfoIcon
           ariaLabel="How Glitch Popper works"
           content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
           className="text-[var(--glitch-teal)]"
         />
+        </div>
       </div>
 
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-gray-400">

@@ -70,7 +70,7 @@ export function LandingPage({
           <button
             type="button"
             onClick={toggleMute}
-            className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
+            className="landing-nav-btn font-mono text-[10px] text-gray-500 transition-colors hover:text-white sm:text-xs"
             title={muted ? "Unmute landing sound" : "Mute landing sound"}
           >
             {muted ? "SOUND OFF" : "SOUND ON"}
@@ -78,7 +78,7 @@ export function LandingPage({
           <button
             type="button"
             onClick={onOpenHelp}
-            className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
+            className="landing-nav-btn font-mono text-[10px] text-gray-500 transition-colors hover:text-white sm:text-xs"
           >
             HELP
           </button>
@@ -86,7 +86,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onOpenDashboard}
-              className="landing-nav-btn font-mono text-[10px] text-gray-400 transition-colors hover:text-white sm:text-xs"
+              className="landing-nav-btn font-mono text-[10px] text-gray-500 transition-colors hover:text-white sm:text-xs"
             >
               DASHBOARD
             </button>
@@ -139,11 +139,11 @@ export function LandingPage({
                 </button>
                 <div
                   role="tooltip"
-                  className="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] px-3 py-2 font-mono text-[10px] text-gray-300 opacity-0 shadow-[0_0_20px_rgba(255,105,180,0.2)] transition-opacity duration-200 group-hover:opacity-100 sm:text-xs"
+                  className="pointer-events-none absolute top-full left-1/2 z-30 mt-2 -translate-x-1/2 rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] px-3 py-2 font-mono text-[10px] text-gray-300 opacity-0 shadow-[0_0_20px_rgba(255,105,180,0.2)] transition-opacity duration-200 group-hover:opacity-100 sm:text-xs"
                   style={{ width: "max-content", maxWidth: "min(260px, 90vw)" }}
                 >
                   New? Try the demo first — no wallet required.
-                  <span className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-8 border-transparent border-t-[var(--bg-darker)]" style={{ marginTop: "2px" }} aria-hidden />
+                  <span className="absolute bottom-full left-1/2 h-0 w-0 -translate-x-1/2 border-8 border-transparent border-b-[var(--bg-darker)]" style={{ marginBottom: "2px" }} aria-hidden />
                 </div>
               </div>
             )}
@@ -161,10 +161,10 @@ export function LandingPage({
 
       {/* Footer - DGB style, compact */}
       <footer className="relative z-20 flex shrink-0 items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
-        <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
+        <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">
           ৲ All in. Win or burn.
         </span>
-        <span className="font-mono text-[9px] text-gray-600 sm:text-[10px]">
+        <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">
           Where are your gods now?
         </span>
         <span className="font-mono text-[9px] text-gray-500 sm:text-[10px]">

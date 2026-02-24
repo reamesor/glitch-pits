@@ -4,7 +4,10 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;600;700&display=swap");
 
-/* --- Glitch Pits: bolder, larger, more interactive --- */
+/* --- Glitch Pits: design tokens ---
+   Typography: body 14px JetBrains Mono; pixel UI = Press Start 2P (8–10px labels, 9–10px buttons).
+   Colors: pink = primary accent; teal = balance/success; gold = highlight/win; gray-500 = muted labels.
+*/
 :root {
   --g-red: #ff00c1;
   --g-blue: #00fff9;

@@ -55,12 +55,12 @@ export function ForgeModal({ onForge }: ForgeModalProps) {
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={16}
-              className="w-full border-4 border-[#4a4a4a] bg-[#2a2a2a] px-4 py-3 font-pixel text-sm text-white placeholder-gray-500 focus:border-[var(--glitch-purple)] focus:outline-none"
+              className="w-full border-4 border-[#4a4a4a] bg-[#2a2a2a] px-4 py-3 font-pixel text-xs text-white placeholder-gray-500 focus:border-[var(--glitch-purple)] focus:outline-none"
               style={{ imageRendering: "pixelated" }}
             />
 
             <div>
-              <label className="mb-2 block font-pixel text-[9px] text-gray-400">
+              <label className="mb-2 block font-pixel text-[9px] text-gray-500">
                 CLOTHES
               </label>
               <div className="flex gap-2">
@@ -82,7 +82,7 @@ export function ForgeModal({ onForge }: ForgeModalProps) {
             </div>
 
             <div>
-              <label className="mb-2 block font-pixel text-[9px] text-gray-400">
+              <label className="mb-2 block font-pixel text-[9px] text-gray-500">
                 WEAPON
               </label>
               <div className="flex gap-2">

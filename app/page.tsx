@@ -147,9 +147,9 @@ export default function Home() {
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
       <WalletSync />
       <div className="bg-static" />
-      {/* Top Bar — glass header, grouped layout */}
-      <header className="app-header flex shrink-0 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2">
-        <h1 className="shrink-0">
+      {/* Top Bar — logo left, balance center, nav right */}
+      <header className="app-header relative flex shrink-0 items-center justify-between gap-2 px-3 py-2 sm:gap-4 sm:px-4 sm:py-2.5">
+        <h1 className="z-10 shrink-0">
           <button
             type="button"
             onClick={() => setShowLandingView(true)}
@@ -160,7 +160,21 @@ export default function Home() {
           </button>
         </h1>
 
-        <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+        <div
+          className="app-header-balance absolute left-1/2 top-1/2 z-10 min-w-[100px] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 px-3 py-2 text-center sm:min-w-[120px] sm:px-4 sm:py-2"
+          title="Live balance — updates when you win or lose"
+        >
+          <p className="font-mono text-[8px] uppercase tracking-widest text-gray-500 sm:text-[9px]">Balance</p>
+          <p
+            className={`font-pixel text-sm tabular-nums sm:text-base md:text-lg ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
+            style={{ color: "var(--glitch-teal)" }}
+          >
+            {mockBalance.toLocaleString()}
+          </p>
+          <p className="font-mono text-[8px] font-medium uppercase tracking-wider text-gray-500 sm:text-[9px]">PITS</p>
+        </div>
+
+        <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={toggleGameMusic}
@@ -169,49 +183,34 @@ export default function Home() {
           >
             {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
           </button>
-          <div
-            className="app-header-balance rounded px-2.5 py-1 text-center sm:px-3 sm:py-1.5"
-            title="Live balance — updates when you win or lose"
-          >
-            <p className="font-mono text-[7px] uppercase tracking-widest text-gray-500 sm:text-[8px]">Balance</p>
-            <p
-              className={`font-pixel text-sm sm:text-base md:text-lg tabular-nums ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
-              style={{ color: "var(--glitch-teal)" }}
-            >
-              {mockBalance.toLocaleString()}
-            </p>
-            <p className="font-mono text-[7px] font-medium uppercase tracking-wider text-gray-500 sm:text-[8px]">PITS</p>
-          </div>
-          <span className="app-header-forged hidden font-mono text-gray-400 md:inline-flex items-center gap-1">
+          <span className="app-header-forged hidden font-mono text-gray-500 md:inline-flex items-center gap-1">
             Forged: <span className="font-semibold tabular-nums" style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
-          <div className="flex items-center gap-1 sm:gap-1.5">
+          <button
+            type="button"
+            onClick={() => setShowGameHelp(true)}
+            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+          >
+            HELP
+          </button>
+          <button
+            type="button"
+            onClick={() => setShowBlackMarket(true)}
+            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+          >
+            BLACK MARKET
+          </button>
+          {walletAddress ? (
             <button
               type="button"
-              onClick={() => setShowGameHelp(true)}
+              onClick={() => setShowDashboard(true)}
               className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
             >
-              HELP
+              DASHBOARD
             </button>
-            <button
-              type="button"
-              onClick={() => setShowBlackMarket(true)}
-              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
-            >
-              BLACK MARKET
-            </button>
-            {walletAddress ? (
-              <button
-                type="button"
-                onClick={() => setShowDashboard(true)}
-                className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
-              >
-                DASHBOARD
-              </button>
-            ) : (
-              <ConnectWalletButton />
-            )}
-          </div>
+          ) : (
+            <ConnectWalletButton />
+          )}
         </div>
       </header>
 

@@ -13,7 +13,8 @@ Your frontend is on **Vercel** and your real-time socket server must run elsewhe
 5. Open **Settings** (or the **Variables** tab):
    - **Root Directory:** set to `socket-server`  
      (so Railway uses the `socket-server` folder, not the repo root).
-   - **Build Command:** leave empty or set to `npm install`.
+   - **Build Command:** leave default (`npm ci`) or set to `npm install`.  
+     The repo includes `socket-server/package-lock.json` so `npm ci` works.
    - **Start Command:** leave as `npm start` (runs `node index.js`).
 6. Add an environment variable (Settings → Variables, or the Variables tab):
    - **Name:** `CORS_ORIGIN`  

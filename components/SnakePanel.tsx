@@ -2,12 +2,13 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
+import { soundManager } from "@/lib/soundManager";
 
-const W = 14;
-const H = 28;
+const W = 16;
+const H = 30;
 const CELL = 10;
-const CANVAS_W = W * CELL;
-const CANVAS_H = H * CELL;
+const CANVAS_W = W * CELL; // 160px
+const CANVAS_H = H * CELL; // 300px
 const PITS_CAP = 20;
 const PITS_PER_10_SCORE = 1;
 
@@ -74,6 +75,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
     }
     const next = [...g.snake, head];
     if (head.x === g.food.x && head.y === g.food.y) {
+      soundManager.play("SNAKE_EAT");
       setScore((s) => s + 1);
       g.food = spawnFood(next);
       g.snake = next;
@@ -84,6 +86,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   }, [status, spawnFood]);
 
   function endGame(finalScore: number) {
+    soundManager.play("SNAKE_DEATH");
     const g = gameRef.current;
     if (g?.loop) clearInterval(g.loop);
     gameRef.current.loop = null;

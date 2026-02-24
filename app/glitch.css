@@ -71,6 +71,40 @@
   transform: translateY(0);
   box-shadow: 0 0 12px rgba(255, 105, 180, 0.15);
 }
+
+/* Music volume slider: dark track, pink fill, pink thumb with glow */
+.music-volume-slider {
+  width: 80px;
+  height: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #222;
+  border-radius: 9999px;
+}
+.music-volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff2d78;
+  box-shadow: 0 0 8px #ff2d78, 0 0 12px rgba(255, 45, 120, 0.6);
+  cursor: pointer;
+}
+.music-volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ff2d78;
+  box-shadow: 0 0 8px #ff2d78;
+  border: none;
+  cursor: pointer;
+}
+.music-volume-slider::-moz-range-track {
+  background: #222;
+  border-radius: 9999px;
+}
+
 .app-header-forged {
   min-height: 32px;
   display: inline-flex;

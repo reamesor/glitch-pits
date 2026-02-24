@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGameStore } from "@/lib/useGameStore";
+import { soundManager } from "@/lib/soundManager";
 
 const ORB_COLORS = ["#ff2d78", "#00ffff", "#c800ff", "#f5c518"] as const;
 const ORB_SIZE_PX = 20;
@@ -42,6 +43,8 @@ export function GlitchPopper() {
   const handleOrbClick = useCallback(
     (orb: Orb, e: React.MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
+      soundManager.play("ORB_POP");
+      soundManager.play("PITS_CHIME");
       removeOrb(orb.id);
       addToBalance(POP_REWARD);
       setPopped((p) => p + 1);
@@ -84,7 +87,7 @@ export function GlitchPopper() {
     return () => clearInterval(t);
   }, []);
 
-  // Mark expired orbs as missed (red) at 3.8s, remove at 4s
+  // Mark expired orbs as missed (red) at 3.8s, remove at 4s; play ORB_MISS when orb expires
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
@@ -92,7 +95,10 @@ export function GlitchPopper() {
         prev
           .map((o) => {
             const age = now - o.spawnTime;
-            if (age >= ORB_LIFETIME_MS) return null;
+            if (age >= ORB_LIFETIME_MS) {
+              soundManager.play("ORB_MISS");
+              return null;
+            }
             if (age >= ORB_LIFETIME_MS - 200) return { ...o, missed: true };
             return o;
           })

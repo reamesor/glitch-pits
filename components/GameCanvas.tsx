@@ -5,10 +5,10 @@ import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
-import { playResultSound } from "@/lib/resultSound";
 import { startBattleSound, stopBattleSound } from "@/lib/battleSound";
-import { playRoundSound } from "@/lib/roundSound";
 import { playJackpotSound } from "@/lib/jackpotSound";
+import { soundManager } from "@/lib/soundManager";
+import { musicManager } from "@/lib/musicManager";
 import { PixelCharacter } from "@/components/PixelCharacter";
 import { JackpotMoment } from "@/components/JackpotMoment";
 
@@ -102,8 +102,12 @@ export function GameCanvas() {
       setBattleWon(lastBetResult.won);
       setBattlePayout(payout);
       setBattlePhase("result");
-      playRoundSound();
-      setTimeout(() => playResultSound(lastBetResult.won), 90);
+      soundManager.play("MULTIPLIER_REVEAL");
+      setTimeout(() => {
+        soundManager.play(lastBetResult.won ? "WIN" : "LOSE");
+        if (lastBetResult.won) musicManager.duckForWin();
+        else musicManager.duckForLoss();
+      }, 90);
       const isJackpot =
         lastBetResult.won &&
         (payout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER);
@@ -158,6 +162,8 @@ export function GameCanvas() {
   const handlePlaceBet = useCallback(() => {
     const canBet = characterCount >= 1 || !!walletAddress;
     if (amount < MIN_BET_PITS || amount > mockBalance || !canBet) return;
+
+    soundManager.play("BET_PLACED");
 
     const betAmount = amount;
     const betMultiplier = multiplier;

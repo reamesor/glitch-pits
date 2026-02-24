@@ -18,12 +18,8 @@ import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
-import {
-  startGameAmbientSound,
-  stopGameAmbientSound,
-  isGameMusicMuted,
-  setGameMusicMuted,
-} from "@/lib/gameAmbientSound";
+import { setGameMusicMuted } from "@/lib/gameAmbientSound";
+import { musicManager } from "@/lib/musicManager";
 
 export default function Home() {
   const [showForge, setShowForge] = useState(true);
@@ -50,8 +46,9 @@ export default function Home() {
   const [showLandingView, setShowLandingView] = useState(false);
   const [funMode, setFunMode] = useState(false); // play without wallet (e.g. in Cursor browser)
   const [gameMusicMuted, setGameMusicMutedState] = useState(() =>
-    typeof window !== "undefined" ? isGameMusicMuted() : false
+    typeof window !== "undefined" ? (localStorage.getItem("glitch-pits-game-music-muted") === "1" || !localStorage.getItem("glitch-pits-game-music-muted")) : true
   );
+  const [musicVolume, setMusicVolume] = useState(25);
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(CHARACTER_STORAGE_KEY) : null;
@@ -106,22 +103,28 @@ export default function Home() {
     if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
   }, [walletAddress, showConnectToEnter]);
 
-  // Constant game ambient (like COLORS): play when in pit, stop when on landing
+  // Background music: play when in pit and music ON, stop when leaving or music OFF
   const inPit = (walletAddress || funMode) && !showLandingView;
   useEffect(() => {
     if (!inPit) {
-      stopGameAmbientSound();
+      musicManager.stop();
       return;
     }
-    if (!gameMusicMuted) startGameAmbientSound();
-    return () => stopGameAmbientSound();
+    if (!gameMusicMuted) musicManager.start();
+    else musicManager.stop();
+    return () => musicManager.stop();
   }, [inPit, gameMusicMuted]);
+
+  useEffect(() => {
+    musicManager.setVolume(musicVolume / 100);
+  }, [musicVolume]);
 
   const toggleGameMusic = () => {
     const next = !gameMusicMuted;
     setGameMusicMutedState(next);
     setGameMusicMuted(next);
-    if (!next) startGameAmbientSound();
+    if (next) musicManager.stop();
+    else musicManager.start();
   };
 
   if (!inPit) {
@@ -161,14 +164,27 @@ export default function Home() {
         </h1>
 
         <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
-          <button
-            type="button"
-            onClick={toggleGameMusic}
-            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
-            title={gameMusicMuted ? "Play background music" : "Mute background music"}
-          >
-            {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleGameMusic}
+              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+              title={gameMusicMuted ? "Play background music" : "Mute background music"}
+            >
+              {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
+            </button>
+            {!gameMusicMuted && (
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={musicVolume}
+                onChange={(e) => setMusicVolume(Number(e.target.value))}
+                className="music-volume-slider"
+                aria-label="Music volume"
+              />
+            )}
+          </div>
           <span className="app-header-forged hidden font-mono text-gray-500 md:inline-flex items-center gap-1">
             Forged: <span className="font-semibold tabular-nums" style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>

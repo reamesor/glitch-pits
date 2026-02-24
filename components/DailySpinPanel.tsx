@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
+import { soundManager } from "@/lib/soundManager";
 
 const DAILY_SPIN_KEY = "glitch-pits-daily-spin";
 const SYMBOLS = ["💀", "★", "◎", "⚡"]; // skull, star, coin, lightning
@@ -84,6 +85,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
     if (spinning || !canSpin) return;
     setSpinning(true);
     setResult(null);
+    soundManager.play("REEL_SPIN");
     const final = [Math.floor(Math.random() * 4), Math.floor(Math.random() * 4), Math.floor(Math.random() * 4)];
     setReels(final);
 
@@ -97,6 +99,10 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
       ]);
     }, 80);
 
+    setTimeout(() => soundManager.play("REEL_STOP"), REEL_SPIN_MS);
+    setTimeout(() => soundManager.play("REEL_STOP"), REEL_SPIN_MS + REEL_STAGGER_MS);
+    setTimeout(() => soundManager.play("REEL_STOP"), REEL_SPIN_MS + REEL_STAGGER_MS * 2);
+
     const done = REEL_SPIN_MS + REEL_STAGGER_MS * 2 + 200;
     setTimeout(() => {
       clearInterval(iv);
@@ -105,6 +111,8 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
       final.forEach((s) => { counts[s] = (counts[s] ?? 0) + 1; });
       const max = Math.max(...Object.values(counts));
       const reward = max >= 3 ? REWARDS.three : max >= 2 ? REWARDS.two : REWARDS.none;
+      if (max >= 3) soundManager.play("SPIN_WIN_BIG");
+      else soundManager.play("SPIN_WIN_SMALL");
       addToBalance(reward);
       setResult(reward);
       setLastSpinDateState(new Date().toISOString());
@@ -117,7 +125,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
     const s = Math.floor(ms / 1000) % 60;
     const m = Math.floor(ms / 60000) % 60;
     const h = Math.floor(ms / 3600000);
-    return `${h}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
   };
 
   return (

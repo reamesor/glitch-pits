@@ -7,7 +7,10 @@ import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
 import { playResultSound } from "@/lib/resultSound";
 import { startBattleSound, stopBattleSound } from "@/lib/battleSound";
+import { playRoundSound } from "@/lib/roundSound";
+import { playJackpotSound } from "@/lib/jackpotSound";
 import { PixelCharacter } from "@/components/PixelCharacter";
+import { JackpotMoment } from "@/components/JackpotMoment";
 
 const BET_AMOUNTS = [50, 100, 250, 500, 1000];
 const AUTOBET_OPTIONS = [5, 10, 20, 50, 100, -1] as const; // -1 = unlimited
@@ -15,7 +18,7 @@ const LORE_INTERVAL_MS = 1600;
 const RESULT_DISPLAY_MS = 2500;
 const SERVER_TIMEOUT_MS = 6000;
 const MIN_BATTLE_MS = 3000;
-const AUTOBET_DELAY_MS = 600; // Delay before next bet when autobet
+const AUTOBET_DELAY_MS = 1400; // Delay before next bet when autobet (gives time to change selection or stop)
 
 export function GameCanvas() {
   const { socket, connected } = useSocket();
@@ -40,9 +43,13 @@ export function GameCanvas() {
   const [autobetLimit, setAutobetLimit] = useState<number>(10);
   const [autobetDone, setAutobetDone] = useState(0);
   const [autobetSessionProfit, setAutobetSessionProfit] = useState(0); // running P&L this session (PITS)
+  const [jackpotPayout, setJackpotPayout] = useState<number | null>(null); // BIG WIN moment
   const previousPhaseRef = useRef<"idle" | "fighting" | "result">("idle");
   const autobetRunningRef = useRef(false);
   autobetRunningRef.current = autobetRunning;
+
+  const JACKPOT_MIN_PAYOUT = 500;
+  const JACKPOT_MIN_MULTIPLIER = 3;
 
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
@@ -74,6 +81,7 @@ export function GameCanvas() {
         lastBetResult.won && lastBetResult.payout === 0
           ? Math.floor(battleAmount * getMultiplierForAmount(battleAmount))
           : lastBetResult.payout;
+      const mult = getMultiplierForAmount(battleAmount);
       useGameStore.getState().recordBetResult(battleAmount, lastBetResult.won, payout);
       if (payout !== lastBetResult.payout) {
         useGameStore.getState().setLastBetResult({ won: lastBetResult.won, payout });
@@ -81,7 +89,15 @@ export function GameCanvas() {
       setBattleWon(lastBetResult.won);
       setBattlePayout(payout);
       setBattlePhase("result");
-      playResultSound(lastBetResult.won);
+      playRoundSound();
+      setTimeout(() => playResultSound(lastBetResult.won), 90);
+      const isJackpot =
+        lastBetResult.won &&
+        (payout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER);
+      if (isJackpot) {
+        playJackpotSound();
+        setJackpotPayout(payout);
+      }
       if (autobetRunningRef.current) {
         setAutobetSessionProfit((p) => p + (lastBetResult.won ? payout : -battleAmount));
       }
@@ -181,9 +197,9 @@ export function GameCanvas() {
 
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
-      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
+      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
         {autobetRunning && (
-          <div className="absolute left-0 right-0 top-0 z-10 flex items-center justify-center gap-3 border-b border-[var(--glitch-pink)]/30 bg-black/50 px-2 py-1.5 font-mono text-[9px]">
+          <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[9px] sm:gap-3">
             <span className="text-gray-400">
               Bet <span className="tabular-nums text-white">{autobetDone + 1}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}</span>
             </span>
@@ -193,6 +209,13 @@ export function GameCanvas() {
             <span className="text-gray-500">
               {battlePhase === "fighting" ? "Fighting…" : "Result"}
             </span>
+            <button
+              type="button"
+              onClick={stopAutobet}
+              className="ml-auto shrink-0 rounded border-2 border-red-500/70 bg-red-950/80 px-2 py-1 font-pixel text-[8px] text-red-300 transition hover:border-red-400 hover:bg-red-900/60 hover:text-red-200 sm:ml-0 sm:px-2.5 sm:text-[9px]"
+            >
+              STOP AUTOBET
+            </button>
           </div>
         )}
         <div className="flex flex-col items-center justify-center">
@@ -249,11 +272,14 @@ export function GameCanvas() {
           )}
         </div>
       </div>
+      {jackpotPayout != null && (
+        <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />
+      )}
     );
   }
 
   return (
-    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_24px_rgba(255,105,180,0.12)] sm:rounded-xl sm:p-4">
+    <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
       <div className="flex w-full max-w-lg shrink-0 flex-col gap-1.5">
       <div className="flex shrink-0 flex-wrap items-center justify-center gap-1.5">
         <h2
@@ -369,7 +395,7 @@ export function GameCanvas() {
               <p className="flex justify-between gap-2 text-gray-500">
                 <span>Status</span>
                 <span className="text-gray-400">
-                  {battlePhase === "idle" ? "Next in 0.6s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
+                  {battlePhase === "idle" ? "Next in 1.4s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
                 </span>
               </p>
             </div>
@@ -404,6 +430,9 @@ export function GameCanvas() {
         Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
       </p>
       </div>
+      {jackpotPayout != null && (
+        <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />
+      )}
     </div>
   );
 }

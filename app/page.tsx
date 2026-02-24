@@ -9,6 +9,7 @@ import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
 import { GlitchLog } from "@/components/GlitchLog";
 import { GameCanvas } from "@/components/GameCanvas";
+import { CharacterPicker } from "@/components/CharacterPicker";
 import { GameArenaDecor } from "@/components/GameArenaDecor";
 import { ConnectToEnterModal } from "@/components/ConnectToEnterModal";
 import { DashboardModal } from "@/components/DashboardModal";
@@ -17,6 +18,12 @@ import { ConnectWalletButton } from "@/components/ConnectWalletButton";
 import { GlitchPitsLogo } from "@/components/GlitchPitsLogo";
 import { LandingPage } from "@/components/LandingPage";
 import { WALLET_STORAGE_KEY, CHARACTER_STORAGE_KEY } from "@/lib/useGameStore";
+import {
+  startGameAmbientSound,
+  stopGameAmbientSound,
+  isGameMusicMuted,
+  setGameMusicMuted,
+} from "@/lib/gameAmbientSound";
 
 export default function Home() {
   const [showForge, setShowForge] = useState(true);
@@ -37,9 +44,13 @@ export default function Home() {
   const victoryData = useGameStore((s) => s.victoryData);
   const setVictoryData = useGameStore((s) => s.setVictoryData);
   const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
+  const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
   const prevBalanceRef = useRef(mockBalance);
   const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
   const [showLandingView, setShowLandingView] = useState(false);
+  const [gameMusicMuted, setGameMusicMutedState] = useState(() =>
+    typeof window !== "undefined" ? isGameMusicMuted() : false
+  );
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(CHARACTER_STORAGE_KEY) : null;
@@ -84,6 +95,23 @@ export default function Home() {
     if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
   }, [walletAddress, showConnectToEnter]);
 
+  // Constant game ambient (like COLORS): play when in pit, stop when on landing
+  useEffect(() => {
+    if (!walletAddress || showLandingView) {
+      stopGameAmbientSound();
+      return;
+    }
+    if (!gameMusicMuted) startGameAmbientSound();
+    return () => stopGameAmbientSound();
+  }, [walletAddress, showLandingView, gameMusicMuted]);
+
+  const toggleGameMusic = () => {
+    const next = !gameMusicMuted;
+    setGameMusicMutedState(next);
+    setGameMusicMuted(next);
+    if (!next) startGameAmbientSound();
+  };
+
   if (!walletAddress || showLandingView) {
     return (
       <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
@@ -119,7 +147,15 @@ export default function Home() {
           </button>
         </h1>
 
-        <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4">
+          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4">
+          <button
+            type="button"
+            onClick={toggleGameMusic}
+            className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-mono text-[9px] sm:px-3 sm:py-2"
+            title={gameMusicMuted ? "Play background music" : "Mute background music"}
+          >
+            {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
+          </button>
           <div
             className="app-header-balance rounded-lg px-3 py-1.5 text-center sm:px-4 sm:py-2"
             title="Live balance — updates when you win or lose"
@@ -180,7 +216,14 @@ export default function Home() {
             <GameCanvas />
           </div>
         </section>
-        <aside className="flex max-h-[30vh] shrink-0 flex-col sm:max-h-none sm:w-48 lg:w-56">
+        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-48 lg:w-56">
+          <div className="game-box shrink-0">
+            <CharacterPicker
+              selectedId={selectedCharacterId}
+              onSelect={setSelectedCharacterId}
+              compact
+            />
+          </div>
           <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden">
             <div className="min-h-0 flex-1 overflow-auto">
               <GlitchLog />

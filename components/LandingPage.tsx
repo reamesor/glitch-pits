@@ -60,7 +60,7 @@ export function LandingPage({
   return (
     <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden bg-[#050505]">
       {/* Mememator-style starfield background */}
-      <div className="landing-starfield pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+      <div className="landing-starfield pointer-events-none absolute inset-0 opacity-75" aria-hidden />
 
       {/* Top nav - minimal like DGB / COLORS */}
       <header className="relative z-20 flex shrink-0 items-center justify-end px-4 py-3 sm:px-6">
@@ -127,7 +127,7 @@ export function LandingPage({
           <button
             type="button"
             onClick={onEnter}
-            className="mt-2 rounded-full border-2 border-[var(--glitch-teal)] bg-black/60 px-8 py-3 font-mono text-sm font-medium text-white transition hover:bg-[var(--glitch-teal)]/20 hover:shadow-[0_0_24px_rgba(0,212,170,0.3)] sm:text-base"
+            className="mt-2 rounded-full border-2 border-[var(--glitch-teal)] bg-black/70 px-8 py-3 font-mono text-sm font-medium text-white shadow-[0_0_20px_rgba(0,212,170,0.2)] transition hover:bg-[var(--glitch-teal)]/20 hover:shadow-[0_0_32px_rgba(0,212,170,0.4)] sm:text-base"
           >
             ENTER
           </button>

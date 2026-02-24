@@ -20,9 +20,29 @@ export function playResultSound(won: boolean): void {
   masterGain.gain.value = 0.35;
 
   if (won) {
-    // Win: arcade victory arpeggio — ascending 4-note chime (square, chiptune feel)
-    const freqs = [261.63, 329.63, 392, 523.25]; // C4, E4, G4, C5
-    const noteLen = 0.18;
+    // Win: brighter, punchier victory arpeggio — more thrilling
+    const freqs = [329.63, 392, 523.25, 659.25]; // E4, G4, C5, E5 — higher, brighter
+    const noteLen = 0.16;
+    const gap = 0.03;
+    freqs.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = "square";
+      osc.frequency.value = freq;
+      const t0 = now + i * (noteLen + gap);
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.24, t0 + 0.015);
+      g.gain.linearRampToValueAtTime(0.14, t0 + noteLen * 0.45);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + noteLen);
+      osc.connect(g);
+      g.connect(masterGain);
+      osc.start(t0);
+      osc.stop(t0 + noteLen);
+    });
+  } else {
+    // Lose: short punchy "nope" — still arcade, not a downer (quick so next round feels soon)
+    const freqs = [349.23, 261.63]; // F4, C4 — two-note drop
+    const noteLen = 0.12;
     const gap = 0.04;
     freqs.forEach((freq, i) => {
       const osc = ctx.createOscillator();
@@ -31,28 +51,7 @@ export function playResultSound(won: boolean): void {
       osc.frequency.value = freq;
       const t0 = now + i * (noteLen + gap);
       g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(0.2, t0 + 0.02);
-      g.gain.linearRampToValueAtTime(0.12, t0 + noteLen * 0.5);
-      g.gain.exponentialRampToValueAtTime(0.001, t0 + noteLen);
-      osc.connect(g);
-      g.connect(masterGain);
-      osc.start(t0);
-      osc.stop(t0 + noteLen);
-    });
-  } else {
-    // Lose: longer retro arcade "game over" / defeat — descending 4-note phrase (square, chiptune)
-    const freqs = [392, 329.63, 261.63, 196]; // G4, E4, C4, G3 — descending "sad" motif
-    const noteLen = 0.2;
-    const gap = 0.06;
-    freqs.forEach((freq, i) => {
-      const osc = ctx.createOscillator();
-      const g = ctx.createGain();
-      osc.type = "square";
-      osc.frequency.value = freq;
-      const t0 = now + i * (noteLen + gap);
-      g.gain.setValueAtTime(0, t0);
-      g.gain.linearRampToValueAtTime(0.18, t0 + 0.02);
-      g.gain.linearRampToValueAtTime(0.1, t0 + noteLen * 0.5);
+      g.gain.linearRampToValueAtTime(0.2, t0 + 0.015);
       g.gain.exponentialRampToValueAtTime(0.001, t0 + noteLen);
       osc.connect(g);
       g.connect(masterGain);

@@ -406,36 +406,38 @@
   text-transform: uppercase;
 }
 
-/* BET ON [NAME] header — no borders, clear readable title */
+/* BET ON [NAME] header — black background, same title spacing/line as other panels */
 .bet-on-header {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   width: 100%;
-  padding: 0.5rem 0.75rem 0.5rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 1rem;
+  margin-bottom: 0.5rem;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(0, 255, 249, 0.06) 0%, rgba(255, 45, 120, 0.04) 50%, rgba(0, 255, 249, 0.05) 100%);
+  border: none;
+  border-bottom: 2px solid rgba(0, 255, 249, 0.4);
+  padding-bottom: 0.5rem;
+  background: #0a0a0a;
 }
 .bet-on-header-title {
   font-family: "Press Start 2P", monospace;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.5;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #00fff9;
   text-shadow:
-    0 0 12px rgba(0, 255, 249, 0.9),
-    0 0 20px rgba(0, 255, 249, 0.5),
     0 1px 2px rgba(0, 0, 0, 0.8),
     0 2px 0 rgba(0, 0, 0, 0.4);
 }
 @media (min-width: 640px) {
-  .bet-on-header-title { font-size: 13px; letter-spacing: 0.12em; }
+  .bet-on-header-title { font-size: 16px; letter-spacing: 0.12em; }
 }
 @media (min-width: 768px) {
-  .bet-on-header-title { font-size: 14px; }
+  .bet-on-header-title { font-size: 18px; }
 }
 .bet-on-header-avatar {
   flex-shrink: 0;
@@ -444,7 +446,8 @@
   justify-content: center;
   padding: 4px;
   border-radius: 6px;
-  background: rgba(0, 0, 0, 0.35);
+  border: none;
+  background: #0a0a0a;
 }
 
 /* Arena decorative side panel grid */

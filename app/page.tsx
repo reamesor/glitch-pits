@@ -225,14 +225,14 @@ export default function Home() {
           </div>
         </section>
         <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-64 lg:w-72">
-          <div className="game-box shrink-0 px-3 py-2 sm:px-4 sm:py-2.5">
+          <div className="game-box shrink-0 px-3 py-3 sm:px-4 sm:py-4">
             <CharacterPicker
               selectedId={selectedCharacterId}
               onSelect={setSelectedCharacterId}
               compact
             />
           </div>
-          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-2 sm:px-4 sm:py-2.5">
+          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-3 sm:px-4 sm:py-4">
             <div className="min-h-0 flex-1 overflow-hidden">
               <GlitchPopper />
             </div>

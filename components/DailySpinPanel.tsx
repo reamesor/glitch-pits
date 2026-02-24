@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { soundManager } from "@/lib/soundManager";
 import { PixelCharacter } from "@/components/PixelCharacter";
+import { FeatureInfoIcon } from "@/components/FeatureInfoIcon";
 
 const DAILY_SPIN_KEY = "glitch-pits-daily-spin";
 const REEL_AVATAR_IDS = ["0", "1", "2", "3"]; // Glitch, Knight, Rogue, Mage
@@ -136,8 +137,19 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
 
   return (
     <div className="daily-spin-panel w-full rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
+      <div className="panel-title-row mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
+          <FeatureInfoIcon
+            ariaLabel="How Daily Spin works"
+            content={
+              <>
+                3 free spins per day. Three matching = 50 PITS, two = 25, no match = 10. Nothing staked or burned.
+              </>
+            }
+            className="text-[var(--glitch-teal)]"
+          />
+        </div>
         {onClose && (
           <button type="button" onClick={onClose} className="font-mono text-[9px] text-gray-400 hover:text-white" aria-label="Close">
             CLOSE

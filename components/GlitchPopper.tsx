@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { soundManager } from "@/lib/soundManager";
+import { FeatureInfoIcon } from "@/components/FeatureInfoIcon";
 
 const ORB_COLORS = ["#ff2d78", "#00ffff", "#c800ff", "#f5c518"] as const;
 const ORB_SIZE_PX = 20;
@@ -110,13 +111,20 @@ export function GlitchPopper() {
 
   return (
     <div className="flex h-full flex-col">
-      <h3
-        className="font-pixel glitch-text mb-3 border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm"
-        data-text="GLITCH POPPER"
-        style={{ color: "#00ffff" }}
-      >
-        GLITCH POPPER
-      </h3>
+      <div className="panel-title-row mb-2 flex items-center gap-1.5">
+        <h3
+          className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm"
+          data-text="GLITCH POPPER"
+          style={{ color: "#00ffff" }}
+        >
+          GLITCH POPPER
+        </h3>
+        <FeatureInfoIcon
+          ariaLabel="How Glitch Popper works"
+          content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
+          className="text-[var(--glitch-teal)]"
+        />
+      </div>
 
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-gray-400">
         <span>POPPED: {popped}</span>

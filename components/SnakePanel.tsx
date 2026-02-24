@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { soundManager } from "@/lib/soundManager";
+import { FeatureInfoIcon } from "@/components/FeatureInfoIcon";
 
 const W = 14;
 const H = 20;
@@ -193,8 +194,19 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
 
   return (
     <div className="snake-panel flex min-h-0 w-full flex-col rounded border border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
+      <div className="panel-title-row mb-2 flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
+          <FeatureInfoIcon
+            ariaLabel="How Snake works"
+            content={
+              <>
+                Arrow keys / WASD. Eat food, avoid walls and body. PITS = round(score ÷ 10), max 20 per game. No stake; you don’t lose PITS.
+              </>
+            }
+            className="text-[var(--glitch-teal)]"
+          />
+        </div>
         {onClose && (
           <button type="button" onClick={handleClose} className="font-mono text-[9px] text-gray-400 hover:text-white" aria-label="Close">
             CLOSE

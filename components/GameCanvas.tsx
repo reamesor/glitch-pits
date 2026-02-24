@@ -10,6 +10,7 @@ import { playJackpotSound } from "@/lib/jackpotSound";
 import { soundManager } from "@/lib/soundManager";
 import { musicManager } from "@/lib/musicManager";
 import { PixelCharacter } from "@/components/PixelCharacter";
+import { FeatureInfoIcon } from "@/components/FeatureInfoIcon";
 import { JackpotMoment } from "@/components/JackpotMoment";
 
 const MIN_BET_PITS = 50;
@@ -324,9 +325,20 @@ export function GameCanvas() {
     <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-2 shadow-[0_0_24px_rgba(255,105,180,0.15),0_0_40px_rgba(0,212,170,0.05)] sm:rounded-xl sm:p-3">
       <div className="flex w-full max-w-lg shrink-0 flex-col items-center gap-2.5">
         <div className="bet-on-header">
-          <h2 className="bet-on-header-title">
-            BET ON {displayName.toUpperCase()}
-          </h2>
+          <div className="flex items-center gap-1.5">
+            <h2 className="bet-on-header-title">
+              BET ON {displayName.toUpperCase()}
+            </h2>
+            <FeatureInfoIcon
+              ariaLabel="How the Bet Battle works"
+              content={
+                <>
+                  Stake 50–1000 PITS. Win = bet × multiplier (1.5× to 4× by tier). Lose = stake burned. Stats affect win chance.
+                </>
+              }
+              className="text-[#00fff9]"
+            />
+          </div>
           <div className="bet-on-header-avatar">
             <PixelCharacter characterId={selectedCharacterId} animated className="scale-125 sm:scale-150" />
           </div>

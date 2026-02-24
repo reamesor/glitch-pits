@@ -7,7 +7,7 @@ import { ForgeModal } from "@/components/ForgeModal";
 import { BlackMarketModal } from "@/components/BlackMarketModal";
 import { VictoryCongrats } from "@/components/VictoryCongrats";
 import { GameHelp } from "@/components/GameHelp";
-import { GlitchLog } from "@/components/GlitchLog";
+import { GlitchPopper } from "@/components/GlitchPopper";
 import { GameCanvas } from "@/components/GameCanvas";
 import { CharacterPicker } from "@/components/CharacterPicker";
 import { GameArenaDecor } from "@/components/GameArenaDecor";
@@ -160,20 +160,6 @@ export default function Home() {
           </button>
         </h1>
 
-        <div
-          className="app-header-balance absolute left-1/2 top-1/2 z-10 min-w-[100px] -translate-x-1/2 -translate-y-1/2 rounded-md border-2 px-3 py-2 text-center sm:min-w-[120px] sm:px-4 sm:py-2"
-          title="Live balance — updates when you win or lose"
-        >
-          <p className="font-mono text-[8px] uppercase tracking-widest text-gray-500 sm:text-[9px]">Balance</p>
-          <p
-            className={`font-pixel text-sm tabular-nums sm:text-base md:text-lg ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
-            style={{ color: "var(--glitch-teal)" }}
-          >
-            {mockBalance.toLocaleString()}
-          </p>
-          <p className="font-mono text-[8px] font-medium uppercase tracking-wider text-gray-500 sm:text-[9px]">PITS</p>
-        </div>
-
         <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           <button
             type="button"
@@ -223,7 +209,7 @@ export default function Home() {
           </div>
         </section>
         <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-48 lg:w-56">
-          <div className="game-box shrink-0">
+          <div className="game-box shrink-0 px-2 py-2 sm:px-3 sm:py-2.5">
             <CharacterPicker
               selectedId={selectedCharacterId}
               onSelect={setSelectedCharacterId}
@@ -231,8 +217,8 @@ export default function Home() {
             />
           </div>
           <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden">
-            <div className="min-h-0 flex-1 overflow-auto">
-              <GlitchLog />
+            <div className="min-h-0 flex-1 overflow-hidden">
+              <GlitchPopper />
             </div>
           </div>
         </aside>

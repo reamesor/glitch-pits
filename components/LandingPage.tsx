@@ -125,14 +125,14 @@ export function LandingPage({
           <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
             Stake your PITS. Multiply or burn. No middle ground.
           </p>
-          {/* CTAs: same-size buttons; demo hint in hover tooltip */}
+          {/* CTAs: identical size for both buttons */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {onEnterFunMode && (
               <div className="relative group">
                 <button
                   type="button"
                   onClick={onEnterFunMode}
-                  className="landing-cta-accent pixel-btn pixel-btn-accent min-w-[180px] px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
+                  className="landing-cta-accent landing-cta-same-size pixel-btn pixel-btn-accent w-[220px] py-2.5 font-pixel text-[9px] sm:text-[10px]"
                   title="Play with virtual PITS, no wallet connection"
                 >
                   TRY DEMO (FUN MODE)
@@ -150,7 +150,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onEnter}
-              className="landing-cta-wallet pixel-btn min-w-[180px] px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
+              className="landing-cta-wallet landing-cta-same-size pixel-btn w-[220px] py-2.5 font-pixel text-[9px] sm:text-[10px]"
               title="Connect wallet to play with real PITS"
             >
               ENTER WITH WALLET

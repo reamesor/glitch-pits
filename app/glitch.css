@@ -532,6 +532,18 @@
   box-shadow: 2px 2px 0 var(--glitch-purple), 0 0 16px rgba(255, 105, 180, 0.3);
 }
 
+/* Force same dimensions for both landing CTAs (override .pixel-btn / .pixel-btn-accent) */
+.landing-cta-same-size {
+  min-height: 40px;
+  padding: 10px 16px;
+  font-size: 9px;
+}
+@media (min-width: 640px) {
+  .landing-cta-same-size {
+    font-size: 10px;
+  }
+}
+
 .landing-cta-wallet {
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
@@ -606,4 +618,54 @@
 }
 .jackpot-pop-in {
   animation: jackpot-pop 0.45s ease-out;
+}
+
+/* --- Glitch Popper mini-game --- */
+.glitch-popper-play {
+  position: relative;
+  min-height: 120px;
+}
+
+.glitch-popper-orb {
+  border-radius: 50%;
+  image-rendering: pixelated;
+  will-change: bottom, transform;
+}
+
+@keyframes glitch-popper-float {
+  0% { bottom: 0; }
+  100% { bottom: 100%; }
+}
+
+@keyframes glitch-popper-wobble {
+  0%, 100% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+}
+
+@keyframes glitch-popper-flicker {
+  0%, 100% { opacity: 1; filter: brightness(1); }
+  25% { opacity: 0.9; filter: brightness(1.15); }
+  50% { opacity: 1; filter: brightness(0.95); }
+  75% { opacity: 0.92; filter: brightness(1.08); }
+}
+
+@keyframes glitch-popper-missed {
+  0% { opacity: 1; box-shadow: 0 0 12px #ff0000; }
+  100% { opacity: 0.6; box-shadow: 0 0 4px #ff0000; }
+}
+
+.glitch-popper-float-text {
+  animation: glitch-popper-float-up 0.8s ease-out forwards;
+  white-space: nowrap;
+}
+
+@keyframes glitch-popper-float-up {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-36px);
+  }
 }

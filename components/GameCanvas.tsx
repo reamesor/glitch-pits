@@ -213,7 +213,7 @@ export function GameCanvas() {
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
       <>
-      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
+      <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
         {autobetRunning && (
           <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[9px] sm:gap-3">
             <span className="text-gray-400">
@@ -245,7 +245,7 @@ export function GameCanvas() {
             </h2>
             <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
           </div>
-          <div className="game-box mb-2 w-full max-w-xs py-1.5">
+          <div className="game-box mb-2 w-full max-w-xs py-1.5 text-center">
             <p className="game-box-label">MATCH</p>
             <p className="font-mono text-center text-[10px] sm:text-xs" style={{ color: "var(--glitch-teal)" }}>
               {displayName} vs {rumbleOpponent || "…"}
@@ -253,7 +253,7 @@ export function GameCanvas() {
           </div>
 
           {battlePhase === "fighting" && (
-            <div className="game-box w-full max-w-md py-1.5">
+            <div className="game-box w-full max-w-md py-1.5 text-center">
               <p className="game-box-label">BATTLE SIMULATOR</p>
               <p
                 className="min-h-[2rem] animate-pulse text-center font-mono text-[9px] leading-relaxed text-gray-300 sm:text-[10px]"
@@ -266,7 +266,7 @@ export function GameCanvas() {
 
           {battlePhase === "result" && (
             <div
-              className="mx-auto w-full max-w-sm rounded-xl border-2 px-4 py-5 sm:py-6"
+              className="mx-auto flex w-full max-w-sm flex-col items-center rounded-xl border-2 px-4 py-5 text-center sm:py-6"
               style={{
                 background: battleWon
                   ? "linear-gradient(180deg, rgba(0,212,170,0.12) 0%, rgba(20,12,28,0.95) 50%)"
@@ -291,16 +291,18 @@ export function GameCanvas() {
                     : "House wins."}
                 </p>
               )}
-              <button
-                type="button"
-                onClick={() => {
-                  setLastBetResult(null);
-                  setBattlePhase("idle");
-                }}
-                className="mt-4 pixel-btn pixel-btn-accent font-pixel text-[10px] sm:text-xs"
-              >
-                START YOUR REVENGE
-              </button>
+              <div className="mt-4 flex w-full justify-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLastBetResult(null);
+                    setBattlePhase("idle");
+                  }}
+                  className="pixel-btn pixel-btn-accent font-pixel text-[10px] sm:text-xs"
+                >
+                  START YOUR REVENGE
+                </button>
+              </div>
             </div>
           )}
         </div>

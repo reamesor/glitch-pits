@@ -15,8 +15,9 @@
   animation: cursor-pulse 0.6s ease-in-out infinite;
 }
 
-/* App header: slick glass bar */
+/* App header: slick glass bar — comfortable height and spacing */
 .app-header {
+  min-height: 52px;
   background: linear-gradient(180deg, rgba(18, 14, 22, 0.97) 0%, rgba(8, 6, 12, 0.99) 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -27,6 +28,11 @@
     0 0 48px rgba(255, 105, 180, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.02);
   transition: border-color 0.2s, box-shadow 0.2s;
+}
+@media (min-width: 640px) {
+  .app-header {
+    min-height: 56px;
+  }
 }
 .app-header:hover {
   border-bottom-color: rgba(255, 105, 180, 0.45);
@@ -117,12 +123,18 @@
   letter-spacing: 0.04em;
 }
 
-/* Header logo: breathing room + hover glow */
+/* Header logo: right size, breathing room + hover glow */
 .header-logo {
   letter-spacing: 0.02em;
 }
 .header-logo .header-logo-btn {
   opacity: 0.95;
+  min-height: 36px;
+}
+@media (min-width: 640px) {
+  .header-logo .header-logo-btn {
+    min-height: 40px;
+  }
 }
 .header-logo .header-logo-btn:hover {
   opacity: 1;

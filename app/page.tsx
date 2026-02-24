@@ -151,19 +151,19 @@ export default function Home() {
       <WalletSync />
       <div className="bg-static" />
       {/* Top Bar — logo left, nav right */}
-      <header className="app-header relative flex shrink-0 items-center justify-between gap-4 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
+      <header className="app-header relative flex shrink-0 items-center justify-between gap-6 px-4 py-3 sm:gap-8 sm:px-6 sm:py-4">
         <h1 className="header-logo z-10 shrink-0">
           <button
             type="button"
             onClick={() => setShowLandingView(true)}
-            className="header-logo-btn flex items-center rounded-md py-2 pl-2 pr-3 transition-all sm:py-2.5 sm:pl-3 sm:pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)]"
+            className="header-logo-btn flex items-center rounded-md py-2.5 pl-3 pr-4 transition-all sm:py-3 sm:pl-4 sm:pr-5 focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)]"
             title="Back to landing"
           >
-            <GlitchPitsLogo size="lg" className="block" />
+            <GlitchPitsLogo size="md" className="block" />
           </button>
         </h1>
 
-        <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
+        <div className="z-10 flex flex-wrap items-center justify-end gap-2 sm:gap-3">
           <div className="flex items-center gap-1.5">
             <button
               type="button"

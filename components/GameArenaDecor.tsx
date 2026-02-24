@@ -1,46 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { PixelCharacter } from "@/components/PixelCharacter";
-import { CHARACTER_PRESETS } from "@/lib/characterPresets";
 import { DailySpinPanel } from "@/components/DailySpinPanel";
 import { SnakePanel } from "@/components/SnakePanel";
 
-/** Left panel: decorative content + optional Daily Spin and Snake (collapsed by default). */
+/** Left panel: Mini games (Daily Spin, Snake) only. */
 export function GameArenaDecor() {
-  const presets = CHARACTER_PRESETS.slice(0, 5);
   const [dailySpinOpen, setDailySpinOpen] = useState(false);
   const [snakeOpen, setSnakeOpen] = useState(false);
 
   return (
     <aside
-      className="arena-decor relative hidden min-h-0 w-[140px] shrink-0 flex-col border-r-2 border-[var(--glitch-pink)]/30 bg-[var(--bg-darker)]/80 py-4 md:flex lg:w-[180px]"
+      className="arena-decor relative flex min-h-0 w-[140px] shrink-0 flex-col overflow-y-auto border-r-2 border-[var(--glitch-pink)]/30 bg-[var(--bg-darker)]/80 py-4 lg:w-[180px]"
     >
       <div className="arena-decor-grid pointer-events-none absolute inset-0 opacity-[0.06]" aria-hidden />
-      {/* Decorative top: scrolls if needed */}
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto">
-        <p className="font-pixel text-[7px] uppercase tracking-widest text-[var(--glitch-pink)]/80">
-          Stake it
-        </p>
-        <p className="text-center font-mono text-[8px] leading-tight text-gray-500">
-          Multiply or burn
-        </p>
-        <div className="flex flex-col items-center gap-3">
-          {presets.map((p, i) => (
-            <div
-              key={p.id}
-              className="animate-pixel-float opacity-70"
-              style={{ animationDelay: `${i * 0.2}s` }}
-            >
-              <PixelCharacter characterId={p.id} size="sm" className="scale-75 lg:scale-90" />
-            </div>
-          ))}
-        </div>
-        <p className="font-mono text-[7px] text-gray-600">THE PIT</p>
-      </div>
-
-      {/* Mini features: always visible at bottom */}
-      <div className="relative z-10 mt-2 shrink-0 border-t border-[var(--glitch-pink)]/20 pt-3">
+      {/* Mini features at TOP so they're always visible */}
+      <div className="relative z-10 shrink-0 pb-3 border-b border-[var(--glitch-pink)]/20">
         <p className="mb-2 text-center font-pixel text-[6px] uppercase tracking-wider text-[var(--glitch-pink)]/60">
           Mini
         </p>

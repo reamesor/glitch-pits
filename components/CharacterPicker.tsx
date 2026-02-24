@@ -22,10 +22,10 @@ export function CharacterPicker({ selectedId, onSelect, compact = false }: Chara
             key={preset.id}
             type="button"
             onClick={() => onSelect(preset.id)}
-            className={`flex flex-col items-center justify-center gap-0 rounded border p-1.5 transition min-w-0 sm:p-2 ${
+            className={`flex flex-col items-center justify-center gap-0 rounded p-1.5 transition min-w-0 sm:p-2 ${
               selectedId === preset.id
-                ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 shadow-[0_0_8px_rgba(0,212,170,0.35)]"
-                : "border-[#4a4a4a] bg-[#2a2a2a]/80 hover:border-[var(--glitch-pink)]/50 hover:bg-[var(--glitch-pink)]/10"
+                ? "bg-[var(--glitch-teal)]/20 shadow-[0_0_8px_rgba(0,212,170,0.35)]"
+                : "bg-[#2a2a2a]/80 hover:bg-[var(--glitch-pink)]/10"
             }`}
           >
             <PixelCharacter

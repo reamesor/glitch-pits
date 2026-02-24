@@ -134,31 +134,31 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
   };
 
   return (
-    <div className="daily-spin-panel rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-2">
-      <div className="mb-1.5 flex items-center justify-between">
-        <span className="font-pixel text-[7px] text-[var(--glitch-pink)]">DAILY SPIN</span>
+    <div className="daily-spin-panel w-full rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-pink)]">DAILY SPIN</span>
         {onClose && (
-          <button type="button" onClick={onClose} className="font-mono text-[7px] text-gray-500 hover:text-white" aria-label="Close">
+          <button type="button" onClick={onClose} className="font-mono text-[8px] text-gray-500 hover:text-white" aria-label="Close">
             CLOSE
           </button>
         )}
       </div>
       {!canSpin ? (
-        <div className="py-2 text-center">
-          <p className="font-pixel text-[7px] text-gray-400">3 SPINS USED</p>
-          <p className="mt-1 font-mono text-[9px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
+        <div className="py-3 text-center">
+          <p className="font-pixel text-[8px] text-gray-400">3 SPINS USED</p>
+          <p className="mt-2 font-mono text-[10px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
         </div>
       ) : (
         <>
-          <div className="mb-1.5 flex justify-center gap-0.5">
+          <div className="mb-2 flex justify-center gap-1 sm:gap-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="flex h-8 w-8 items-center justify-center rounded border border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] text-base">
+              <div key={i} className="flex h-12 w-12 flex-1 max-w-14 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] text-2xl sm:h-14 sm:w-14 sm:text-3xl">
                 {SYMBOLS[displayReels[i]]}
               </div>
             ))}
           </div>
           {result !== null && (
-            <p className="mb-1 text-center font-pixel text-[8px] animate-pulse" style={{ color: "var(--glitch-pink)" }}>
+            <p className="mb-2 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
               +{result} PITS
             </p>
           )}
@@ -166,7 +166,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
             type="button"
             onClick={spin}
             disabled={spinning}
-            className="w-full rounded border border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-1 font-pixel text-[7px] text-white hover:border-[var(--glitch-teal)] hover:bg-[var(--g-blue)]/80 hover:text-[#0a0a0a] disabled:opacity-50"
+            className="w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-2 font-pixel text-[8px] text-white hover:border-[var(--glitch-teal)] hover:bg-[var(--g-blue)]/80 hover:text-[#0a0a0a] disabled:opacity-50 sm:text-[9px]"
           >
             {spinning ? "…" : `SPIN (${triesLeft} left)`}
           </button>

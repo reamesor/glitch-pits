@@ -138,11 +138,9 @@
 }
 .header-logo .header-logo-btn:hover {
   opacity: 1;
-  box-shadow: 0 0 20px rgba(255, 105, 180, 0.25);
-  border-radius: 6px;
 }
 .header-logo .header-logo-btn:active {
-  box-shadow: 0 0 12px rgba(255, 105, 180, 0.2);
+  opacity: 1;
 }
 
 .app-header-status {

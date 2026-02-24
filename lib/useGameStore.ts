@@ -2,8 +2,29 @@ import { create } from "zustand";
 
 const STARTING_TOKENS = 1000; // Imaginary tokens when joiner enters a character
 const DASHBOARD_STORAGE_PREFIX = "glitch-pits-dashboard-";
+const PLAYER_NAME_PREFIX = "glitch-pits-player-name-";
 export const WALLET_STORAGE_KEY = "glitch-pits-wallet";
 export const CHARACTER_STORAGE_KEY = "glitch-pits-character";
+
+function loadPlayerNameForWallet(address: string): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const raw = localStorage.getItem(PLAYER_NAME_PREFIX + address.toLowerCase());
+    return raw?.trim() ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function savePlayerNameForWallet(address: string, name: string) {
+  if (typeof window === "undefined") return;
+  try {
+    if (name.trim()) localStorage.setItem(PLAYER_NAME_PREFIX + address.toLowerCase(), name.trim());
+    else localStorage.removeItem(PLAYER_NAME_PREFIX + address.toLowerCase());
+  } catch {
+    // ignore
+  }
+}
 
 export interface DashboardStats {
   totalWagered: number;
@@ -121,10 +142,22 @@ function loadWalletFromStorage(): string | null {
   return null;
 }
 
+function getInitialWalletAndName(): { walletAddress: string | null; playerName: string } {
+  if (typeof window === "undefined") return { walletAddress: null, playerName: "" };
+  const addr = loadWalletFromStorage();
+  return {
+    walletAddress: addr,
+    playerName: addr ? loadPlayerNameForWallet(addr) : "",
+  };
+}
+
+const initialWallet = getInitialWalletAndName();
+
 export const useGameStore = create<GameState & GameActions>((set) => ({
   ...initialState,
   selectedCharacterId: typeof window !== "undefined" ? loadSelectedCharacterId() : "0",
-  walletAddress: typeof window !== "undefined" ? loadWalletFromStorage() : null,
+  walletAddress: initialWallet.walletAddress,
+  playerName: initialWallet.playerName || initialState.playerName,
 
   setBalance: (balance) => set({ mockBalance: balance }),
 
@@ -143,7 +176,12 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
 
   setPlayerId: (id) => set({ playerId: id }),
 
-  setPlayerName: (name) => set({ playerName: name }),
+  setPlayerName: (name) =>
+    set((state) => {
+      const trimmed = name.trim();
+      if (state.walletAddress) savePlayerNameForWallet(state.walletAddress, trimmed);
+      return { playerName: trimmed };
+    }),
 
   setCharacterCount: (count) => set({ characterCount: count }),
   setVictoryData: (data) => set({ victoryData: data }),
@@ -167,6 +205,7 @@ export const useGameStore = create<GameState & GameActions>((set) => ({
       const next = { ...state, walletAddress: address || null };
       if (address) {
         next.dashboardStats = loadDashboardFromStorage(address);
+        next.playerName = loadPlayerNameForWallet(address) || state.playerName;
         if (typeof window !== "undefined") {
           try {
             localStorage.setItem(WALLET_STORAGE_KEY, address);

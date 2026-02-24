@@ -17,6 +17,8 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
   const [pasteAddress, setPasteAddress] = useState("");
   const [viewingStats, setViewingStats] = useState<DashboardStats | null>(null);
   const [copied, setCopied] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [draftName, setDraftName] = useState("");
   const walletAddress = useGameStore((s) => s.walletAddress);
   const dashboardStats = useGameStore((s) => s.dashboardStats);
   const mockBalance = useGameStore((s) => s.mockBalance);
@@ -25,6 +27,7 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
   const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
   const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const playerName = useGameStore((s) => s.playerName);
+  const setPlayerName = useGameStore((s) => s.setPlayerName);
   const preset = getCharacterPreset(selectedCharacterId);
 
   const net = dashboardStats.totalWon - dashboardStats.totalLost;
@@ -114,17 +117,67 @@ export function DashboardModal({ onClose }: DashboardModalProps) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="game-box-label">PROFILE</p>
-                  <p className="font-mono text-base font-semibold text-white">
-                    {playerName || "Gladiator"}
-                  </p>
-                  <p className="font-mono text-xs text-gray-500">{preset.name}</p>
-                  <button
-                    type="button"
-                    onClick={() => setShowPicker((v) => !v)}
-                    className="mt-1 font-pixel text-[9px] text-[var(--glitch-teal)] hover:underline"
-                  >
-                    {showPicker ? "HIDE PICKER" : "CHANGE CHARACTER"}
-                  </button>
+                  {editingName ? (
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      <input
+                        type="text"
+                        value={draftName}
+                        onChange={(e) => setDraftName(e.target.value)}
+                        placeholder="Gladiator name"
+                        maxLength={24}
+                        className="min-w-0 flex-1 border-2 border-[var(--glitch-teal)]/50 bg-[#1a1a1a] px-2 py-1 font-mono text-sm text-white placeholder-gray-500"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const name = draftName.trim();
+                          if (name) setPlayerName(name);
+                          setEditingName(false);
+                          setDraftName("");
+                        }}
+                        className="shrink-0 border border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 px-2 py-1 font-pixel text-[8px] text-[var(--glitch-teal)]"
+                      >
+                        SAVE
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingName(false);
+                          setDraftName("");
+                        }}
+                        className="shrink-0 font-mono text-[10px] text-gray-500 hover:text-gray-400"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="font-mono text-base font-semibold text-white">
+                        {playerName || "Gladiator"}
+                      </p>
+                      <p className="font-mono text-xs text-gray-500">{preset.name}</p>
+                      <div className="mt-1 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDraftName(playerName || "Gladiator");
+                            setEditingName(true);
+                          }}
+                          className="font-pixel text-[9px] text-[var(--glitch-teal)] hover:underline"
+                        >
+                          RENAME GLADIATOR
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowPicker((v) => !v)}
+                          className="font-pixel text-[9px] text-[var(--glitch-teal)] hover:underline"
+                        >
+                          {showPicker ? "HIDE PICKER" : "CHANGE CHARACTER"}
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
 

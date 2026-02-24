@@ -6,7 +6,7 @@ import { soundManager } from "@/lib/soundManager";
 
 const W = 14;
 const H = 20;
-const CELL = 10;
+const CELL = 12;
 const CANVAS_W = W * CELL;
 const CANVAS_H = H * CELL;
 const PITS_CAP = 20;
@@ -20,7 +20,8 @@ interface SnakePanelProps {
 export function SnakePanel({ onClose }: SnakePanelProps) {
   const addToBalance = useGameStore((s) => s.addToBalance);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [status, setStatus] = useState<"idle" | "playing" | "gameover">("idle");
+  const [status, setStatus] = useState<"idle" | "countdown" | "playing" | "gameover">("idle");
+  const [countdown, setCountdown] = useState(3);
   const [score, setScore] = useState(0);
   const [earned, setEarned] = useState(0);
   const [confirmClose, setConfirmClose] = useState(false);
@@ -33,9 +34,10 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   });
 
   const startGame = useCallback(() => {
-    setStatus("playing");
     setScore(0);
     setEarned(0);
+    setCountdown(3);
+    targetRef.current = null;
     const cx = Math.floor(W / 2);
     const cy = Math.floor(H / 2);
     const snake = [{ x: cx - 2, y: cy }, { x: cx - 1, y: cy }, { x: cx, y: cy }];
@@ -45,7 +47,19 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
       food = { x: cx + 4, y: cy };
     }
     gameRef.current = { snake, dir: "right", food, loop: null };
+    setStatus("countdown");
   }, []);
+
+  // 3-second countdown then start playing
+  useEffect(() => {
+    if (status !== "countdown") return;
+    if (countdown <= 0) {
+      setStatus("playing");
+      return;
+    }
+    const t = setTimeout(() => setCountdown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [status, countdown]);
 
   const spawnFood = useCallback((snake: { x: number; y: number }[]) => {
     const set = new Set(snake.map((s) => `${s.x},${s.y}`));
@@ -165,7 +179,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   }, [status]);
 
   useEffect(() => {
-    if (status !== "playing") return;
+    if (status !== "playing" && status !== "countdown") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -200,7 +214,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   }, [status]);
 
   const handleClose = () => {
-    if (status === "playing" && onClose) {
+    if ((status === "playing" || status === "countdown") && onClose) {
       setConfirmClose(true);
       return;
     }
@@ -208,9 +222,9 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   };
 
   return (
-    <div className="snake-panel rounded border border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-2">
-      <div className="mb-1.5 flex items-center justify-between">
-        <span className="font-pixel text-[7px] text-[var(--glitch-teal)]">SNAKE</span>
+    <div className="snake-panel flex min-h-0 w-full flex-col rounded border border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-teal)]">SNAKE</span>
         {onClose && (
           <button type="button" onClick={handleClose} className="font-mono text-[7px] text-gray-500 hover:text-white" aria-label="Close">
             CLOSE
@@ -228,6 +242,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
                 if (g?.loop) clearInterval(g.loop);
                 if (gameRef.current) gameRef.current.loop = null;
                 setStatus("idle");
+                setCountdown(3);
                 setConfirmClose(false);
                 onClose?.();
               }}
@@ -245,30 +260,41 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
           </div>
         </div>
       )}
-      <canvas
-        ref={canvasRef}
-        width={CANVAS_W}
-        height={CANVAS_H}
-        className="mx-auto block rounded border border-[var(--glitch-teal)]/30 cursor-crosshair"
-        style={{ width: CANVAS_W, height: CANVAS_H, imageRendering: "pixelated" }}
-      />
-      <p className="mt-1 text-center font-mono text-[7px] text-gray-500">Score: {score} · Arrow keys / WASD or cursor</p>
+      <div className="min-h-0 w-full flex-1 flex items-center justify-center">
+        <canvas
+          ref={canvasRef}
+          width={CANVAS_W}
+          height={CANVAS_H}
+          className="w-full max-w-full h-auto block rounded border border-[var(--glitch-teal)]/30 cursor-crosshair"
+          style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
+        />
+      </div>
+      <p className="mt-2 text-center font-mono text-[7px] sm:text-[8px] text-gray-500">
+        {status === "playing" && `Score: ${score} · Arrow keys / WASD or cursor`}
+        {status === "idle" && "Arrow keys / WASD or cursor"}
+        {status === "gameover" && `Score: ${score}`}
+      </p>
+      {status === "countdown" && (
+        <p className="mt-2 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
+          Get ready — {countdown}
+        </p>
+      )}
       {status === "idle" && (
         <button
           type="button"
           onClick={startGame}
-          className="mt-1.5 w-full rounded border border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1 font-pixel text-[7px] text-[var(--glitch-teal)]"
+          className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[8px] text-[var(--glitch-teal)] sm:text-[9px]"
         >
           [ START ]
         </button>
       )}
       {status === "gameover" && (
-        <div className="mt-1.5 text-center">
-          <p className="font-pixel text-[8px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
+        <div className="mt-2 text-center">
+          <p className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
           <button
             type="button"
             onClick={startGame}
-            className="mt-1 w-full rounded border border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1 font-pixel text-[7px]"
+            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[8px] sm:text-[9px]"
           >
             PLAY AGAIN
           </button>

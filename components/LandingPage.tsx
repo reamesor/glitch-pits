@@ -150,7 +150,7 @@ export function LandingPage({
             <button
               type="button"
               onClick={onEnter}
-              className="landing-cta-wallet landing-cta-same-size pixel-btn w-[220px] py-2.5 font-pixel text-[9px] sm:text-[10px]"
+              className="landing-cta-accent landing-cta-same-size pixel-btn pixel-btn-accent w-[220px] py-2.5 font-pixel text-[9px] sm:text-[10px]"
               title="Connect wallet to play with real PITS"
             >
               ENTER WITH WALLET

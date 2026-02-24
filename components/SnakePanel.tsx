@@ -25,7 +25,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   const [score, setScore] = useState(0);
   const [earned, setEarned] = useState(0);
   const [confirmClose, setConfirmClose] = useState(false);
-  const gameRef = useRef<{ snake: { x: number; y: number }[]; dir: Dir; food: { x: number; y: number }; loop: number | null }>({
+  const gameRef = useRef<{ snake: { x: number; y: number }[]; dir: Dir; food: { x: number; y: number }; loop: ReturnType<typeof setInterval> | null }>({
     snake: [],
     dir: "right",
     food: { x: 0, y: 0 },

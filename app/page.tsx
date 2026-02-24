@@ -216,23 +216,23 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content: fit viewport, no scroll */}
-      <div className="flex min-h-0 flex-1 flex-col gap-1 p-1.5 sm:flex-row sm:gap-2 sm:p-2">
-        <section className="arena-section flex min-h-0 min-w-0 flex-1 items-stretch overflow-hidden sm:flex-row">
+      {/* Main Content: equal gaps and symmetric side panels */}
+      <div className="flex min-h-0 flex-1 flex-col gap-2 p-2 sm:flex-row sm:gap-4 sm:p-4">
+        <section className="arena-section flex min-h-0 min-w-0 flex-1 items-stretch gap-2 overflow-hidden sm:flex-row sm:gap-4">
           <GameArenaDecor />
-          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)] px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-hidden bg-[var(--bg-dark)] px-3 py-2 sm:px-5 sm:py-3">
             <GameCanvas />
           </div>
         </section>
-        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-3 sm:max-h-none sm:w-72 lg:w-80">
-          <div className="game-box shrink-0 px-4 py-3 sm:px-5 sm:py-4">
+        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-64 lg:w-72">
+          <div className="game-box shrink-0 px-3 py-2 sm:px-4 sm:py-2.5">
             <CharacterPicker
               selectedId={selectedCharacterId}
               onSelect={setSelectedCharacterId}
               compact
             />
           </div>
-          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-2.5 sm:px-5 sm:py-3">
+          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-3 py-2 sm:px-4 sm:py-2.5">
             <div className="min-h-0 flex-1 overflow-hidden">
               <GlitchPopper />
             </div>

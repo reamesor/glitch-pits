@@ -13,10 +13,10 @@ function getContext(): AudioContext | null {
   return audioContext;
 }
 
-// Tense, curious ascending pattern — 4 notes per bar, ~0.4s per note
-const BATTLE_FREQS = [261.63, 293.66, 329.63, 349.23]; // C4, D4, E4, F4
-const BATTLE_NOTE_LEN = 0.25;
-const BATTLE_BAR_MS = 700;
+// Upbeat, punchy ascending pattern — fun fight energy
+const BATTLE_FREQS = [293.66, 329.63, 392, 523.25]; // D4, E4, G4, C5
+const BATTLE_NOTE_LEN = 0.2;
+const BATTLE_BAR_MS = 580;
 
 function scheduleBattleBar() {
   const ctx = getContext();
@@ -47,7 +47,7 @@ export function startBattleSound(): void {
   if (!ctx) return;
   stopBattleSound();
   battleGainNode = ctx.createGain();
-  battleGainNode.gain.value = 0.28;
+  battleGainNode.gain.value = 0.26;
   battleGainNode.connect(ctx.destination);
   battleNextTime = ctx.currentTime;
   scheduleBattleBar();

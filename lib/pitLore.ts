@@ -98,12 +98,72 @@ const WINNER_STAKES: string[] = [
   "CRITICAL ERROR: {Victim} has been permanently formatted.",
 ];
 
+// Pit chronicles: round-like actions, crafting, mishaps, defending
+const STORY_ROUNDS: string[] = [
+  "{Killer} set a trap. {Victim} walked right into it.",
+  "{Victim} was taming a glitch-pig when {Killer} struck from the shadows.",
+  "{Killer} crafted a fishing rod. {Victim} was the first catch.",
+  "{Victim} was surprised by goblins but defended with their fists. Little parasitic buggers.",
+  "{Killer} is hoarding scrap metal and biding their time. {Victim} should run.",
+  "{Victim} learned esoteric secrets... lightning strike! {Killer} felt it.",
+  "{Killer} laid a trap. {Victim} stepped in it and screamed.",
+  "{Victim} tried to tame a glitch-beast. It bit back. {Killer} finished the job.",
+  "{Killer} forged a blade from arena scrap. {Victim} was the test cut.",
+  "{Victim} defended against a swarm. \"Little parasitic buggers.\" Then {Killer} showed up.",
+  "{Killer} bided their time in the static. {Victim} never saw it coming.",
+  "{Victim} unlocked a forbidden skill. {Killer} copied it and used it first.",
+  "{Killer} set a trap. {Victim} triggered it. The Pit cheered.",
+  "{Victim} was gathering resources when {Killer} raided their inventory.",
+  "{Killer} learned an esoteric secret. {Victim} became the demonstration.",
+  "{Victim} built a barricade. {Killer} went around it.",
+  "{Killer} tamed a glitch-wolf. {Victim} became its first meal.",
+  "{Victim} was crafting when {Killer} threw a wrench. Literally.",
+  "{Killer} hoarded power-ups. {Victim} ran in under-leveled.",
+  "{Victim} defended with their fists. Brave. Then {Killer} pulled a weapon.",
+];
+
+// Irreverent / chaotic story beats
+const STORY_CHAOS: string[] = [
+  "{Victim} accidentally sent their nudes to the Pit's group chat. {Killer} took advantage.",
+  "{Killer} posted cringe. {Victim} died of secondhand embarrassment.",
+  "{Victim} tried to respawn. The queue was full. {Killer} closed the ticket.",
+  "{Killer} said \"skill issue\" and pressed the button. {Victim} agreed too late.",
+  "{Victim} rage-quit. {Killer} counted it as a win.",
+  "{Killer} distracted {Victim} with a fake drop. It worked.",
+  "{Victim} blamed lag. {Killer} had 5 bars. Ouch.",
+  "{Killer} sent \"gg ez\" before the fight ended. {Victim} tilted into the void.",
+  "{Victim} forgot to save. {Killer} was the autosave.",
+  "{Killer} pulled the plug. {Victim} was still in the game.",
+  "{Victim} tried to report {Killer}. The report bounced. So did {Victim}.",
+  "{Killer} offered a truce. {Victim} reached for a handshake. It was a trap.",
+  "{Victim} went AFK to get snacks. {Killer} did not wait.",
+  "{Killer} said \"nothing personal.\" It was very personal.",
+  "{Victim} challenged {Killer} to a duel. They accepted. It was short.",
+];
+
+// More environmental / round-announcement style
+const STORY_ARENA: string[] = [
+  "Round in progress. {Killer} and {Victim} trade blows in the static.",
+  "The Pit narrows. {Killer} corners {Victim}.",
+  "{Victim} found a power-up. {Killer} found {Victim}.",
+  "A glitch storm hits. {Killer} used it. {Victim} did not.",
+  "Supply drop! {Killer} got the weapon. {Victim} got the box.",
+  "{Victim} took high ground. {Killer} took the win.",
+  "The crowd chants. {Killer} delivers. {Victim} exits stage left.",
+  "{Killer} and {Victim} clash. One leaves. One does not.",
+  "Arena shrink. {Victim} had nowhere to run. {Killer} had the blade.",
+  "{Victim} went for the objective. {Killer} was the objective.",
+];
+
 const ALL_LORE: string[] = [
   ...TECHNICAL,
   ...GLITCH_HORROR,
   ...HUMOROUS,
   ...ARENA_ENVIRONMENTAL,
   ...WINNER_STAKES,
+  ...STORY_ROUNDS,
+  ...STORY_CHAOS,
+  ...STORY_ARENA,
 ];
 
 function pick<T>(arr: T[]): T {

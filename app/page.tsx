@@ -147,58 +147,56 @@ export default function Home() {
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
       <WalletSync />
       <div className="bg-static" />
-      {/* Top Bar — slick glass header */}
-      <header className="app-header flex shrink-0 items-center justify-between gap-3 px-3 py-2 sm:px-5 sm:py-2.5">
+      {/* Top Bar — glass header, grouped layout */}
+      <header className="app-header flex shrink-0 items-center justify-between gap-2 px-3 py-2 sm:gap-3 sm:px-4 sm:py-2">
         <h1 className="shrink-0">
           <button
             type="button"
             onClick={() => setShowLandingView(true)}
-            className="focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)] rounded"
+            className="focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)] rounded transition opacity-90 hover:opacity-100"
             title="Back to landing"
           >
             <GlitchPitsLogo size="lg" />
           </button>
         </h1>
 
-          <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3 md:gap-4">
+        <div className="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={toggleGameMusic}
-            className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-mono text-[9px] sm:px-3 sm:py-2"
+            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
             title={gameMusicMuted ? "Play background music" : "Mute background music"}
           >
             {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
           </button>
           <div
-            className="app-header-balance rounded-lg px-3 py-1.5 text-center sm:px-4 sm:py-2"
+            className="app-header-balance rounded px-2.5 py-1 text-center sm:px-3 sm:py-1.5"
             title="Live balance — updates when you win or lose"
           >
-            <p className="font-mono text-[8px] uppercase tracking-widest text-gray-500 sm:text-[9px]">Balance</p>
+            <p className="font-mono text-[7px] uppercase tracking-widest text-gray-500 sm:text-[8px]">Balance</p>
             <p
-              className={`font-pixel text-base sm:text-lg md:text-xl tabular-nums ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
+              className={`font-pixel text-sm sm:text-base md:text-lg tabular-nums ${balanceJustUpdated ? "balance-updated" : "animate-pulse-glow"}`}
               style={{ color: "var(--glitch-teal)" }}
             >
               {mockBalance.toLocaleString()}
             </p>
-            <p className="font-mono text-[8px] font-medium uppercase tracking-wider text-gray-500 sm:text-[9px]">PITS</p>
+            <p className="font-mono text-[7px] font-medium uppercase tracking-wider text-gray-500 sm:text-[8px]">PITS</p>
           </div>
-
-          <span className="hidden font-mono text-[10px] text-gray-500 md:inline">
-            Forged: <span className="font-semibold" style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
+          <span className="app-header-forged hidden font-mono text-gray-400 md:inline-flex items-center gap-1">
+            Forged: <span className="font-semibold tabular-nums" style={{ color: "var(--glitch-teal)" }}>{characterCount}</span>
           </span>
-
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             <button
               type="button"
               onClick={() => setShowGameHelp(true)}
-              className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
+              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
             >
               HELP
             </button>
             <button
               type="button"
               onClick={() => setShowBlackMarket(true)}
-              className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
+              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
             >
               BLACK MARKET
             </button>
@@ -206,7 +204,7 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setShowDashboard(true)}
-                className="app-header-nav-btn rounded-md px-2.5 py-1.5 font-pixel text-[9px] sm:px-3 sm:py-2"
+                className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
               >
                 DASHBOARD
               </button>

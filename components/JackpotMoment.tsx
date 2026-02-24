@@ -40,8 +40,15 @@ export function JackpotMoment({ payout, onDone, durationMs = 2800 }: JackpotMome
           background: "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(255,215,0,0.4) 0%, rgba(255,105,180,0.2) 50%, transparent 70%)",
         }}
       />
-      {/* Jackpot card */}
-      <div className="relative font-pixel text-center jackpot-pop-in">
+      {/* Jackpot card — color square background */}
+      <div
+        className="relative font-pixel text-center jackpot-pop-in rounded-lg border-4 px-8 py-6 sm:px-10 sm:py-8"
+        style={{
+          background: "linear-gradient(145deg, rgba(20,12,28,0.96) 0%, rgba(40,20,50,0.98) 100%)",
+          borderColor: "var(--glitch-gold)",
+          boxShadow: "0 0 0 2px rgba(255,105,180,0.5), 0 0 40px rgba(255,215,0,0.25), inset 0 0 60px rgba(255,215,0,0.06)",
+        }}
+      >
         <p
           className="glitch-text text-xl sm:text-2xl md:text-3xl uppercase tracking-wider mb-1"
           data-text="BIG WIN"

@@ -24,6 +24,7 @@ export function GameCanvas() {
   const { socket } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
+  const walletAddress = useGameStore((s) => s.walletAddress);
   const lastBetResult = useGameStore((s) => s.lastBetResult);
   const playerName = useGameStore((s) => s.playerName);
   const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
@@ -31,6 +32,7 @@ export function GameCanvas() {
   const setLastBetResult = useGameStore((s) => s.setLastBetResult);
 
   const [amount, setAmount] = useState(100);
+  const [customAmountStr, setCustomAmountStr] = useState("");
   const [battlePhase, setBattlePhase] = useState<"idle" | "fighting" | "result">("idle");
   const [battleAmount, setBattleAmount] = useState(0);
   const [battleMultiplier, setBattleMultiplier] = useState(0);
@@ -54,6 +56,16 @@ export function GameCanvas() {
   const multiplier = getMultiplierForAmount(amount);
   const potentialWin = Math.floor(amount * multiplier);
   const displayName = playerName || "Warrior";
+  const canPlaceBet = (characterCount >= 1 || !!walletAddress) && amount >= 50 && amount <= mockBalance && !autobetRunning;
+
+  const handleCustomAmountBlur = () => {
+    const parsed = parseInt(customAmountStr.replace(/\D/g, ""), 10);
+    if (!Number.isNaN(parsed)) {
+      const clamped = Math.min(mockBalance, Math.max(50, parsed));
+      setAmount(clamped);
+    }
+    setCustomAmountStr("");
+  };
 
   // Battle-phase sound: start when fighting, stop when leaving
   useEffect(() => {
@@ -129,7 +141,8 @@ export function GameCanvas() {
     const completed = autobetDone + 1;
     const remaining = autobetLimit < 0 ? 1 : autobetLimit - completed;
     const balance = useGameStore.getState().mockBalance;
-    if (remaining <= 0 || balance < amount || characterCount < 1) {
+    const canBet = characterCount >= 1 || !!walletAddress;
+    if (remaining <= 0 || balance < amount || !canBet) {
       setAutobetRunning(false);
       return;
     }
@@ -139,10 +152,11 @@ export function GameCanvas() {
       handlePlaceBetRef.current?.();
     }, AUTOBET_DELAY_MS);
     return () => clearTimeout(t);
-  }, [battlePhase, autobetRunning, autobetLimit, autobetDone, amount, characterCount]);
+  }, [battlePhase, autobetRunning, autobetLimit, autobetDone, amount, characterCount, walletAddress]);
 
   const handlePlaceBet = useCallback(() => {
-    if (amount < 50 || amount > mockBalance || characterCount < 1) return;
+    const canBet = characterCount >= 1 || !!walletAddress;
+    if (amount < 50 || amount > mockBalance || !canBet) return;
 
     const betAmount = amount;
     const betMultiplier = multiplier;
@@ -181,7 +195,7 @@ export function GameCanvas() {
         unsub();
       }
     });
-  }, [amount, multiplier, mockBalance, characterCount, socket, displayName, setBalance, setLastBetResult]);
+  }, [amount, multiplier, mockBalance, characterCount, walletAddress, socket, displayName, setBalance, setLastBetResult]);
 
   const handlePlaceBetRef = useRef(handlePlaceBet);
   handlePlaceBetRef.current = handlePlaceBet;
@@ -283,149 +297,168 @@ export function GameCanvas() {
   return (
     <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
       <div className="flex w-full max-w-lg shrink-0 flex-col gap-1.5">
-      <div className="flex shrink-0 flex-wrap items-center justify-center gap-1.5">
-        <h2
-          className="font-pixel glitch-text text-center text-xs uppercase sm:text-sm"
-          data-text={`BET ON ${displayName.toUpperCase()}`}
-          style={{ color: "var(--g-blue)" }}
-        >
-          BET ON {displayName.toUpperCase()}
-        </h2>
-        <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
-      </div>
-      <p className="mb-2 shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
-        Pick your stake. Place your bet. Multiply or burn.
-      </p>
-
-      <div className="flex flex-col gap-1.5">
-        <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2.5 py-2">
-          <div>
-            <p className="game-box-label">BALANCE</p>
-            <p className="font-pixel text-base animate-pulse-glow sm:text-lg" style={{ color: "var(--glitch-teal)" }}>
-              {mockBalance.toLocaleString()} PITS
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-1.5">
-            {BET_AMOUNTS.map((a) => (
-              <button
-                key={a}
-                type="button"
-                onClick={() => setAmount(a)}
-                disabled={a > mockBalance}
-                className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:text-[9px] hover:scale-105 ${
-                  amount === a
-                    ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_8px_rgba(255,105,180,0.4)]"
-                    : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
-                }`}
-              >
-                {a}→{getMultiplierForAmount(a)}x
-              </button>
-            ))}
-          </div>
+        <div className="flex shrink-0 flex-wrap items-center justify-center gap-1.5">
+          <h2
+            className="font-pixel glitch-text text-center text-xs uppercase sm:text-sm"
+            data-text={`BET ON ${displayName.toUpperCase()}`}
+            style={{ color: "var(--g-blue)" }}
+          >
+            BET ON {displayName.toUpperCase()}
+          </h2>
+          <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
         </div>
-        <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
-          Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span>
+        <p className="mb-2 shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
+          Pick your stake. Place your bet. Multiply or burn.
         </p>
 
-        <button
-          type="button"
-          onClick={handlePlaceBet}
-          disabled={autobetRunning || amount > mockBalance || amount < 50 || characterCount < 1}
-          className="pixel-btn pixel-btn-accent pixel-btn-interactive w-full shrink-0 font-pixel text-[10px] sm:text-xs"
-        >
-          PLACE BET ({amount} PITS)
-        </button>
-
-        <div className="game-box shrink-0 py-1.5">
-          <p className="game-box-label">AUTOBET</p>
-          <div className="mb-1 flex flex-wrap gap-1">
-            {AUTOBET_OPTIONS.map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setAutobetLimit(n)}
-                disabled={autobetRunning}
-                className={`border-2 px-1.5 py-1 font-pixel text-[8px] transition-colors sm:text-[9px] ${
-                  autobetLimit === n
-                    ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20"
-                    : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
-                }`}
-              >
-                {n < 0 ? "∞" : n}
-              </button>
-            ))}
-          </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={startAutobet}
-              disabled={
-                autobetRunning ||
-                amount > mockBalance ||
-                amount < 50 ||
-                characterCount < 1
-              }
-              className="pixel-btn pixel-btn-interactive flex-1 text-[9px]"
-            >
-              START
-            </button>
-            <button
-              type="button"
-              onClick={stopAutobet}
-              disabled={!autobetRunning}
-              className="pixel-btn flex-1 border-red-500/50 text-[9px] text-red-400 disabled:opacity-50"
-            >
-              STOP
-            </button>
-          </div>
-          {autobetRunning && (
-            <div className="mt-1 space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-1.5 py-1 font-mono text-[8px]">
-              <p className="flex justify-between gap-2 text-gray-300">
-                <span>Completed</span>
-                <span className="tabular-nums">
-                  {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}
-                </span>
+        <div className="flex flex-col gap-1.5">
+          <div className="flex shrink-0 flex-wrap items-center justify-between gap-2 rounded border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2.5 py-2">
+            <div>
+              <p className="game-box-label">BALANCE</p>
+              <p className="font-pixel text-base animate-pulse-glow sm:text-lg" style={{ color: "var(--glitch-teal)" }}>
+                {mockBalance.toLocaleString()} PITS
               </p>
-              <p className="flex justify-between gap-2">
-                <span className="text-gray-500">Session</span>
-                <span
-                  className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {BET_AMOUNTS.map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => {
+                    setAmount(a);
+                    setCustomAmountStr("");
+                  }}
+                  disabled={a > mockBalance}
+                  className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:text-[9px] hover:scale-105 ${
+                    amount === a && !customAmountStr
+                      ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_8px_rgba(255,105,180,0.4)]"
+                      : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
+                  }`}
                 >
-                  {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
-                </span>
-              </p>
-              <p className="flex justify-between gap-2 text-gray-500">
-                <span>Status</span>
-                <span className="text-gray-400">
-                  {battlePhase === "idle" ? "Next in 1.4s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
-                </span>
+                  {a}→{getMultiplierForAmount(a)}x
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">
+              Or custom:{" "}
+            </p>
+            <input
+              type="text"
+              inputMode="numeric"
+              min={50}
+              max={mockBalance}
+              value={customAmountStr !== "" ? customAmountStr : BET_AMOUNTS.includes(amount) ? "" : String(amount)}
+              onChange={(e) => setCustomAmountStr(e.target.value.replace(/\D/g, ""))}
+              onBlur={handleCustomAmountBlur}
+              onKeyDown={(e) => e.key === "Enter" && handleCustomAmountBlur()}
+              placeholder={String(amount)}
+              className="w-20 border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2 py-1 font-mono text-[10px] tabular-nums text-white placeholder-gray-500 focus:border-[var(--glitch-pink)] focus:outline-none"
+            />
+            <span className="font-mono text-[9px] text-gray-500">PITS</span>
+          </div>
+          <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+            Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> ({getMultiplierForAmount(amount)}x)
+          </p>
+
+          <button
+            type="button"
+            onClick={handlePlaceBet}
+            disabled={!canPlaceBet}
+            className="pixel-btn pixel-btn-accent pixel-btn-interactive w-full shrink-0 font-pixel text-[10px] sm:text-xs disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            PLACE BET ({amount} PITS)
+          </button>
+
+          <div className="game-box shrink-0 py-1.5">
+            <p className="game-box-label">AUTOBET</p>
+            <div className="mb-1 flex flex-wrap gap-1">
+              {AUTOBET_OPTIONS.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setAutobetLimit(n)}
+                  disabled={autobetRunning}
+                  className={`border-2 px-1.5 py-1 font-pixel text-[8px] transition-colors sm:text-[9px] ${
+                    autobetLimit === n
+                      ? "border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20"
+                      : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
+                  }`}
+                >
+                  {n < 0 ? "∞" : n}
+                </button>
+              ))}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={startAutobet}
+                disabled={!canPlaceBet}
+                className="pixel-btn pixel-btn-interactive flex-1 font-pixel text-[9px]"
+              >
+                START
+              </button>
+              <button
+                type="button"
+                onClick={stopAutobet}
+                disabled={!autobetRunning}
+                className="pixel-btn flex-1 border-red-500/50 font-pixel text-[9px] text-red-400 disabled:opacity-50"
+              >
+                STOP
+              </button>
+            </div>
+            {autobetRunning && (
+              <div className="mt-1 space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-1.5 py-1 font-mono text-[8px]">
+                <p className="flex justify-between gap-2 text-gray-300">
+                  <span>Completed</span>
+                  <span className="tabular-nums">
+                    {autobetDone}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}
+                  </span>
+                </p>
+                <p className="flex justify-between gap-2">
+                  <span className="text-gray-500">Session</span>
+                  <span
+                    className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}
+                  >
+                    {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
+                  </span>
+                </p>
+                <p className="flex justify-between gap-2 text-gray-500">
+                  <span>Status</span>
+                  <span className="text-gray-400">
+                    {battlePhase === "idle" ? "Next in 1.4s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
+                  </span>
+                </p>
+              </div>
+            )}
+          </div>
+
+          {lastBetResult !== null && battlePhase === "idle" && (
+            <div
+              className={`shrink-0 rounded border-2 py-1 px-2 ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
+            >
+              <p className="font-mono text-[10px] font-semibold sm:text-xs">
+                {lastBetResult.won ? (
+                  <span style={{ color: "var(--glitch-teal)" }}>WON {lastBetResult.payout} PITS</span>
+                ) : (
+                  <span className="text-red-400">HOUSE WINS</span>
+                )}
               </p>
             </div>
           )}
         </div>
 
-        {lastBetResult !== null && battlePhase === "idle" && (
-          <div
-            className={`shrink-0 rounded border-2 py-1 px-2 ${lastBetResult.won ? "border-[var(--glitch-teal)]/50 bg-[rgba(0,212,170,0.06)]" : "border-red-500/40 bg-[rgba(220,38,38,0.06)]"}`}
-          >
-            <p className="font-mono text-[10px] font-semibold sm:text-xs">
-              {lastBetResult.won ? (
-                <span style={{ color: "var(--glitch-teal)" }}>WON {lastBetResult.payout} PITS</span>
-              ) : (
-                <span className="text-red-400">HOUSE WINS</span>
-              )}
-            </p>
-          </div>
+        {characterCount < 1 && !walletAddress && (
+          <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to enter the Pit.</p>
         )}
-      </div>
+        {characterCount < 1 && walletAddress && (
+          <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to customize your gladiator (optional).</p>
+        )}
 
-      {characterCount < 1 && (
-        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to enter the Pit.</p>
-      )}
-
-      <p className="mt-1.5 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
-        Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
-      </p>
+        <p className="mt-1.5 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+          Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
+        </p>
       </div>
       {jackpotPayout != null && (
         <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />

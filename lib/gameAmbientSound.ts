@@ -36,11 +36,11 @@ export function setGameMusicMuted(muted: boolean): void {
   if (muted) stopGameAmbientSound();
 }
 
-// Gentle 2-bar loop: soft chord tones (pit / tension vibe, stays in background)
-const GAME_FREQS = [196, 246.94, 293.66, 329.63, 392]; // G3, B3, D4, E4, G4 — minor-ish
-const GAME_NOTE_LEN = 0.28;
-const GAME_GAP = 0.08;
-const GAME_BAR_MS = 1600;
+// Upbeat 2-bar loop: major chord tones, fun pit vibe, stays in background
+const GAME_FREQS = [261.63, 329.63, 392, 523.25]; // C4, E4, G4, C5 — C major
+const GAME_NOTE_LEN = 0.2;
+const GAME_GAP = 0.06;
+const GAME_BAR_MS = 1200;
 
 function scheduleGameBar() {
   const ctx = getContext();
@@ -74,7 +74,7 @@ export function startGameAmbientSound(): void {
   gameMusicMuted = isGameMusicMuted();
   if (gameMusicMuted) return;
   gameGainNode = ctx.createGain();
-  gameGainNode.gain.value = 0.18;
+  gameGainNode.gain.value = 0.2;
   gameGainNode.connect(ctx.destination);
   gameNextTime = ctx.currentTime;
   scheduleGameBar();

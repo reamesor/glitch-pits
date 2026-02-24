@@ -17,29 +17,59 @@
 
 /* App header: slick glass bar */
 .app-header {
-  background: linear-gradient(180deg, rgba(20, 18, 22, 0.95) 0%, rgba(10, 8, 12, 0.98) 100%);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 105, 180, 0.2);
+  background: linear-gradient(180deg, rgba(18, 14, 22, 0.97) 0%, rgba(8, 6, 12, 0.99) 100%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 2px solid rgba(255, 105, 180, 0.35);
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.03),
-    0 4px 24px rgba(0, 0, 0, 0.4),
-    0 0 40px rgba(255, 105, 180, 0.04);
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 48px rgba(255, 105, 180, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.app-header:hover {
+  border-bottom-color: rgba(255, 105, 180, 0.45);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 24px rgba(0, 0, 0, 0.5),
+    0 0 56px rgba(255, 105, 180, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.02);
 }
 .app-header-balance {
-  background: linear-gradient(135deg, rgba(0, 212, 170, 0.08) 0%, rgba(0, 212, 170, 0.02) 100%);
-  border: 1px solid rgba(0, 212, 170, 0.35);
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, rgba(0, 212, 170, 0.12) 0%, rgba(0, 212, 170, 0.04) 100%);
+  border: 1px solid rgba(0, 212, 170, 0.4);
+  box-shadow: 0 0 20px rgba(0, 212, 170, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.app-header-balance:hover {
+  box-shadow: 0 0 24px rgba(0, 212, 170, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 .app-header-nav-btn {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.04);
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  min-height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
 }
 .app-header-nav-btn:hover {
-  border-color: rgba(255, 105, 180, 0.4);
-  background: rgba(255, 105, 180, 0.08);
-  box-shadow: 0 0 16px rgba(255, 105, 180, 0.12);
+  border-color: rgba(255, 105, 180, 0.5);
+  background: rgba(255, 105, 180, 0.12);
+  box-shadow: 0 0 20px rgba(255, 105, 180, 0.2);
+  transform: translateY(-1px);
+}
+.app-header-nav-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 12px rgba(255, 105, 180, 0.15);
+}
+.app-header-forged {
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 212, 170, 0.25);
+  background: rgba(0, 212, 170, 0.06);
+  font-size: 9px;
+  letter-spacing: 0.04em;
 }
 .app-header-status {
   padding: 4px 8px;

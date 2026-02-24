@@ -135,7 +135,7 @@ export function LandingPage({
                 <button
                   type="button"
                   onClick={onEnterFunMode}
-                  className="rounded-full border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/10 px-8 py-3 font-mono text-sm font-medium text-white shadow-[0_0_20px_rgba(0,212,170,0.25)] transition hover:bg-[var(--glitch-teal)]/25 hover:shadow-[0_0_32px_rgba(0,212,170,0.4)] sm:text-base"
+                  className="pixel-btn pixel-btn-accent pixel-btn-interactive px-4 py-2 font-pixel text-[8px] sm:text-[9px]"
                   title="Play with virtual PITS, no wallet connection"
                 >
                   TRY DEMO (FUN MODE)
@@ -144,7 +144,7 @@ export function LandingPage({
               <button
                 type="button"
                 onClick={onEnter}
-                className="rounded-full border-2 border-[var(--glitch-pink)]/70 bg-black/70 px-6 py-3 font-mono text-xs font-medium text-white/90 shadow-[0_0_16px_rgba(255,105,180,0.2)] transition hover:bg-[var(--glitch-pink)]/20 hover:shadow-[0_0_24px_rgba(255,105,180,0.35)] sm:text-sm"
+                className="pixel-btn pixel-btn-interactive px-5 py-2.5 font-pixel text-[9px] sm:text-[10px]"
                 title="Connect wallet to play with real PITS"
               >
                 ENTER WITH WALLET

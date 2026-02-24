@@ -143,6 +143,29 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
 
   useEffect(() => {
     if (status !== "playing") return;
+    const handle = (e: KeyboardEvent) => {
+      const g = gameRef.current;
+      if (!g) return;
+      const k = e.key;
+      if (k === "ArrowUp" || k === "w" || k === "W") {
+        if (g.dir !== "down") { g.dir = "up"; targetRef.current = null; }
+      }
+      if (k === "ArrowDown" || k === "s" || k === "S") {
+        if (g.dir !== "up") { g.dir = "down"; targetRef.current = null; }
+      }
+      if (k === "ArrowLeft" || k === "a" || k === "A") {
+        if (g.dir !== "right") { g.dir = "left"; targetRef.current = null; }
+      }
+      if (k === "ArrowRight" || k === "d" || k === "D") {
+        if (g.dir !== "left") { g.dir = "right"; targetRef.current = null; }
+      }
+    };
+    window.addEventListener("keydown", handle);
+    return () => window.removeEventListener("keydown", handle);
+  }, [status]);
+
+  useEffect(() => {
+    if (status !== "playing") return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -229,7 +252,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
         className="mx-auto block rounded border border-[var(--glitch-teal)]/30 cursor-crosshair"
         style={{ width: CANVAS_W, height: CANVAS_H, imageRendering: "pixelated" }}
       />
-      <p className="mt-1 text-center font-mono text-[7px] text-gray-500">Score: {score} · Move cursor to steer</p>
+      <p className="mt-1 text-center font-mono text-[7px] text-gray-500">Score: {score} · Arrow keys / WASD or cursor</p>
       {status === "idle" && (
         <button
           type="button"

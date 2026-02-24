@@ -19,16 +19,15 @@ const WEAPON_OPTIONS = [
 
 interface ForgeModalProps {
   onForge: (data: { name: string; clothes: string; weapon: string; characterId?: string }) => void;
-  connected?: boolean;
 }
 
-export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
+export function ForgeModal({ onForge }: ForgeModalProps) {
   const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
   const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const [name, setName] = useState("");
   const [clothes, setClothes] = useState("vest");
   const [weapon, setWeapon] = useState("sword");
-  const canForge = connected && name.trim().length > 0;
+  const canForge = name.trim().length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,11 +47,6 @@ export function ForgeModal({ onForge, connected = false }: ForgeModalProps) {
           <p className="mb-4 text-center text-base text-gray-400">
             Create your gladiator — name them, pick clothes and weapon — then get <strong>1,000 PITS</strong> added to your balance to play. Free.
           </p>
-          {!connected && (
-            <p className="mb-2 text-center text-sm text-amber-400">
-              Connect to a server first (see game area)
-            </p>
-          )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input

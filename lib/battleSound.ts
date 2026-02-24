@@ -20,7 +20,8 @@ const BATTLE_BAR_MS = 700;
 
 function scheduleBattleBar() {
   const ctx = getContext();
-  if (!ctx || !battleGainNode) return;
+  const gain = battleGainNode;
+  if (!ctx || !gain) return;
   const now = ctx.currentTime;
   if (battleNextTime < now) battleNextTime = now;
   BATTLE_FREQS.forEach((freq, i) => {
@@ -34,7 +35,7 @@ function scheduleBattleBar() {
     g.gain.linearRampToValueAtTime(0.04, t0 + BATTLE_NOTE_LEN * 0.6);
     g.gain.exponentialRampToValueAtTime(0.001, t0 + BATTLE_NOTE_LEN);
     osc.connect(g);
-    g.connect(battleGainNode);
+    g.connect(gain);
     osc.start(t0);
     osc.stop(t0 + BATTLE_NOTE_LEN);
   });

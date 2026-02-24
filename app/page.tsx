@@ -31,7 +31,7 @@ export default function Home() {
   const [showGameHelp, setShowGameHelp] = useState(false);
   const [showConnectToEnter, setShowConnectToEnter] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
-  const { socket, connected } = useSocket();
+  const { socket } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
   const isForged = useGameStore((s) => s.isForged);
@@ -67,10 +67,10 @@ export default function Home() {
   }, [mockBalance]);
 
   const handleForge = (data: { name: string; clothes: string; weapon: string; characterId?: string }) => {
-    if (!forgeCharacter() || !socket) return;
+    if (!forgeCharacter()) return;
     setPlayerName(data.name);
     if (data.characterId != null) setSelectedCharacterId(data.characterId);
-    socket.emit("forge", { name: data.name, clothes: data.clothes, weapon: data.weapon });
+    if (socket) socket.emit("forge", { name: data.name, clothes: data.clothes, weapon: data.weapon });
     addToBalance(1000); // +1000 PITS for entering the pit with a new character (initial 1000 + 1000 = 2000)
     setShowForge(false);
   };
@@ -214,10 +214,6 @@ export default function Home() {
               <ConnectWalletButton />
             )}
           </div>
-
-          <span className={`app-header-status font-mono ${connected ? "connected" : "offline"}`}>
-            {connected ? "● CONNECTED" : "○ OFFLINE"}
-          </span>
         </div>
       </header>
 
@@ -246,7 +242,7 @@ export default function Home() {
       </div>
 
       {/* Forge Modal */}
-      {showForge && <ForgeModal onForge={handleForge} connected={connected} />}
+      {showForge && <ForgeModal onForge={handleForge} />}
 
       {/* Game Help Modal */}
       {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}

@@ -44,7 +44,8 @@ const GAME_BAR_MS = 1600;
 
 function scheduleGameBar() {
   const ctx = getContext();
-  if (!ctx || !gameGainNode || gameMusicMuted) return;
+  const gain = gameGainNode;
+  if (!ctx || !gain || gameMusicMuted) return;
   const now = ctx.currentTime;
   if (gameNextTime < now) gameNextTime = now;
   GAME_FREQS.forEach((freq, i) => {
@@ -58,7 +59,7 @@ function scheduleGameBar() {
     g.gain.linearRampToValueAtTime(0.025, t0 + GAME_NOTE_LEN * 0.6);
     g.gain.exponentialRampToValueAtTime(0.001, t0 + GAME_NOTE_LEN);
     osc.connect(g);
-    g.connect(gameGainNode);
+    g.connect(gain);
     osc.start(t0);
     osc.stop(t0 + GAME_NOTE_LEN);
   });

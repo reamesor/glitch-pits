@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { useGameStore } from "@/lib/useGameStore";
 
+// Only connect to a socket server when explicitly configured (e.g. Railway). Otherwise app runs standalone.
 const SOCKET_URL =
   typeof window !== "undefined"
-    ? (process.env.NEXT_PUBLIC_SOCKET_URL || window.location.origin)
+    ? (process.env.NEXT_PUBLIC_SOCKET_URL?.trim() || "")
     : "";
 
 export function useSocket() {
@@ -22,6 +23,11 @@ export function useSocket() {
   const setTotalBurnedAllPits = useGameStore((s) => s.setTotalBurnedAllPits);
 
   useEffect(() => {
+    if (!SOCKET_URL) {
+      setSocket(null);
+      setConnected(false);
+      return;
+    }
     const s = io(SOCKET_URL, { autoConnect: true });
 
     s.on("connect", () => setConnected(true));
@@ -61,8 +67,9 @@ export function useSocket() {
     return () => {
       s.disconnect();
       setSocket(null);
+      setConnected(false);
     };
-  }, [addGlitchLog, setBalance, setPlayerId, setCharacterCount, setVictoryData, setLastBetResult, setTotalBurnedAllPits]);
+  }, [SOCKET_URL, addGlitchLog, setBalance, setPlayerId, setCharacterCount, setVictoryData, setLastBetResult, setTotalBurnedAllPits]);
 
   return { socket, connected };
 }

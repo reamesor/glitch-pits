@@ -20,7 +20,8 @@ const LANDING_BAR_MS = 1200;
 
 function scheduleLandingBar() {
   const ctx = getContext();
-  if (!ctx || !landingGainNode) return;
+  const gain = landingGainNode;
+  if (!ctx || !gain) return;
   const now = ctx.currentTime;
   if (landingNextTime < now) landingNextTime = now;
   LANDING_FREQS.forEach((freq, i) => {
@@ -34,7 +35,7 @@ function scheduleLandingBar() {
     g.gain.linearRampToValueAtTime(0.03, t0 + LANDING_NOTE_LEN * 0.6);
     g.gain.exponentialRampToValueAtTime(0.001, t0 + LANDING_NOTE_LEN);
     osc.connect(g);
-    g.connect(landingGainNode);
+    g.connect(gain);
     osc.start(t0);
     osc.stop(t0 + LANDING_NOTE_LEN);
   });

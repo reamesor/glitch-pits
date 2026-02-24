@@ -21,7 +21,7 @@ const MIN_BATTLE_MS = 3000;
 const AUTOBET_DELAY_MS = 1400; // Delay before next bet when autobet (gives time to change selection or stop)
 
 export function GameCanvas() {
-  const { socket, connected } = useSocket();
+  const { socket } = useSocket();
   const mockBalance = useGameStore((s) => s.mockBalance);
   const characterCount = useGameStore((s) => s.characterCount);
   const lastBetResult = useGameStore((s) => s.lastBetResult);
@@ -197,6 +197,7 @@ export function GameCanvas() {
 
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
+      <>
       <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
         {autobetRunning && (
           <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[9px] sm:gap-3">
@@ -275,6 +276,7 @@ export function GameCanvas() {
       {jackpotPayout != null && (
         <JackpotMoment payout={jackpotPayout} onDone={() => setJackpotPayout(null)} />
       )}
+      </>
     );
   }
 
@@ -417,13 +419,8 @@ export function GameCanvas() {
         )}
       </div>
 
-      {!connected && (
-        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">
-          Offline mode: battle runs locally. Connect for real payouts.
-        </p>
-      )}
-      {connected && characterCount < 1 && (
-        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character first.</p>
+      {characterCount < 1 && (
+        <p className="mt-1 shrink-0 font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to enter the Pit.</p>
       )}
 
       <p className="mt-1.5 shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">

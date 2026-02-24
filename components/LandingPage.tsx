@@ -10,6 +10,7 @@ const LANDING_SOUND_MUTED_KEY = "glitch-pits-landing-sound-muted";
 
 interface LandingPageProps {
   onEnter: () => void;
+  onEnterFunMode?: () => void;
   onOpenHelp: () => void;
   onOpenDashboard: () => void;
   hasWallet: boolean;
@@ -28,6 +29,7 @@ const FLOATING_CHARS = CHARACTER_PRESETS.map((preset, i) => {
 
 export function LandingPage({
   onEnter,
+  onEnterFunMode,
   onOpenHelp,
   onOpenDashboard,
   hasWallet,
@@ -123,14 +125,32 @@ export function LandingPage({
           <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
             Stake your PITS. Multiply or burn. No middle ground.
           </p>
-          {/* Mememator-style Enter: teal border, clear CTA */}
-          <button
-            type="button"
-            onClick={onEnter}
-            className="mt-2 rounded-full border-2 border-[var(--glitch-teal)] bg-black/70 px-8 py-3 font-mono text-sm font-medium text-white shadow-[0_0_20px_rgba(0,212,170,0.2)] transition hover:bg-[var(--glitch-teal)]/20 hover:shadow-[0_0_32px_rgba(0,212,170,0.4)] sm:text-base"
-          >
-            ENTER
-          </button>
+          {/* Try demo first (no wallet) · or enter with wallet */}
+          <div className="mt-3 flex flex-col items-center gap-3 sm:gap-4">
+            <p className="text-center font-mono text-[10px] text-gray-500 sm:text-xs">
+              New? Try the demo first — no wallet required.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {onEnterFunMode && (
+                <button
+                  type="button"
+                  onClick={onEnterFunMode}
+                  className="rounded-full border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/10 px-8 py-3 font-mono text-sm font-medium text-white shadow-[0_0_20px_rgba(0,212,170,0.25)] transition hover:bg-[var(--glitch-teal)]/25 hover:shadow-[0_0_32px_rgba(0,212,170,0.4)] sm:text-base"
+                  title="Play with virtual PITS, no wallet connection"
+                >
+                  TRY DEMO (FUN MODE)
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onEnter}
+                className="rounded-full border-2 border-[var(--glitch-pink)]/70 bg-black/70 px-6 py-3 font-mono text-xs font-medium text-white/90 shadow-[0_0_16px_rgba(255,105,180,0.2)] transition hover:bg-[var(--glitch-pink)]/20 hover:shadow-[0_0_24px_rgba(255,105,180,0.35)] sm:text-sm"
+                title="Connect wallet to play with real PITS"
+              >
+                ENTER WITH WALLET
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

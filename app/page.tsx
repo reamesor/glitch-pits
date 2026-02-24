@@ -48,6 +48,7 @@ export default function Home() {
   const prevBalanceRef = useRef(mockBalance);
   const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
   const [showLandingView, setShowLandingView] = useState(false);
+  const [funMode, setFunMode] = useState(false); // play without wallet (e.g. in Cursor browser)
   const [gameMusicMuted, setGameMusicMutedState] = useState(() =>
     typeof window !== "undefined" ? isGameMusicMuted() : false
   );
@@ -90,20 +91,31 @@ export default function Home() {
     else setShowLandingView(false); // from landing, go into the Pits
   };
 
+  const handleEnterFunMode = () => {
+    setFunMode(true);
+    setShowLandingView(false);
+    setShowConnectToEnter(false);
+    useGameStore.getState().forgeCharacter();
+    useGameStore.getState().setCharacterCount(1);
+    useGameStore.getState().setPlayerName("Gladiator");
+    setShowForge(false);
+  };
+
   // When wallet connects (e.g. from ConnectToEnterModal), close that modal
   useEffect(() => {
     if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
   }, [walletAddress, showConnectToEnter]);
 
   // Constant game ambient (like COLORS): play when in pit, stop when on landing
+  const inPit = (walletAddress || funMode) && !showLandingView;
   useEffect(() => {
-    if (!walletAddress || showLandingView) {
+    if (!inPit) {
       stopGameAmbientSound();
       return;
     }
     if (!gameMusicMuted) startGameAmbientSound();
     return () => stopGameAmbientSound();
-  }, [walletAddress, showLandingView, gameMusicMuted]);
+  }, [inPit, gameMusicMuted]);
 
   const toggleGameMusic = () => {
     const next = !gameMusicMuted;
@@ -112,12 +124,13 @@ export default function Home() {
     if (!next) startGameAmbientSound();
   };
 
-  if (!walletAddress || showLandingView) {
+  if (!inPit) {
     return (
       <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
         <WalletSync />
         <LandingPage
           onEnter={handleEnterPits}
+          onEnterFunMode={handleEnterFunMode}
           onOpenHelp={() => setShowGameHelp(true)}
           onOpenDashboard={() => setShowDashboard(true)}
           hasWallet={!!walletAddress}

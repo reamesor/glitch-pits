@@ -4,7 +4,7 @@
 
 export const LORE = {
   title: "THE GLITCH PITS",
-  tagline: "Stake your PITS. Multiply or burn. No middle ground.",
+  tagline: "Bet. Pop. Spin. Pray for the glitch. Welcome to the Pit.",
 
   vision: "A transparent pit: you stake PITS, the House holds the other side. One round, one outcome — win and your stake is multiplied; lose and it burns. No hidden odds.",
   mission: "One character. One bet. One outcome. Win and your stake multiplies. Lose and it burns. Use PITS to play, upgrade in the Black Market, or walk away.",

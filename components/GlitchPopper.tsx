@@ -118,11 +118,11 @@ export function GlitchPopper() {
         GLITCH POPPER
       </h3>
 
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[9px] text-gray-500">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-gray-400">
         <span>POPPED: {popped}</span>
         <span>EARNED: {earned.toFixed(2)} PITS</span>
       </div>
-      <p className="mb-3 font-mono text-[8px] text-gray-600">[ CLICK THE GLITCHES ]</p>
+      <p className="mb-3 font-mono text-[10px] text-gray-400">[ CLICK THE GLITCHES ]</p>
 
       <div
         ref={playAreaRef}

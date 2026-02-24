@@ -3,9 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { soundManager } from "@/lib/soundManager";
+import { PixelCharacter } from "@/components/PixelCharacter";
 
 const DAILY_SPIN_KEY = "glitch-pits-daily-spin";
-const SYMBOLS = ["💀", "★", "◎", "⚡"]; // skull, star, coin, lightning
+const REEL_AVATAR_IDS = ["0", "1", "2", "3"]; // Glitch, Knight, Rogue, Mage
 const REWARDS = { three: 50, two: 25, none: 10 };
 const REEL_SPIN_MS = 2500;
 const REEL_STAGGER_MS = 400;
@@ -136,29 +137,31 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
   return (
     <div className="daily-spin-panel w-full rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between">
-        <span className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-pink)]">DAILY SPIN</span>
+        <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
         {onClose && (
-          <button type="button" onClick={onClose} className="font-mono text-[8px] text-gray-500 hover:text-white" aria-label="Close">
+          <button type="button" onClick={onClose} className="font-mono text-[9px] text-gray-400 hover:text-white" aria-label="Close">
             CLOSE
           </button>
         )}
       </div>
       {!canSpin ? (
         <div className="py-3 text-center">
-          <p className="font-pixel text-[8px] text-gray-400">3 SPINS USED</p>
-          <p className="mt-2 font-mono text-[10px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
+          <p className="font-pixel text-[9px] text-gray-300 sm:text-[10px]">3 SPINS USED</p>
+          <p className="mt-2 font-mono text-[11px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
         </div>
       ) : (
         <>
           <div className="mb-2 flex justify-center gap-1 sm:gap-2">
             {[0, 1, 2].map((i) => (
-              <div key={i} className="flex h-12 w-12 flex-1 max-w-14 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] text-2xl sm:h-14 sm:w-14 sm:text-3xl">
-                {SYMBOLS[displayReels[i]]}
+              <div key={i} className="flex h-12 w-12 flex-1 max-w-14 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] sm:h-14 sm:w-14">
+                <span className="inline-flex scale-[2.5] origin-center">
+                  <PixelCharacter characterId={REEL_AVATAR_IDS[displayReels[i]]} size="sm" animated={false} />
+                </span>
               </div>
             ))}
           </div>
           {result !== null && (
-            <p className="mb-2 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
+            <p className="mb-2 text-center font-pixel text-[10px] animate-pulse sm:text-[11px]" style={{ color: "var(--glitch-pink)" }}>
               +{result} PITS
             </p>
           )}
@@ -166,7 +169,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
             type="button"
             onClick={spin}
             disabled={spinning}
-            className="w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-2 font-pixel text-[8px] text-white hover:border-[var(--glitch-teal)] hover:bg-[var(--g-blue)]/80 hover:text-[#0a0a0a] disabled:opacity-50 sm:text-[9px]"
+            className="w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-2 font-pixel text-[9px] text-white hover:border-[var(--glitch-teal)] hover:bg-[var(--g-blue)]/80 hover:text-[#0a0a0a] disabled:opacity-50 sm:text-[10px]"
           >
             {spinning ? "…" : `SPIN (${triesLeft} left)`}
           </button>

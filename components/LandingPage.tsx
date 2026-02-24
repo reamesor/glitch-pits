@@ -123,7 +123,7 @@ export function LandingPage({
             <GlitchPitsLogo size="xl" />
           </h1>
           <p className="max-w-sm text-center font-mono text-xs text-gray-500 sm:text-sm">
-            Stake your PITS. Multiply or burn. No middle ground.
+            Bet. Pop. Spin. Pray for the glitch. Welcome to the Pit.
           </p>
           {/* CTAs: identical size for both buttons */}
           <div className="mt-4 flex flex-wrap items-center justify-center gap-3 sm:gap-4">

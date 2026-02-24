@@ -1,7 +1,7 @@
 # Glitch Pits — Investor Pitch Document
 
 **Product:** Glitch Pits | $PITS  
-**Tagline:** *Stake your PITS. Multiply or burn. No middle ground.*  
+**Tagline:** *Bet. Pop. Spin. Pray for the glitch. Welcome to the Pit.*  
 **One-liner:** A transparent, real-time betting game where players stake PITS tokens on gladiator battles; wins multiply the stake, losses burn tokens permanently.
 
 ---

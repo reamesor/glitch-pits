@@ -25,7 +25,6 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   const [score, setScore] = useState(0);
   const [earned, setEarned] = useState(0);
   const [confirmClose, setConfirmClose] = useState(false);
-  const targetRef = useRef<{ x: number; y: number } | null>(null);
   const gameRef = useRef<{ snake: { x: number; y: number }[]; dir: Dir; food: { x: number; y: number }; loop: ReturnType<typeof setInterval> | null }>({
     snake: [],
     dir: "right",
@@ -37,7 +36,6 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
     setScore(0);
     setEarned(0);
     setCountdown(3);
-    targetRef.current = null;
     const cx = Math.floor(W / 2);
     const cy = Math.floor(H / 2);
     const snake = [{ x: cx - 2, y: cy }, { x: cx - 1, y: cy }, { x: cx, y: cy }];
@@ -75,16 +73,6 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
     const g = gameRef.current;
     if (!g || status !== "playing" || g.snake.length === 0) return;
     const head = g.snake[g.snake.length - 1];
-    const target = targetRef.current;
-    if (target !== null) {
-      const dx = target.x - head.x;
-      const dy = target.y - head.y;
-      if (Math.abs(dx) >= Math.abs(dy)) {
-        g.dir = dx > 0 ? "right" : dx < 0 ? "left" : g.dir;
-      } else {
-        g.dir = dy > 0 ? "down" : dy < 0 ? "up" : g.dir;
-      }
-    }
     const nextHead = { ...head };
     if (g.dir === "up") nextHead.y -= 1;
     if (g.dir === "down") nextHead.y += 1;
@@ -139,39 +127,21 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
 
   useEffect(() => {
     if (status !== "playing") return;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const onMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      const px = (e.clientX - rect.left) * scaleX;
-      const py = (e.clientY - rect.top) * scaleY;
-      const cx = Math.floor(px / CELL);
-      const cy = Math.floor(py / CELL);
-      if (cx >= 0 && cx < W && cy >= 0 && cy < H) targetRef.current = { x: cx, y: cy };
-    };
-    canvas.addEventListener("mousemove", onMove);
-    return () => canvas.removeEventListener("mousemove", onMove);
-  }, [status]);
-
-  useEffect(() => {
-    if (status !== "playing") return;
     const handle = (e: KeyboardEvent) => {
       const g = gameRef.current;
       if (!g) return;
       const k = e.key;
       if (k === "ArrowUp" || k === "w" || k === "W") {
-        if (g.dir !== "down") { g.dir = "up"; targetRef.current = null; }
+        if (g.dir !== "down") g.dir = "up";
       }
       if (k === "ArrowDown" || k === "s" || k === "S") {
-        if (g.dir !== "up") { g.dir = "down"; targetRef.current = null; }
+        if (g.dir !== "up") g.dir = "down";
       }
       if (k === "ArrowLeft" || k === "a" || k === "A") {
-        if (g.dir !== "right") { g.dir = "left"; targetRef.current = null; }
+        if (g.dir !== "right") g.dir = "left";
       }
       if (k === "ArrowRight" || k === "d" || k === "D") {
-        if (g.dir !== "left") { g.dir = "right"; targetRef.current = null; }
+        if (g.dir !== "left") g.dir = "right";
       }
     };
     window.addEventListener("keydown", handle);
@@ -224,15 +194,15 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   return (
     <div className="snake-panel flex min-h-0 w-full flex-col rounded border border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
       <div className="mb-2 flex items-center justify-between">
-        <span className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-teal)]">SNAKE</span>
+        <span className="font-pixel glitch-text inline-block border-b-2 border-[var(--glitch-teal)]/40 pb-2 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
         {onClose && (
-          <button type="button" onClick={handleClose} className="font-mono text-[7px] text-gray-500 hover:text-white" aria-label="Close">
+          <button type="button" onClick={handleClose} className="font-mono text-[9px] text-gray-400 hover:text-white" aria-label="Close">
             CLOSE
           </button>
         )}
       </div>
       {confirmClose && (
-        <div className="mb-1.5 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[7px]">
+        <div className="mb-1.5 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[9px]">
           <p className="text-gray-300">Quit? Score will be lost.</p>
           <div className="mt-1.5 flex justify-center gap-1.5">
             <button
@@ -265,13 +235,13 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
           ref={canvasRef}
           width={CANVAS_W}
           height={CANVAS_H}
-          className="w-full max-w-full h-auto block rounded border border-[var(--glitch-teal)]/30 cursor-crosshair"
+          className="w-full max-w-full h-auto block rounded border border-[var(--glitch-teal)]/30"
           style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
         />
       </div>
-      <p className="mt-2 text-center font-mono text-[7px] sm:text-[8px] text-gray-500">
-        {status === "playing" && `Score: ${score} · Arrow keys / WASD or cursor`}
-        {status === "idle" && "Arrow keys / WASD or cursor"}
+      <p className="mt-2 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
+        {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
+        {status === "idle" && "Arrow keys / WASD"}
         {status === "gameover" && `Score: ${score}`}
       </p>
       {status === "countdown" && (
@@ -283,18 +253,18 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
         <button
           type="button"
           onClick={startGame}
-          className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[8px] text-[var(--glitch-teal)] sm:text-[9px]"
+          className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
         >
           [ START ]
         </button>
       )}
       {status === "gameover" && (
         <div className="mt-2 text-center">
-          <p className="font-pixel text-[8px] sm:text-[9px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
+          <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
           <button
             type="button"
             onClick={startGame}
-            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[8px] sm:text-[9px]"
+            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] sm:text-[10px]"
           >
             PLAY AGAIN
           </button>

@@ -221,14 +221,14 @@ export function GameCanvas() {
       <>
       <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-3 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
         {autobetRunning && (
-          <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[9px] sm:gap-3">
+          <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[10px] sm:gap-3 sm:text-xs">
             <span className="text-gray-400">
               Bet <span className="tabular-nums text-white">{autobetDone + 1}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}</span>
             </span>
             <span className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}>
               Session {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
             </span>
-            <span className="text-gray-500">
+            <span className="text-gray-400">
               {battlePhase === "fighting" ? "Fighting…" : "Result"}
             </span>
             <button
@@ -262,7 +262,7 @@ export function GameCanvas() {
             <div className="game-box w-full max-w-md py-1.5 text-center">
               <p className="game-box-label">BATTLE SIMULATOR</p>
               <p
-                className="min-h-[2rem] animate-pulse text-center font-mono text-[9px] leading-relaxed text-gray-300 sm:text-[10px]"
+                className="min-h-[2rem] animate-pulse text-center font-mono text-[10px] leading-relaxed text-gray-300 sm:text-xs"
                 key={currentLore}
               >
                 {currentLore || "Entering the Pit…"}
@@ -331,7 +331,7 @@ export function GameCanvas() {
             <PixelCharacter characterId={selectedCharacterId} animated className="scale-125 sm:scale-150" />
           </div>
         </div>
-        <p className="shrink-0 text-center font-mono text-[10px] text-gray-500 sm:text-xs">
+        <p className="shrink-0 text-center font-mono text-xs text-gray-400 sm:text-sm">
           Pick your stake. Place your bet. Multiply or burn.
         </p>
 
@@ -364,7 +364,7 @@ export function GameCanvas() {
           </div>
           <div className="game-box w-full shrink-0 px-3 py-2.5">
             <p className="game-box-label mb-1.5 text-center">CUSTOM BET</p>
-            <p className="mb-2 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+            <p className="mb-2 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
               Min <strong className="text-white">{MIN_BET_PITS} PITS</strong> · Max <strong className="text-white">{mockBalance.toLocaleString()} PITS</strong>
             </p>
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -379,9 +379,9 @@ export function GameCanvas() {
                 className="w-28 border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] px-3 py-2 font-mono text-base tabular-nums text-white placeholder-gray-500 focus:border-[var(--glitch-pink)] focus:outline-none sm:w-32 sm:px-4 sm:py-2.5 sm:text-lg"
                 aria-label="Custom bet amount in PITS"
               />
-              <span className="font-mono text-xs text-gray-500 sm:text-sm">PITS</span>
+              <span className="font-mono text-xs text-gray-400 sm:text-sm">PITS</span>
             </div>
-            <p className="mt-2 text-center font-mono text-[10px] sm:text-xs text-gray-500">
+            <p className="mt-2 text-center font-mono text-xs text-gray-400 sm:text-sm">
               Your bet uses the <strong className="text-[var(--glitch-teal)]">{getMultiplierForAmount(amount)}×</strong> tier → win <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> if you win.
             </p>
           </div>
@@ -436,7 +436,7 @@ export function GameCanvas() {
               </button>
             </div>
             {autobetRunning && (
-              <div className="mt-2 w-full space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-2 py-1.5 text-center font-mono text-[8px]">
+              <div className="mt-2 w-full space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-2 py-1.5 text-center font-mono text-[9px] sm:text-[10px]">
                 <p className="flex justify-center gap-4 text-gray-300">
                   <span>Completed</span>
                   <span className="tabular-nums">
@@ -444,14 +444,14 @@ export function GameCanvas() {
                   </span>
                 </p>
                 <p className="flex justify-center gap-4">
-                  <span className="text-gray-500">Session</span>
+                  <span className="text-gray-400">Session</span>
                   <span
                     className={`tabular-nums font-semibold ${autobetSessionProfit >= 0 ? "text-[var(--glitch-teal)]" : "text-red-400"}`}
                   >
                     {autobetSessionProfit >= 0 ? "+" : ""}{autobetSessionProfit} PITS
                   </span>
                 </p>
-                <p className="flex justify-center gap-4 text-gray-500">
+                <p className="flex justify-center gap-4 text-gray-400">
                   <span>Status</span>
                   <span className="text-gray-400">
                     {battlePhase === "idle" ? "Next in 1.4s" : battlePhase === "fighting" ? "Fighting…" : "Result"}
@@ -477,13 +477,13 @@ export function GameCanvas() {
         </div>
 
         {characterCount < 1 && !walletAddress && (
-          <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to enter the Pit.</p>
+          <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">Forge a character to enter the Pit.</p>
         )}
         {characterCount < 1 && walletAddress && (
-          <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">Forge a character to customize your gladiator (optional).</p>
+          <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">Forge a character to customize your gladiator (optional).</p>
         )}
 
-        <p className="shrink-0 text-center font-mono text-[9px] text-gray-500 sm:text-[10px]">
+        <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
           Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
         </p>
       </div>

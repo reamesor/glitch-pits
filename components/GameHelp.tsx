@@ -120,7 +120,7 @@ export function GameHelp({ onClose }: GameHelpProps) {
               <section data-section="lore" className="rounded border-2 border-[var(--glitch-pink)]/30 bg-[var(--bg-card)] p-4">
                 <h3 className="mb-2 font-pixel text-sm text-[var(--glitch-pink)]">Lore</h3>
                 <p className="mb-2 text-sm leading-relaxed text-gray-200">
-                  <em>Stake your PITS. Multiply or burn. No middle ground.</em>
+                  <em>Bet. Pop. Spin. Pray for the glitch. Welcome to the Pit.</em>
                 </p>
                 <p className="text-sm leading-relaxed text-gray-400">
                   The Pits are a crucible: forge a gladiator, stake PITS on their run. The House fields its own. Battles are simulated in real time. What you win is yours until you put it back on the line. Where are your gods now? In the next round.

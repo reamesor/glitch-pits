@@ -12,7 +12,7 @@ interface CharacterPickerProps {
 export function CharacterPicker({ selectedId, onSelect, compact = false }: CharacterPickerProps) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-center font-pixel text-[7px] text-gray-500">PICK YOUR AVATAR</p>
+      <p className="text-center font-pixel text-[9px] text-gray-400 sm:text-[10px]">PICK YOUR AVATAR</p>
       <div
         className="grid grid-cols-4 gap-1.5 sm:grid-cols-5 sm:gap-2"
         style={{ imageRendering: "pixelated" }}
@@ -34,7 +34,7 @@ export function CharacterPicker({ selectedId, onSelect, compact = false }: Chara
               size="sm"
             />
             {!compact && (
-              <span className="truncate w-full text-center font-mono text-[6px] text-gray-500">{preset.name}</span>
+              <span className="truncate w-full text-center font-mono text-[8px] text-gray-400 sm:text-[9px]">{preset.name}</span>
             )}
           </button>
         ))}

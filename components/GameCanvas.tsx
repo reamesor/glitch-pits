@@ -317,15 +317,18 @@ export function GameCanvas() {
   return (
     <div className="relative flex h-full max-h-full w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-2.5 shadow-[0_0_28px_rgba(255,105,180,0.18),0_0_48px_rgba(0,212,170,0.06)] sm:rounded-xl sm:p-4">
       <div className="flex w-full max-w-lg shrink-0 flex-col items-center gap-3">
-        <div className="flex shrink-0 flex-wrap items-center justify-center gap-2">
+        <div className="bet-on-header flex shrink-0 flex-wrap items-center justify-center gap-3 rounded-lg border border-[var(--g-blue)]/30 bg-[var(--g-blue)]/5 px-4 py-3 shadow-[0_0_24px_rgba(0,255,249,0.15)] sm:gap-4 sm:px-5 sm:py-4">
           <h2
-            className="font-pixel glitch-text text-center text-xs uppercase sm:text-sm"
+            className="font-pixel glitch-text text-center text-sm uppercase sm:text-base md:text-lg"
             data-text={`BET ON ${displayName.toUpperCase()}`}
-            style={{ color: "var(--g-blue)" }}
+            style={{
+              color: "var(--g-blue)",
+              textShadow: "0 0 12px rgba(0,255,249,0.5), 0 0 24px rgba(0,255,249,0.2)",
+            }}
           >
             BET ON {displayName.toUpperCase()}
           </h2>
-          <PixelCharacter characterId={selectedCharacterId} animated className="scale-90 sm:scale-100" />
+          <PixelCharacter characterId={selectedCharacterId} animated className="scale-110 sm:scale-125" />
         </div>
         <p className="shrink-0 text-center font-mono text-[10px] text-gray-500 sm:text-xs">
           Pick your stake. Place your bet. Multiply or burn.

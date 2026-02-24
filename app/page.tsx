@@ -147,16 +147,16 @@ export default function Home() {
     <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
       <WalletSync />
       <div className="bg-static" />
-      {/* Top Bar — logo left, balance center, nav right */}
-      <header className="app-header relative flex shrink-0 items-center justify-between gap-2 px-3 py-2 sm:gap-4 sm:px-4 sm:py-2.5">
-        <h1 className="z-10 shrink-0">
+      {/* Top Bar — logo left, nav right */}
+      <header className="app-header relative flex shrink-0 items-center justify-between gap-4 px-4 py-2.5 sm:gap-6 sm:px-6 sm:py-3">
+        <h1 className="header-logo z-10 shrink-0">
           <button
             type="button"
             onClick={() => setShowLandingView(true)}
-            className="focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)] rounded transition opacity-90 hover:opacity-100"
+            className="header-logo-btn flex items-center rounded-md py-2 pl-2 pr-3 transition-all sm:py-2.5 sm:pl-3 sm:pr-4 focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)]"
             title="Back to landing"
           >
-            <GlitchPitsLogo size="lg" />
+            <GlitchPitsLogo size="lg" className="block" />
           </button>
         </h1>
 
@@ -208,15 +208,15 @@ export default function Home() {
             <GameCanvas />
           </div>
         </section>
-        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-2 sm:max-h-none sm:w-48 lg:w-56">
-          <div className="game-box shrink-0 px-2 py-2 sm:px-3 sm:py-2.5">
+        <aside className="flex max-h-[30vh] shrink-0 flex-col gap-3 sm:max-h-none sm:w-72 lg:w-80">
+          <div className="game-box shrink-0 px-4 py-3 sm:px-5 sm:py-4">
             <CharacterPicker
               selectedId={selectedCharacterId}
               onSelect={setSelectedCharacterId}
               compact
             />
           </div>
-          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="game-box flex min-h-0 flex-1 flex-col overflow-hidden px-4 py-2.5 sm:px-5 sm:py-3">
             <div className="min-h-0 flex-1 overflow-hidden">
               <GlitchPopper />
             </div>

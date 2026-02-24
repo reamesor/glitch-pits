@@ -19,8 +19,10 @@ export function ConnectWalletButton() {
         [&_.wallet-adapter-button]:!text-[8px]
         [&_.wallet-adapter-button]:!text-white
         [&_.wallet-adapter-button]:transition
-        [&_.wallet-adapter-button:hover]:!bg-[var(--glitch-pink)]
-        [&_.wallet-adapter-button:hover]:!shadow-[0_0_20px_rgba(255,105,180,0.4)]
+        [&_.wallet-adapter-button:hover]:!bg-[var(--g-blue)]
+        [&_.wallet-adapter-button:hover]:!border-[var(--glitch-teal)]
+        [&_.wallet-adapter-button:hover]:!shadow-[0_0_20px_rgba(0,255,249,0.5)]
+        [&_.wallet-adapter-button:hover]:!text-[#0a0a0a]
         [&_.wallet-adapter-button:hover]:!-translate-y-0.5
         [&_.wallet-adapter-button:active]:!translate-y-0
       "

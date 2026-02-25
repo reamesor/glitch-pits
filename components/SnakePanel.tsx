@@ -20,6 +20,7 @@ interface SnakePanelProps {
 
 export function SnakePanel({ onClose }: SnakePanelProps) {
   const addToBalance = useGameStore((s) => s.addToBalance);
+  const panelRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [status, setStatus] = useState<"idle" | "countdown" | "playing" | "gameover">("idle");
   const [countdown, setCountdown] = useState(3);
@@ -193,8 +194,8 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   };
 
   return (
-    <div className="snake-panel flex min-h-0 w-full flex-col">
-      <div className="panel-title-row w-full shrink-0 overflow-visible">
+    <div ref={panelRef} className="snake-panel flex min-h-0 w-full flex-col">
+      <div className="panel-title-row w-full shrink-0 overflow-hidden">
         <div className="flex w-full items-center gap-1.5">
           <h3 className="font-pixel glitch-text inline-block shrink-0 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>
             SNAKE
@@ -207,6 +208,7 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
               </>
             }
             className="shrink-0 text-[var(--glitch-teal)]"
+            constrainToRef={panelRef}
           />
           {onClose && (
             <button type="button" onClick={handleClose} className="ml-auto font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">

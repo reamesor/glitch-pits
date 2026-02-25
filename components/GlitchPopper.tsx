@@ -107,9 +107,10 @@ export function GlitchPopper() {
     return () => clearInterval(interval);
   }, []);
 
+  const panelRef = useRef<HTMLDivElement>(null);
   return (
-    <div className="flex h-full flex-col">
-      <div className="panel-title-row w-full shrink-0 overflow-visible">
+    <div ref={panelRef} className="flex h-full flex-col">
+      <div className="panel-title-row w-full shrink-0 overflow-hidden">
         <div className="flex w-full items-center gap-1.5">
           <h3
             className="font-pixel glitch-text inline-block shrink-0 text-sm"
@@ -122,6 +123,7 @@ export function GlitchPopper() {
             ariaLabel="How Glitch Popper works"
             content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
             className="shrink-0 text-[var(--glitch-teal)]"
+            constrainToRef={panelRef}
           />
         </div>
         <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />

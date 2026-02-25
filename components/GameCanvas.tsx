@@ -324,7 +324,7 @@ export function GameCanvas() {
           </div>
         )}
         <div className="flex min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
-          <div className="mb-1 flex min-w-0 flex-shrink-0 items-center justify-center gap-1 sm:mb-2">
+          <div className="mb-4 flex min-w-0 flex-shrink-0 items-center justify-center gap-2 sm:mb-5">
             <h2
               className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
               data-text="THE GLITCH PIT"
@@ -334,15 +334,15 @@ export function GameCanvas() {
             </h2>
             <PixelCharacter characterId={selectedCharacterId} animated className="scale-75 sm:scale-100" />
           </div>
-          <div className="game-box mb-2 w-full max-w-xs py-1.5 text-center">
-            <p className="game-box-label">MATCH</p>
+          <div className="game-box mb-4 w-full max-w-xs py-3 text-center sm:mb-5 sm:py-4">
+            <p className="game-box-label mb-1">MATCH</p>
             <p className="font-mono text-center text-[10px] sm:text-xs" style={{ color: "var(--glitch-teal)" }}>
               {displayName} vs {rumbleOpponent || "…"}
             </p>
           </div>
 
           {battlePhase === "fighting" && (
-            <div className="game-box w-full max-w-md py-1.5 text-center">
+            <div className="game-box w-full max-w-md py-3 text-center sm:py-4">
               <p className="game-box-label">BATTLE SIMULATOR</p>
               <p
                 className="min-h-[2rem] animate-pulse text-center font-mono text-[10px] leading-relaxed text-gray-300 sm:text-xs"
@@ -355,7 +355,7 @@ export function GameCanvas() {
 
           {battlePhase === "result" && (
             <div
-              className={`mx-auto flex w-full max-w-sm flex-col items-center rounded-xl border-2 px-4 py-5 text-center sm:py-6 ${battleWon ? "win-border-pulse" : ""}`}
+              className={`mx-auto mt-2 flex w-full max-w-sm flex-col items-center rounded-xl border-2 px-5 py-6 text-center sm:mt-3 sm:py-8 ${battleWon ? "win-border-pulse" : ""}`}
               style={{
                 background: battleWon
                   ? "linear-gradient(180deg, rgba(0,212,170,0.12) 0%, rgba(20,12,28,0.95) 50%)"
@@ -376,7 +376,7 @@ export function GameCanvas() {
               </p>
               {resultMessage && (
                 <p
-                  className="mt-2 text-center font-mono text-[10px]"
+                  className="mt-3 text-center font-mono text-[10px]"
                   style={{
                     color: resultMessage.includes("SHIELD") ? "var(--glitch-teal)" : resultMessage.includes("2X") ? "#f5c518" : resultMessage.includes("CLOAK") ? "#a78bfa" : resultMessage.includes("PACT") ? "#f5c518" : "var(--glitch-pink)",
                   }}
@@ -384,7 +384,7 @@ export function GameCanvas() {
                   {resultMessage}
                 </p>
               )}
-              <div className="mt-4 flex w-full justify-center">
+              <div className="mt-6 flex w-full justify-center sm:mt-8">
                 <button
                   type="button"
                   onClick={() => {

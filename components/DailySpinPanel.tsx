@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useGameStore } from "@/lib/useGameStore";
 import { soundManager } from "@/lib/soundManager";
 import { PixelCharacter } from "@/components/PixelCharacter";
@@ -61,6 +61,7 @@ interface DailySpinPanelProps {
 
 export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
   const addToBalance = useGameStore((s) => s.addToBalance);
+  const panelRef = useRef<HTMLDivElement>(null);
   const [spinning, setSpinning] = useState(false);
   const [reels, setReels] = useState<number[]>([0, 0, 0]);
   const [displayReels, setDisplayReels] = useState<number[]>([0, 0, 0]);
@@ -136,8 +137,8 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
   };
 
   return (
-    <div className="daily-spin-panel flex h-full min-w-0 flex-col overflow-visible">
-      <div className="panel-title-row w-full shrink-0 overflow-visible">
+    <div ref={panelRef} className="daily-spin-panel flex h-full min-w-0 flex-col overflow-visible">
+      <div className="panel-title-row w-full shrink-0 overflow-hidden">
         <div className="flex w-full items-center gap-1.5">
           <h3 className="daily-spin-title font-pixel glitch-text inline-block shrink-0 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>
             DAILY SPIN
@@ -150,6 +151,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
               </>
             }
             className="shrink-0 text-[var(--glitch-teal)]"
+            constrainToRef={panelRef}
           />
           {onClose && (
             <button type="button" onClick={onClose} className="ml-auto font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
@@ -167,8 +169,8 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
           </div>
         ) : (
           <>
-            {/* Slot machine: one strip with three reel windows; avatars fit inside, no overflow */}
-            <div className="daily-spin-reels mb-1.5 inline-flex items-center justify-center gap-0.5 rounded-lg border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-1 py-1 sm:gap-1 sm:px-1.5 sm:py-1.5">
+            {/* Slot machine: one strip with three reel windows; no side borders to avoid extra vertical line */}
+            <div className="daily-spin-reels mb-1.5 inline-flex items-center justify-center gap-0.5 rounded-lg border-y-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-1 py-1 sm:gap-1 sm:px-1.5 sm:py-1.5">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}

@@ -48,7 +48,7 @@
 }
 
 /* Daily Spin panel: no aggressive glitch so reels and button don’t look broken */
-/* Mini-game panels (Daily Spin, Snake, Glitch Popper): same structure, compact spacing, no cut-offs */
+/* Mini-game panels (Daily Spin, Snake, Glitch Popper): same structure as right panel, no extra lines */
 .panel-title-row {
   flex-shrink: 0;
 }
@@ -58,6 +58,12 @@
 .daily-spin-panel,
 .snake-panel {
   overflow: visible;
+}
+/* Left panel (arena-decor): same structure as right panel — no extra border or vertical line */
+.arena-decor {
+  border: none;
+  outline: none;
+  box-shadow: none;
 }
 .daily-spin-title {
   position: relative;

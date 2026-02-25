@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, type RefObject } from "react";
 import { createPortal } from "react-dom";
 
 interface FeatureInfoIconProps {
@@ -10,9 +10,11 @@ interface FeatureInfoIconProps {
   ariaLabel?: string;
   /** Optional class for the wrapper (e.g. to align with panel title color) */
   className?: string;
+  /** Optional ref to a container (e.g. panel) — popover will stay inside it and be centered */
+  constrainToRef?: RefObject<HTMLElement | null>;
 }
 
-export function FeatureInfoIcon({ content, ariaLabel = "How this feature works", className = "" }: FeatureInfoIconProps) {
+export function FeatureInfoIcon({ content, ariaLabel = "How this feature works", className = "", constrainToRef }: FeatureInfoIconProps) {
   const [open, setOpen] = useState(false);
   const [popoverStyle, setPopoverStyle] = useState<React.CSSProperties>({});
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -33,14 +35,24 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
     if (!open || !buttonRef.current || typeof document === "undefined") return;
     const rect = buttonRef.current.getBoundingClientRect();
     const gap = 6;
-    const padding = 20;
-    const maxW = Math.min(380, document.documentElement.clientWidth - padding * 2);
-    const popoverWidth = maxW;
-    const centerX = rect.left + rect.width / 2;
-    const left = Math.max(padding, Math.min(centerX - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - padding));
+    const padding = 12;
+    const maxW = Math.min(320, document.documentElement.clientWidth - padding * 2);
+    let popoverWidth = maxW;
+    let centerX = rect.left + rect.width / 2;
+    let left = Math.max(padding, Math.min(centerX - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - padding));
+
+    if (constrainToRef?.current) {
+      const box = constrainToRef.current.getBoundingClientRect();
+      const innerPad = 8;
+      const maxWidthInBox = box.width - innerPad * 2;
+      popoverWidth = Math.min(popoverWidth, maxWidthInBox, 320);
+      centerX = box.left + box.width / 2;
+      left = Math.max(box.left + innerPad, Math.min(centerX - popoverWidth / 2, box.right - popoverWidth - innerPad));
+    }
+
     const top = rect.bottom + gap;
-    setPopoverStyle({ left, top, width: popoverWidth, minWidth: 260 });
-  }, [open]);
+    setPopoverStyle({ left, top, width: popoverWidth, minWidth: Math.min(220, popoverWidth) });
+  }, [open, constrainToRef]);
 
   return (
     <>

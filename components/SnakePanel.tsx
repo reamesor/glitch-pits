@@ -257,13 +257,13 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
             style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
           />
         </div>
-        <p className="mt-0.5 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
+        <p className="mt-3 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
           {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
           {status === "idle" && "Arrow keys / WASD"}
           {status === "gameover" && `Score: ${score}`}
         </p>
         {status === "countdown" && (
-          <p className="mt-0.5 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
+          <p className="mt-2 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
             Get ready — {countdown}
           </p>
         )}
@@ -271,18 +271,18 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
           <button
             type="button"
             onClick={startGame}
-            className="mt-0.5 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
+            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
           >
             [ START ]
           </button>
         )}
         {status === "gameover" && (
-          <div className="mt-0.5 text-center">
+          <div className="mt-3 text-center">
             <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
             <button
               type="button"
               onClick={startGame}
-              className="mt-0.5 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
+              className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
             >
               PLAY AGAIN
             </button>

@@ -159,32 +159,32 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
             </button>
           )}
         </div>
-        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-2" aria-hidden />
       </div>
       <div className="panel-content min-h-0 flex-1 flex flex-col">
         {!canSpin ? (
-          <div className="py-1.5 text-center">
+          <div className="py-2 text-center">
             <p className="font-pixel text-[9px] text-gray-300 sm:text-[10px]">3 SPINS USED</p>
             <p className="mt-0.5 font-mono text-[10px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
           </div>
         ) : (
           <>
-            {/* Slot machine: one strip with three reel windows; no side borders to avoid extra vertical line */}
-            <div className="daily-spin-reels mb-1.5 inline-flex items-center justify-center gap-0.5 rounded-lg border-y-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-1 py-1 sm:gap-1 sm:px-1.5 sm:py-1.5">
+            {/* Slot machine: reels with room so avatars fit inside and don't overlap separator or SPIN button */}
+            <div className="daily-spin-reels mb-2 inline-flex items-center justify-center gap-1.5 rounded-lg border-y-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-2 py-2 sm:gap-2 sm:px-2.5 sm:py-2.5">
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--glitch-pink)]/50 bg-black/50 sm:h-9 sm:w-9"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--glitch-pink)]/50 bg-black/50 sm:h-10 sm:w-10"
                   style={{ imageRendering: "pixelated" }}
                 >
-                  <span className="inline-flex shrink-0 scale-[0.7] origin-center sm:scale-[0.85]">
+                  <span className="inline-flex shrink-0 scale-75 origin-center sm:scale-90">
                     <PixelCharacter characterId={REEL_AVATAR_IDS[displayReels[i]]} size="sm" animated={false} />
                   </span>
                 </div>
               ))}
             </div>
             {result !== null && (
-              <p className="mb-0.5 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
+              <p className="mb-1 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
                 +{result} PITS
               </p>
             )}
@@ -192,7 +192,7 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
               type="button"
               onClick={spin}
               disabled={spinning}
-              className="mt-0.5 w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-1.5 font-pixel text-[9px] text-white transition-colors hover:border-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/30 hover:text-white disabled:opacity-50 sm:text-[10px]"
+              className="mt-2 w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-2 font-pixel text-[9px] text-white transition-colors hover:border-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/30 hover:text-white disabled:opacity-50 sm:text-[10px]"
             >
               {spinning ? "…" : `SPIN (${triesLeft} left)`}
             </button>

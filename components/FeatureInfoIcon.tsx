@@ -40,6 +40,7 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
     let popoverWidth = maxW;
     let centerX = rect.left + rect.width / 2;
     let left = Math.max(padding, Math.min(centerX - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - padding));
+    let maxHeight: number | undefined;
 
     if (constrainToRef?.current) {
       const box = constrainToRef.current.getBoundingClientRect();
@@ -48,10 +49,18 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
       popoverWidth = Math.min(popoverWidth, maxWidthInBox, 320);
       centerX = box.left + box.width / 2;
       left = Math.max(box.left + innerPad, Math.min(centerX - popoverWidth / 2, box.right - popoverWidth - innerPad));
+      const topIfBelow = rect.bottom + gap;
+      maxHeight = Math.max(120, box.bottom - topIfBelow - innerPad);
     }
 
     const top = rect.bottom + gap;
-    setPopoverStyle({ left, top, width: popoverWidth, minWidth: Math.min(220, popoverWidth) });
+    setPopoverStyle({
+      left,
+      top,
+      width: popoverWidth,
+      minWidth: Math.min(220, popoverWidth),
+      ...(maxHeight != null && { maxHeight }),
+    });
   }, [open, constrainToRef]);
 
   return (
@@ -73,11 +82,11 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
         createPortal(
           <div
             ref={popRef}
-            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] p-3 shadow-lg"
-            style={popoverStyle}
+            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] p-3 shadow-lg overflow-y-auto"
+            style={{ ...popoverStyle, maxWidth: "100%" }}
             role="tooltip"
           >
-            <div className="font-mono text-[10px] leading-relaxed text-gray-200 sm:text-[11px] break-words" style={{ overflowWrap: "break-word" }}>
+            <div className="text-center font-mono text-[10px] leading-relaxed text-gray-200 sm:text-[11px] break-words" style={{ overflowWrap: "break-word" }}>
               {content}
             </div>
             <button

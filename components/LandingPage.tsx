@@ -12,8 +12,6 @@ interface LandingPageProps {
   onEnter: () => void;
   onEnterFunMode?: () => void;
   onOpenHelp: () => void;
-  onOpenDashboard: () => void;
-  hasWallet: boolean;
 }
 
 /* Scattered positions for Mememator-style background characters (all presets) */
@@ -31,8 +29,6 @@ export function LandingPage({
   onEnter,
   onEnterFunMode,
   onOpenHelp,
-  onOpenDashboard,
-  hasWallet,
 }: LandingPageProps) {
   const [muted, setMuted] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -82,15 +78,6 @@ export function LandingPage({
           >
             HELP
           </button>
-          {hasWallet && (
-            <button
-              type="button"
-              onClick={onOpenDashboard}
-              className="landing-nav-btn font-mono text-[10px] text-gray-500 transition-colors hover:text-white sm:text-xs"
-            >
-              DASHBOARD
-            </button>
-          )}
         </nav>
       </header>
 

@@ -42,6 +42,7 @@ export default function Home() {
   const setSelectedCharacterId = useGameStore((s) => s.setSelectedCharacterId);
   const selectedCharacterId = useGameStore((s) => s.selectedCharacterId);
   const prevBalanceRef = useRef(mockBalance);
+  const openedConnectModalRef = useRef(false);
   const [balanceJustUpdated, setBalanceJustUpdated] = useState(false);
   const [showLandingView, setShowLandingView] = useState(false);
   const [funMode, setFunMode] = useState(false); // play without wallet (e.g. in Cursor browser)
@@ -84,8 +85,12 @@ export default function Home() {
   }, [setWalletAddress]);
 
   const handleEnterPits = () => {
-    if (!walletAddress) setShowConnectToEnter(true);
-    else setShowLandingView(false); // from landing, go into the Pits
+    if (!walletAddress) {
+      openedConnectModalRef.current = true;
+      setShowConnectToEnter(true);
+    } else {
+      setShowLandingView(false); // from landing, go into the Pits
+    }
   };
 
   const handleEnterFunMode = () => {
@@ -98,9 +103,16 @@ export default function Home() {
     setShowForge(false);
   };
 
-  // When wallet connects (e.g. from ConnectToEnterModal), close that modal
+  // When wallet connects after clicking "Enter with wallet", close modal and go to main app
   useEffect(() => {
-    if (walletAddress && showConnectToEnter) setShowConnectToEnter(false);
+    if (!walletAddress) return;
+    if (showConnectToEnter) {
+      setShowConnectToEnter(false);
+      setShowLandingView(false);
+    } else if (openedConnectModalRef.current) {
+      setShowLandingView(false);
+    }
+    openedConnectModalRef.current = false;
   }, [walletAddress, showConnectToEnter]);
 
   // Background music: play when in pit and music ON, stop when leaving or music OFF
@@ -135,8 +147,6 @@ export default function Home() {
           onEnter={handleEnterPits}
           onEnterFunMode={handleEnterFunMode}
           onOpenHelp={() => setShowGameHelp(true)}
-          onOpenDashboard={() => setShowDashboard(true)}
-          hasWallet={!!walletAddress}
         />
         {showGameHelp && <GameHelp onClose={() => setShowGameHelp(false)} />}
         {showBlackMarket && <BlackMarketModal onClose={() => setShowBlackMarket(false)} />}

@@ -103,17 +103,13 @@ export default function Home() {
     setShowForge(false);
   };
 
-  // When wallet connects after clicking "Enter with wallet", close modal and go to main app
+  // When wallet is connected, always show main app (redirect from landing), close connect modal if open
   useEffect(() => {
     if (!walletAddress) return;
-    if (showConnectToEnter) {
-      setShowConnectToEnter(false);
-      setShowLandingView(false);
-    } else if (openedConnectModalRef.current) {
-      setShowLandingView(false);
-    }
+    setShowConnectToEnter(false);
+    setShowLandingView(false);
     openedConnectModalRef.current = false;
-  }, [walletAddress, showConnectToEnter]);
+  }, [walletAddress]);
 
   // Background music: play when in pit and music ON, stop when leaving or music OFF
   const inPit = (walletAddress || funMode) && !showLandingView;

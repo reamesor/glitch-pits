@@ -18,7 +18,6 @@ interface Orb {
   x: number; // percentage 0-100
   colorIndex: number;
   spawnTime: number;
-  missed?: boolean;
 }
 
 interface FloatText {
@@ -88,7 +87,7 @@ export function GlitchPopper() {
     return () => clearInterval(t);
   }, []);
 
-  // Mark expired orbs as missed (red) at 3.8s, remove at 4s; play ORB_MISS when orb expires
+  // Remove expired orbs at 4s; play ORB_MISS when orb expires (no red "missed" state so no stuck circle)
   useEffect(() => {
     const interval = setInterval(() => {
       const now = Date.now();
@@ -100,7 +99,6 @@ export function GlitchPopper() {
               soundManager.play("ORB_MISS");
               return null;
             }
-            if (age >= ORB_LIFETIME_MS - 200) return { ...o, missed: true };
             return o;
           })
           .filter((o): o is Orb => o !== null)
@@ -112,9 +110,9 @@ export function GlitchPopper() {
   return (
     <div className="flex h-full flex-col">
       <div className="panel-title-row w-full overflow-visible">
-        <div className="mb-2 flex w-full items-center gap-1.5 border-b-2 border-[var(--glitch-teal)]/40 pb-2">
+        <div className="flex w-full items-center gap-1.5">
           <h3
-            className="font-pixel glitch-text inline-block text-sm"
+            className="font-pixel glitch-text inline-block shrink-0 text-sm"
             data-text="GLITCH POPPER"
             style={{ color: "#00ffff" }}
           >
@@ -123,49 +121,43 @@ export function GlitchPopper() {
           <FeatureInfoIcon
           ariaLabel="How Glitch Popper works"
           content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
-          className="text-[var(--glitch-teal)]"
-        />
+            className="shrink-0 text-[var(--glitch-teal)]"
+          />
         </div>
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
       </div>
 
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-gray-400">
+      <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 font-mono text-[9px] text-gray-400 sm:text-[10px]">
         <span>POPPED: {popped}</span>
         <span>EARNED: {earned.toFixed(2)} PITS</span>
       </div>
-      <p className="mb-3 font-mono text-[10px] text-gray-400">[ CLICK THE GLITCHES ]</p>
+      <p className="mb-2 font-mono text-[9px] text-gray-400 sm:text-[10px]">[ CLICK THE GLITCHES ]</p>
 
       <div
         ref={playAreaRef}
         className="glitch-popper-play relative min-h-0 flex-1 overflow-hidden rounded border border-[var(--glitch-pink)]/20"
       >
-        {orbs.map((orb) => {
-          const isMissed = orb.missed === true;
-          return (
-            <div
-              key={orb.id}
-              role="button"
-              tabIndex={0}
-              onClick={(e) => handleOrbClick(orb, e)}
-              onKeyDown={(e) => e.key === "Enter" && handleOrbClick(orb, e as unknown as React.MouseEvent<HTMLDivElement>)}
-              className="glitch-popper-orb absolute cursor-pointer"
-              style={{
-                left: `${orb.x}%`,
-                bottom: 0,
-                width: ORB_SIZE_PX,
-                height: ORB_SIZE_PX,
-                marginLeft: -ORB_SIZE_PX / 2,
-                backgroundColor: isMissed ? "#ff0000" : ORB_COLORS[orb.colorIndex],
-                boxShadow: isMissed
-                  ? "0 0 8px #ff0000"
-                  : `0 0 6px ${ORB_COLORS[orb.colorIndex]}, inset 0 0 4px rgba(255,255,255,0.3)`,
-                animation: isMissed
-                  ? "glitch-popper-missed 0.2s ease-out forwards"
-                  : "glitch-popper-float 4s linear forwards, glitch-popper-wobble 0.6s ease-in-out infinite, glitch-popper-flicker 0.15s ease-in-out infinite",
-              }}
-              aria-label="Pop glitch orb"
-            />
-          );
-        })}
+        {orbs.map((orb) => (
+          <div
+            key={orb.id}
+            role="button"
+            tabIndex={0}
+            onClick={(e) => handleOrbClick(orb, e)}
+            onKeyDown={(e) => e.key === "Enter" && handleOrbClick(orb, e as unknown as React.MouseEvent<HTMLDivElement>)}
+            className="glitch-popper-orb absolute cursor-pointer"
+            style={{
+              left: `${orb.x}%`,
+              bottom: 0,
+              width: ORB_SIZE_PX,
+              height: ORB_SIZE_PX,
+              marginLeft: -ORB_SIZE_PX / 2,
+              backgroundColor: ORB_COLORS[orb.colorIndex],
+              boxShadow: `0 0 6px ${ORB_COLORS[orb.colorIndex]}, inset 0 0 4px rgba(255,255,255,0.3)`,
+              animation: "glitch-popper-float 4s linear forwards, glitch-popper-wobble 0.6s ease-in-out infinite, glitch-popper-flicker 0.15s ease-in-out infinite",
+            }}
+            aria-label="Pop glitch orb"
+          />
+        ))}
 
         {floatTexts.map((ft) => (
           <div

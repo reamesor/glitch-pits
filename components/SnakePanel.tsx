@@ -193,27 +193,28 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
   };
 
   return (
-    <div className="snake-panel flex min-h-0 w-full flex-col rounded border border-[var(--glitch-teal)]/40 bg-[var(--bg-card)] p-3 sm:p-4">
+    <div className="snake-panel flex min-h-0 w-full flex-col">
       <div className="panel-title-row w-full overflow-visible">
-        <div className="mb-2 flex w-full items-center justify-between border-b-2 border-[var(--glitch-teal)]/40 pb-2">
-          <div className="flex items-center gap-1.5">
-            <span className="font-pixel glitch-text inline-block text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
+        <div className="flex w-full items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-1.5">
+            <span className="font-pixel glitch-text inline-block shrink-0 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
             <FeatureInfoIcon
-            ariaLabel="How Snake works"
+              ariaLabel="How Snake works"
             content={
               <>
                 Arrow keys / WASD. Eat food, avoid walls and body. PITS = round(score ÷ 10), max 20 per game. No stake; you don’t lose PITS.
               </>
             }
-            className="text-[var(--glitch-teal)]"
-          />
+              className="shrink-0 text-[var(--glitch-teal)]"
+            />
+          </div>
+          {onClose && (
+            <button type="button" onClick={handleClose} className="font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
+              CLOSE
+            </button>
+          )}
         </div>
-        {onClose && (
-          <button type="button" onClick={handleClose} className="font-mono text-[9px] text-gray-400 hover:text-white" aria-label="Close">
-            CLOSE
-          </button>
-        )}
-        </div>
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1.5" aria-hidden />
       </div>
       {confirmClose && (
         <div className="mb-1.5 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[9px]">
@@ -253,13 +254,13 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
           style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
         />
       </div>
-      <p className="mt-2 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
+      <p className="mt-1 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
         {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
         {status === "idle" && "Arrow keys / WASD"}
         {status === "gameover" && `Score: ${score}`}
       </p>
       {status === "countdown" && (
-        <p className="mt-2 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
+        <p className="mt-1 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
           Get ready — {countdown}
         </p>
       )}
@@ -267,18 +268,18 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
         <button
           type="button"
           onClick={startGame}
-          className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
+          className="mt-1 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
         >
           [ START ]
         </button>
       )}
       {status === "gameover" && (
-        <div className="mt-2 text-center">
+        <div className="mt-1 text-center">
           <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
           <button
             type="button"
             onClick={startGame}
-            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] sm:text-[10px]"
+            className="mt-1 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
           >
             PLAY AGAIN
           </button>

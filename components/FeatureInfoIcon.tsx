@@ -32,11 +32,14 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
   useEffect(() => {
     if (!open || !buttonRef.current || typeof document === "undefined") return;
     const rect = buttonRef.current.getBoundingClientRect();
-    const gap = 4;
-    const popoverWidth = 224; // w-56 max
-    const left = Math.max(8, Math.min(rect.left + rect.width / 2 - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - 8));
+    const gap = 6;
+    const padding = 20;
+    const maxW = Math.min(380, document.documentElement.clientWidth - padding * 2);
+    const popoverWidth = maxW;
+    const centerX = rect.left + rect.width / 2;
+    const left = Math.max(padding, Math.min(centerX - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - padding));
     const top = rect.bottom + gap;
-    setPopoverStyle({ left, top, width: "14rem", maxWidth: "min(14rem, calc(100vw - 16px))" });
+    setPopoverStyle({ left, top, width: popoverWidth, minWidth: 260 });
   }, [open]);
 
   return (
@@ -58,11 +61,11 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
         createPortal(
           <div
             ref={popRef}
-            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] p-2 shadow-lg"
+            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] p-3 shadow-lg"
             style={popoverStyle}
             role="tooltip"
           >
-            <div className="font-mono text-[9px] leading-relaxed text-gray-200 sm:text-[10px]">
+            <div className="font-mono text-[10px] leading-relaxed text-gray-200 sm:text-[11px] break-words" style={{ overflowWrap: "break-word" }}>
               {content}
             </div>
             <button

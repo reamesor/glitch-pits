@@ -5,6 +5,7 @@ import { useGameStore } from "@/lib/useGameStore";
 import { useSocket } from "@/hooks/useSocket";
 import { getMultiplierForAmount } from "@/lib/betMultipliers";
 import { getRandomPitLore, getRandomOpponentName } from "@/lib/pitLore";
+import { useActiveConsumablesStore } from "@/lib/activeConsumablesStore";
 import { startBattleSound, stopBattleSound } from "@/lib/battleSound";
 import { playJackpotSound } from "@/lib/jackpotSound";
 import { soundManager } from "@/lib/soundManager";
@@ -32,6 +33,10 @@ export function GameCanvas() {
   const setBalance = useGameStore((s) => s.setBalance);
   const setLastBetResult = useGameStore((s) => s.setLastBetResult);
 
+  const consumables = useActiveConsumablesStore();
+  const thisBetUsedJackpotKeyRef = useRef(false);
+  const [useJackpotKeyForNextBet, setUseJackpotKeyForNextBet] = useState(false);
+
   const [amount, setAmount] = useState(100);
   const [customAmountStr, setCustomAmountStr] = useState("");
   const [battlePhase, setBattlePhase] = useState<"idle" | "fighting" | "result">("idle");
@@ -39,6 +44,7 @@ export function GameCanvas() {
   const [battleMultiplier, setBattleMultiplier] = useState(0);
   const [battleWon, setBattleWon] = useState(false);
   const [battlePayout, setBattlePayout] = useState(0);
+  const [resultMessage, setResultMessage] = useState<string | null>(null); // e.g. "[ SHIELD BLOCKED ]"
   const [currentLore, setCurrentLore] = useState("");
   const [rumbleOpponent, setRumbleOpponent] = useState("");
   const battleStartTimeRef = useRef<number>(0);
@@ -56,7 +62,11 @@ export function GameCanvas() {
   const JACKPOT_MIN_PAYOUT = 500;
   const JACKPOT_MIN_MULTIPLIER = 3;
 
-  const multiplier = getMultiplierForAmount(amount);
+  const baseMultiplier = getMultiplierForAmount(amount);
+  const glitchMultActive = consumables.glitchMultiplier;
+  const jackpotKeyActive = consumables.jackpotKeyExpiry != null && consumables.jackpotKeyExpiry > Date.now();
+  const effectiveMultiplier = glitchMultActive ? 3 : (useJackpotKeyForNextBet && jackpotKeyActive ? 5 : baseMultiplier);
+  const multiplier = effectiveMultiplier;
   const potentialWin = Math.floor(amount * multiplier);
   const displayName = playerName || "Warrior";
   const canPlaceBet = (characterCount >= 1 || !!walletAddress) && amount >= MIN_BET_PITS && amount <= mockBalance && !autobetRunning;
@@ -85,48 +95,113 @@ export function GameCanvas() {
     return () => clearInterval(id);
   }, [battlePhase, displayName, rumbleOpponent]);
 
-  // When betResult arrives, wait for minimum battle time then show result, then idle
+  // When betResult arrives, wait for minimum battle time then apply consumables, update balance, show result
   useEffect(() => {
     if (battlePhase !== "fighting" || lastBetResult === null) return;
     const elapsed = Date.now() - battleStartTimeRef.current;
     const waitMs = Math.max(0, MIN_BATTLE_MS - elapsed);
 
     const t = setTimeout(() => {
-      const payout =
-        lastBetResult.won && lastBetResult.payout === 0
-          ? Math.floor(battleAmount * getMultiplierForAmount(battleAmount))
-          : lastBetResult.payout;
-      const mult = getMultiplierForAmount(battleAmount);
-      useGameStore.getState().recordBetResult(battleAmount, lastBetResult.won, payout);
-      if (payout !== lastBetResult.payout) {
-        useGameStore.getState().setLastBetResult({ won: lastBetResult.won, payout });
+      const store = useGameStore.getState();
+      const cons = useActiveConsumablesStore.getState();
+      let effectiveWon = lastBetResult.won;
+      let effectivePayout = lastBetResult.payout;
+      if (lastBetResult.won) {
+        if (lastBetResult.payout === 0 || cons.glitchMultiplier) {
+          effectivePayout = Math.floor(battleAmount * battleMultiplier);
+        }
       }
-      setBattleWon(lastBetResult.won);
-      setBattlePayout(payout);
+      let msg: string | null = null;
+
+      if (cons.bloodPact) {
+        effectiveWon = true;
+        effectivePayout = Math.floor(battleAmount * battleMultiplier);
+        useActiveConsumablesStore.getState().consumeBloodPact();
+        msg = "[ PACT FULFILLED ]";
+      }
+
+      if (!effectiveWon) {
+        if (cons.glitchShield) {
+          useActiveConsumablesStore.getState().consumeGlitchShield();
+          msg = "[ SHIELD BLOCKED ]";
+        } else if (cons.phantomBet) {
+          useActiveConsumablesStore.getState().consumePhantomBet();
+          msg = "[ PHANTOM CONSUMED ]";
+        } else if (cons.shadowCloakUsesLeft > 0) {
+          useActiveConsumablesStore.getState().consumeShadowCloakUse();
+          const halfLoss = Math.floor(battleAmount / 2);
+          msg = `[ CLOAK REDUCED LOSS ] -${halfLoss} PITS`;
+        }
+      }
+
+      if (effectiveWon) {
+        if (cons.doubleDownChip) {
+          effectivePayout = effectivePayout * 2;
+          useActiveConsumablesStore.getState().consumeDoubleDownChip();
+          msg = "[ 2X CHIP APPLIED ]";
+        }
+        if (cons.phantomBet && !cons.doubleDownChip) {
+          useActiveConsumablesStore.getState().consumePhantomBet();
+          if (!msg) msg = "[ PHANTOM CONSUMED ]";
+        } else if (cons.phantomBet) useActiveConsumablesStore.getState().consumePhantomBet();
+      }
+
+      if (cons.glitchMultiplier) useActiveConsumablesStore.getState().consumeGlitchMultiplier();
+      if (thisBetUsedJackpotKeyRef.current) {
+        useActiveConsumablesStore.getState().consumeJackpotKey();
+        thisBetUsedJackpotKeyRef.current = false;
+      }
+      if (cons.pitBribeBetsLeft > 0) useActiveConsumablesStore.getState().consumePitBribeBet();
+      if (cons.speedHackRoundsLeft > 0 && autobetRunningRef.current) useActiveConsumablesStore.getState().consumeSpeedHackRound();
+
+      const balance = store.mockBalance;
+      let newBalance: number;
+      if (effectiveWon) {
+        newBalance = balance - battleAmount + effectivePayout;
+      } else {
+        if (msg === "[ SHIELD BLOCKED ]") newBalance = balance;
+        else if (msg?.startsWith("[ CLOAK")) newBalance = balance - Math.floor(battleAmount / 2);
+        else newBalance = balance - battleAmount;
+      }
+      setBalance(newBalance);
+
+      useGameStore.getState().recordBetResult(battleAmount, effectiveWon, effectiveWon ? effectivePayout : 0);
+      if (effectiveWon && effectivePayout !== lastBetResult.payout) {
+        useGameStore.getState().setLastBetResult({ won: true, payout: effectivePayout });
+      } else if (!effectiveWon) {
+        useGameStore.getState().setLastBetResult({ won: false, payout: 0 });
+      }
+
+      setResultMessage(msg);
+      setBattleWon(effectiveWon);
+      setBattlePayout(effectiveWon ? effectivePayout : 0);
       setBattlePhase("result");
       soundManager.play("MULTIPLIER_REVEAL");
       setTimeout(() => {
-        soundManager.play(lastBetResult.won ? "WIN" : "LOSE");
-        if (lastBetResult.won) musicManager.duckForWin();
+        soundManager.play(effectiveWon ? "WIN" : "LOSE");
+        if (effectiveWon) musicManager.duckForWin();
         else musicManager.duckForLoss();
       }, 90);
-      if (lastBetResult.won) {
+      if (effectiveWon) {
         setWinEffectActive(true);
         setTimeout(() => setWinEffectActive(false), 2000);
         setBalanceBounceActive(true);
         setTimeout(() => setBalanceBounceActive(false), 4500);
-        if (payout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER) {
+        const mult = battleMultiplier;
+        if (effectivePayout >= JACKPOT_MIN_PAYOUT || mult >= JACKPOT_MIN_MULTIPLIER) {
           playJackpotSound();
           setBigWinVignetteActive(true);
           setTimeout(() => setBigWinVignetteActive(false), 1500);
         }
       }
       if (autobetRunningRef.current) {
-        setAutobetSessionProfit((p) => p + (lastBetResult.won ? payout : -battleAmount));
+        const sessionDelta = effectiveWon ? effectivePayout : (msg === "[ SHIELD BLOCKED ]" ? 0 : msg?.startsWith("[ CLOAK") ? -Math.floor(battleAmount / 2) : -battleAmount);
+        setAutobetSessionProfit((p) => p + sessionDelta);
       }
     }, waitMs);
 
     const tIdle = setTimeout(() => {
+      setResultMessage(null);
       useGameStore.getState().setLastBetResult(null);
       setBattlePhase("idle");
     }, waitMs + RESULT_DISPLAY_MS);
@@ -135,7 +210,7 @@ export function GameCanvas() {
       clearTimeout(t);
       clearTimeout(tIdle);
     };
-  }, [battlePhase, lastBetResult, battleAmount]);
+  }, [battlePhase, lastBetResult, battleAmount, battleMultiplier]);
 
   // When returning to idle after a bet, run next autobet if active
   useEffect(() => {
@@ -158,10 +233,12 @@ export function GameCanvas() {
       return;
     }
 
+    const speedHackActive = useActiveConsumablesStore.getState().speedHackRoundsLeft > 0;
+    const delayMs = speedHackActive ? AUTOBET_DELAY_MS / 2 : AUTOBET_DELAY_MS;
     const t = setTimeout(() => {
       setAutobetDone((d) => d + 1);
       handlePlaceBetRef.current?.();
-    }, AUTOBET_DELAY_MS);
+    }, delayMs);
     return () => clearTimeout(t);
   }, [battlePhase, autobetRunning, autobetLimit, autobetDone, amount, characterCount, walletAddress]);
 
@@ -172,7 +249,11 @@ export function GameCanvas() {
     soundManager.play("BET_PLACED");
 
     const betAmount = amount;
-    const betMultiplier = multiplier;
+    const betMultiplier = effectiveMultiplier;
+    if (useJackpotKeyForNextBet && jackpotKeyActive) {
+      thisBetUsedJackpotKeyRef.current = true;
+      setUseJackpotKeyForNextBet(false);
+    }
 
     setLastBetResult(null);
     setBattleAmount(betAmount);
@@ -188,18 +269,14 @@ export function GameCanvas() {
 
     if (socket) socket.emit("placeBet", { amount: betAmount });
 
-    // If server doesn't respond in time, run local simulation (use betAmount/betMultiplier so payout is correct)
+    // If server doesn't respond in time, run local simulation. Balance is updated in result effect (consumables-aware).
     const timeoutId = setTimeout(() => {
       if (useGameStore.getState().lastBetResult !== null) return; // server already replied
-      const won = Math.random() < 0.5;
+      const pitBribeActive = useActiveConsumablesStore.getState().pitBribeBetsLeft > 0;
+      const winChance = pitBribeActive ? 0.55 : 0.5;
+      const won = Math.random() < winChance;
       const payout = won ? Math.floor(betAmount * betMultiplier) : 0;
       setLastBetResult({ won, payout });
-      const balance = useGameStore.getState().mockBalance;
-      if (won) {
-        setBalance(balance - betAmount + payout);
-      } else {
-        setBalance(balance - betAmount);
-      }
     }, SERVER_TIMEOUT_MS);
 
     const unsub = useGameStore.subscribe((state) => {
@@ -208,7 +285,7 @@ export function GameCanvas() {
         unsub();
       }
     });
-  }, [amount, multiplier, mockBalance, characterCount, walletAddress, socket, displayName, setBalance, setLastBetResult]);
+  }, [amount, effectiveMultiplier, mockBalance, characterCount, walletAddress, socket, displayName, setBalance, setLastBetResult, useJackpotKeyForNextBet, jackpotKeyActive]);
 
   const handlePlaceBetRef = useRef(handlePlaceBet);
   handlePlaceBetRef.current = handlePlaceBet;
@@ -225,9 +302,9 @@ export function GameCanvas() {
   if (battlePhase === "fighting" || battlePhase === "result") {
     return (
       <>
-      <div className={`relative flex min-h-0 w-full max-w-4xl flex-col items-center justify-center overflow-y-auto overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] p-2 sm:p-4 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
+      <div className={`relative flex min-h-0 w-full min-w-0 max-w-4xl flex-col items-center justify-center overflow-hidden overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/60 bg-[var(--bg-dark)] pt-1 px-1.5 pb-1.5 sm:pt-2 sm:px-3 sm:pb-3 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
         {autobetRunning && (
-          <div className="absolute left-0 right-0 top-0 z-10 flex flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[10px] sm:gap-3 sm:text-xs">
+          <div className="absolute left-0 right-0 top-0 z-10 flex min-w-0 flex-shrink-0 flex-wrap items-center justify-center gap-2 border-b border-[var(--glitch-pink)]/30 bg-black/60 px-2 py-1.5 font-mono text-[10px] sm:gap-3 sm:text-xs">
             <span className="text-gray-400">
               Bet <span className="tabular-nums text-white">{autobetDone + 1}{autobetLimit >= 0 ? ` / ${autobetLimit}` : " ∞"}</span>
             </span>
@@ -246,8 +323,8 @@ export function GameCanvas() {
             </button>
           </div>
         )}
-        <div className="flex flex-col items-center justify-center">
-          <div className="mb-1 flex items-center justify-center gap-1 sm:mb-2">
+        <div className="flex min-w-0 flex-1 flex-col items-center justify-center overflow-hidden">
+          <div className="mb-1 flex min-w-0 flex-shrink-0 items-center justify-center gap-1 sm:mb-2">
             <h2
               className="font-pixel glitch-text text-center text-[10px] uppercase sm:text-xs"
               data-text="THE GLITCH PIT"
@@ -297,6 +374,16 @@ export function GameCanvas() {
                   ? `You won ${battlePayout > 0 ? battlePayout : Math.floor(battleAmount * battleMultiplier)} PITS`
                   : "House wins."}
               </p>
+              {resultMessage && (
+                <p
+                  className="mt-2 text-center font-mono text-[10px]"
+                  style={{
+                    color: resultMessage.includes("SHIELD") ? "var(--glitch-teal)" : resultMessage.includes("2X") ? "#f5c518" : resultMessage.includes("CLOAK") ? "#a78bfa" : resultMessage.includes("PACT") ? "#f5c518" : "var(--glitch-pink)",
+                  }}
+                >
+                  {resultMessage}
+                </p>
+              )}
               <div className="mt-4 flex w-full justify-center">
                 <button
                   type="button"
@@ -318,10 +405,10 @@ export function GameCanvas() {
   }
 
   return (
-    <div className={`relative flex min-h-0 w-full max-w-4xl flex-col items-center justify-center overflow-y-auto overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] p-3 shadow-[0_0_24px_rgba(255,105,180,0.15),0_0_40px_rgba(0,212,170,0.05)] sm:rounded-xl sm:p-4 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
-        <div className="flex w-full max-w-lg min-w-0 shrink-0 flex-col items-center gap-2 sm:gap-2.5">
+    <div className={`relative flex min-h-0 w-full min-w-0 max-w-4xl flex-col items-center justify-center overflow-hidden overflow-x-hidden rounded-lg border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-dark)] pt-1 px-1.5 pb-1.5 shadow-[0_0_24px_rgba(255,105,180,0.15),0_0_40px_rgba(0,212,170,0.05)] sm:rounded-xl sm:pt-2 sm:px-3 sm:pb-3 ${bigWinVignetteActive ? "win-vignette" : ""}`}>
+        <div className="flex w-full max-w-lg min-w-0 shrink-0 flex-col items-center gap-1 overflow-x-hidden sm:gap-2">
         <div className="bet-on-header">
-          <div className="flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1 sm:gap-1.5">
             <h2 className="bet-on-header-title">
               BET ON {displayName.toUpperCase()}
             </h2>
@@ -336,15 +423,15 @@ export function GameCanvas() {
             />
           </div>
           <div className="bet-on-header-avatar">
-            <PixelCharacter characterId={selectedCharacterId} animated className="scale-125 sm:scale-150" />
+            <PixelCharacter characterId={selectedCharacterId} animated className="scale-100 sm:scale-125 md:scale-150" />
           </div>
         </div>
         <p className="shrink-0 text-center font-mono text-xs text-gray-400 sm:text-sm">
           Pick your stake. Place your bet. Multiply or burn.
         </p>
 
-        <div className="flex w-full flex-col items-center gap-2.5">
-          <div className="flex w-full shrink-0 flex-col items-center gap-1.5 rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-3 py-2.5">
+        <div className="flex w-full flex-col items-center gap-2">
+          <div className="flex w-full shrink-0 flex-col items-center gap-1 rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-card)] px-2 py-2">
             <p className="game-box-label text-center">BALANCE</p>
             <p className={`font-pixel text-center text-base sm:text-lg ${balanceBounceActive ? "balance-win-bounce" : "animate-pulse-glow"}`} style={{ color: "var(--glitch-teal)" }}>
               {mockBalance.toLocaleString()} PITS
@@ -357,10 +444,11 @@ export function GameCanvas() {
                   onClick={() => {
                     setAmount(a);
                     setCustomAmountStr("");
+                    setUseJackpotKeyForNextBet(false);
                   }}
                   disabled={a > mockBalance}
                   className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:text-[9px] hover:scale-105 ${
-                    amount === a && !customAmountStr
+                    (amount === a && !customAmountStr) || (glitchMultActive && a === 500)
                       ? "border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 shadow-[0_0_8px_rgba(255,105,180,0.4)]"
                       : "border-[#4a4a4a] bg-[#2a2a2a] hover:border-[#5a5a5a]"
                   }`}
@@ -368,11 +456,31 @@ export function GameCanvas() {
                   {a}→{getMultiplierForAmount(a)}x
                 </button>
               ))}
+              {jackpotKeyActive && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAmount(1000);
+                    setCustomAmountStr("");
+                    setUseJackpotKeyForNextBet(true);
+                  }}
+                  disabled={1000 > mockBalance}
+                  className={`border-2 px-2 py-1.5 font-pixel text-[8px] transition-all sm:text-[9px] hover:scale-105 ${
+                    useJackpotKeyForNextBet ? "border-[#f5c518] bg-[#f5c518]/25 shadow-[0_0_8px_rgba(245,197,24,0.6)]" : "border-[#f5c518]/70 bg-[#f5c518]/10"
+                  }`}
+                  style={{ color: "#f5c518" }}
+                >
+                  1000→5x
+                </button>
+              )}
             </div>
+            {glitchMultActive && (
+              <p className="mt-1 font-mono text-[9px] text-[var(--glitch-pink)]">[ GLITCH MULTIPLIER ACTIVE ]</p>
+            )}
           </div>
-          <div className="game-box w-full shrink-0 px-3 py-2.5">
-            <p className="game-box-label mb-1.5 text-center">CUSTOM BET</p>
-            <p className="mb-2 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
+          <div className="game-box w-full shrink-0 px-2 py-2">
+            <p className="game-box-label mb-1 text-center">CUSTOM BET</p>
+            <p className="mb-1.5 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
               Min <strong className="text-white">{MIN_BET_PITS} PITS</strong> · Max <strong className="text-white">{mockBalance.toLocaleString()} PITS</strong>
             </p>
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -389,13 +497,32 @@ export function GameCanvas() {
               />
               <span className="font-mono text-xs text-gray-400 sm:text-sm">PITS</span>
             </div>
-            <p className="mt-2 text-center font-mono text-xs text-gray-400 sm:text-sm">
-              Your bet uses the <strong className="text-[var(--glitch-teal)]">{getMultiplierForAmount(amount)}×</strong> tier → win <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> if you win.
+            <p className="mt-1.5 text-center font-mono text-[10px] text-gray-400 sm:text-xs">
+              Your bet uses the <strong className="text-[var(--glitch-teal)]">{multiplier}×</strong> tier → win <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> if you win.
             </p>
           </div>
-          <p className="w-full shrink-0 text-center font-mono text-[10px] font-semibold sm:text-xs">
-            Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> ({getMultiplierForAmount(amount)}× multiplier)
+          <p className="w-full shrink-0 text-center font-mono text-[9px] font-semibold sm:text-[10px]">
+            Potential win: <span style={{ color: "var(--glitch-gold)" }}>{potentialWin} PITS</span> ({multiplier}× multiplier)
           </p>
+
+          {/* Active consumables strip */}
+          {(consumables.glitchShield || consumables.doubleDownChip || consumables.phantomBet || consumables.glitchMultiplier || consumables.bloodPact || consumables.pitBribeBetsLeft > 0 || consumables.shadowCloakUsesLeft > 0 || consumables.speedHackRoundsLeft > 0 || jackpotKeyActive) && (
+            <div className="flex w-full max-w-xs shrink-0 flex-wrap items-center justify-center gap-1.5 rounded border border-[var(--glitch-pink)]/30 bg-black/40 px-2 py-1.5 font-mono text-[8px] sm:text-[9px]">
+              {consumables.glitchShield && <span className="rounded bg-[var(--glitch-teal)]/20 px-1 text-[var(--glitch-teal)]">SHIELD</span>}
+              {consumables.doubleDownChip && <span className="rounded bg-yellow-500/20 px-1 text-yellow-400">2X CHIP</span>}
+              {consumables.phantomBet && <span className="rounded bg-[var(--glitch-pink)]/20 px-1 text-[var(--glitch-pink)]">PHANTOM BET</span>}
+              {consumables.glitchMultiplier && <span className="rounded bg-[var(--glitch-pink)]/20 px-1 text-[var(--glitch-pink)]">GLITCH 3X</span>}
+              {consumables.bloodPact && <span className="rounded bg-red-900/50 px-1 text-red-400" style={{ animation: "pulse 1s ease-in-out infinite" }}>BLOOD PACT</span>}
+              {consumables.pitBribeBetsLeft > 0 && <span className="rounded bg-[var(--glitch-teal)]/20 px-1 text-[var(--glitch-teal)]">PIT BRIBE: {consumables.pitBribeBetsLeft}</span>}
+              {consumables.shadowCloakUsesLeft > 0 && <span className="rounded bg-purple-900/40 px-1 text-purple-300">CLOAK: {consumables.shadowCloakUsesLeft}</span>}
+              {consumables.speedHackRoundsLeft > 0 && <span className="rounded bg-cyan-900/40 px-1 text-cyan-300">SPEED: {consumables.speedHackRoundsLeft}</span>}
+              {jackpotKeyActive && consumables.jackpotKeyExpiry != null && (
+                <span className="rounded bg-[#f5c518]/20 px-1" style={{ color: "#f5c518" }}>
+                  KEY: {Math.max(0, Math.floor((consumables.jackpotKeyExpiry - Date.now()) / 60000))}:{Math.max(0, Math.floor(((consumables.jackpotKeyExpiry - Date.now()) / 1000) % 60)).toString().padStart(2, "0")}
+                </span>
+              )}
+            </div>
+          )}
 
           <button
             type="button"
@@ -406,9 +533,9 @@ export function GameCanvas() {
             PLACE BET ({amount} PITS)
           </button>
 
-          <div className="game-box w-full shrink-0 px-3 py-2.5">
-            <p className="game-box-label mb-1.5 text-center">AUTOBET</p>
-            <div className="mb-2 flex flex-wrap items-center justify-center gap-1">
+          <div className="game-box w-full shrink-0 px-2 py-2">
+            <p className="game-box-label mb-1 text-center">AUTOBET</p>
+            <div className="mb-1.5 flex flex-wrap items-center justify-center gap-1">
               {AUTOBET_OPTIONS.map((n) => (
                 <button
                   key={n}
@@ -444,7 +571,7 @@ export function GameCanvas() {
               </button>
             </div>
             {autobetRunning && (
-              <div className="mt-2 w-full space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-2 py-1.5 text-center font-mono text-[9px] sm:text-[10px]">
+              <div className="mt-1.5 w-full space-y-0.5 rounded border border-[var(--glitch-pink)]/30 bg-black/30 px-2 py-1 text-center font-mono text-[9px] sm:text-[10px]">
                 <p className="flex justify-center gap-4 text-gray-300">
                   <span>Completed</span>
                   <span className="tabular-nums">
@@ -491,7 +618,7 @@ export function GameCanvas() {
           <p className="shrink-0 text-center font-mono text-[10px] text-gray-400 sm:text-xs">Forge a character to customize your gladiator (optional).</p>
         )}
 
-        <p className="w-full max-w-full shrink-0 px-2 text-center font-mono text-[10px] text-gray-400 sm:px-0 sm:text-xs" style={{ overflowWrap: "break-word" }}>
+        <p className="w-full max-w-full shrink-0 px-2 text-center font-mono text-[9px] text-gray-400 sm:px-0 sm:text-[10px]" style={{ overflowWrap: "break-word" }}>
           Your gladiator in the Pit · Win = bet × multiplier. Lose = burn.
         </p>
       </div>

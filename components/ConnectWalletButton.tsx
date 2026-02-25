@@ -7,8 +7,9 @@ export function ConnectWalletButton() {
   return (
     <div
       className="
-        [&_.wallet-adapter-button]:!min-h-[32px]
+        [&_.wallet-adapter-button]:!min-h-[40px]
         [&_.wallet-adapter-button]:!h-8
+        sm:[&_.wallet-adapter-button]:!min-h-[32px]
         [&_.wallet-adapter-button]:!rounded
         [&_.wallet-adapter-button]:!border
         [&_.wallet-adapter-button]:!border-[var(--glitch-pink)]

@@ -31,11 +31,13 @@
 html {
   height: 100%;
   overflow: hidden;
+  overflow-x: hidden;
 }
 
 body {
   height: 100%;
   min-height: 0;
+  min-width: 0;
   background: radial-gradient(ellipse 140% 100% at 50% -10%, rgba(255, 105, 180, 0.12) 0%, transparent 45%),
     radial-gradient(ellipse 100% 70% at 85% 40%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse 80% 60% at 15% 60%, rgba(255, 105, 180, 0.05) 0%, transparent 45%),
@@ -43,6 +45,7 @@ body {
   color: var(--text-primary);
   font-family: "JetBrains Mono", "Courier New", monospace;
   overflow: hidden;
+  overflow-x: hidden;
   font-size: 14px;
 }
 

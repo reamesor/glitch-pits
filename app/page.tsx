@@ -129,7 +129,7 @@ export default function Home() {
 
   if (!inPit) {
     return (
-      <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
+      <main className="relative flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden overflow-x-hidden" style={{ height: "100dvh" }}>
         <WalletSync />
         <LandingPage
           onEnter={handleEnterPits}
@@ -147,28 +147,28 @@ export default function Home() {
   }
 
   return (
-    <main className="relative flex h-full min-h-0 flex-col overflow-hidden" style={{ height: "100dvh" }}>
+    <main className="relative flex h-full min-h-0 w-full min-w-0 max-w-full flex-col overflow-hidden overflow-x-hidden" style={{ height: "100dvh" }}>
       <WalletSync />
       <div className="bg-static" />
-      {/* Top Bar — logo left, nav right */}
-      <header className="app-header relative flex shrink-0 flex-wrap items-center justify-between gap-2 px-3 py-2.5 sm:gap-6 sm:px-6 sm:py-4 md:gap-8">
+      {/* Top Bar — logo left, nav right; compact on mobile, touch-friendly */}
+      <header className="app-header relative flex shrink-0 flex-wrap items-center justify-between gap-1.5 px-2 py-1.5 sm:gap-4 sm:px-4 sm:py-2.5 md:gap-6">
         <h1 className="header-logo z-10 shrink-0">
           <button
             type="button"
             onClick={() => setShowLandingView(true)}
-            className="header-logo-btn flex items-center rounded-md py-2.5 pl-3 pr-4 transition-all sm:py-3 sm:pl-4 sm:pr-5 focus:outline-none focus:ring-2 focus:ring-[var(--glitch-pink)]/50 focus:ring-offset-2 focus:ring-offset-[var(--bg-darker)]"
+            className="header-logo-btn flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md py-2 pl-2 pr-2 transition-all sm:min-h-0 sm:min-w-0 sm:py-3 sm:pl-4 sm:pr-5"
             title="Back to landing"
           >
             <GlitchPitsLogo size="md" className="block" />
           </button>
         </h1>
 
-        <div className="z-10 flex flex-wrap items-center justify-end gap-1.5 sm:gap-3">
-          <div className="flex items-center gap-1.5">
+        <div className="z-10 flex flex-wrap items-center justify-end gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-1.5">
             <button
               type="button"
               onClick={toggleGameMusic}
-              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+              className="app-header-nav-btn min-h-[40px] rounded px-2 py-2 sm:min-h-[32px] sm:px-2.5 sm:py-1.5"
               title={gameMusicMuted ? "Play background music" : "Mute background music"}
             >
               {gameMusicMuted ? "MUSIC OFF" : "MUSIC ON"}
@@ -180,7 +180,7 @@ export default function Home() {
                 max={100}
                 value={musicVolume}
                 onChange={(e) => setMusicVolume(Number(e.target.value))}
-                className="music-volume-slider"
+                className="music-volume-slider music-volume-slider-mobile"
                 aria-label="Music volume"
               />
             )}
@@ -191,14 +191,14 @@ export default function Home() {
           <button
             type="button"
             onClick={() => setShowGameHelp(true)}
-            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+            className="app-header-nav-btn min-h-[40px] rounded px-2 py-2 sm:min-h-[32px] sm:px-2.5 sm:py-1.5"
           >
             HELP
           </button>
           <button
             type="button"
             onClick={() => setShowBlackMarket(true)}
-            className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+            className="app-header-nav-btn min-h-[40px] rounded px-2 py-2 sm:min-h-[32px] sm:px-2.5 sm:py-1.5"
           >
             BLACK MARKET
           </button>
@@ -206,7 +206,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setShowDashboard(true)}
-              className="app-header-nav-btn rounded px-2 py-1.5 sm:px-2.5"
+              className="app-header-nav-btn min-h-[40px] rounded px-2 py-2 sm:min-h-[32px] sm:px-2.5 sm:py-1.5"
             >
               DASHBOARD
             </button>
@@ -216,23 +216,23 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content: no horizontal scroll; content visible and evenly spaced */}
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overflow-x-hidden p-3 sm:flex-row sm:gap-4 sm:p-4">
-        <section className="arena-section flex min-h-0 min-w-0 flex-1 flex-col gap-3 overflow-visible sm:flex-row sm:gap-4">
+      {/* Main Content: mobile = scrollable column (no overlap); sm+ = row, no scroll */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-1.5 overflow-x-hidden overflow-y-auto p-1.5 sm:flex-row sm:gap-3 sm:overflow-hidden sm:p-3">
+        <section className="arena-section flex min-h-0 min-w-0 flex-shrink-0 flex-col gap-1.5 overflow-hidden sm:min-h-0 sm:flex-1 sm:flex-row sm:gap-3">
           <GameArenaDecor />
-          <div className="flex min-h-[260px] min-w-0 flex-1 items-center justify-center overflow-visible bg-[var(--bg-dark)] px-3 py-3 sm:min-h-0 sm:px-4 sm:py-3">
+          <div className="flex min-h-[220px] min-w-0 max-w-full flex-shrink-0 items-center justify-center overflow-hidden overflow-x-hidden bg-[var(--bg-dark)] px-1.5 pt-1 pb-1.5 sm:min-h-0 sm:flex-1 sm:px-3 sm:pt-1.5 sm:pb-2">
             <GameCanvas />
           </div>
         </section>
-        <aside className="flex min-h-0 shrink-0 flex-col gap-3 sm:w-64 sm:gap-4 lg:w-72">
-          <div className="game-box shrink-0 px-3 py-3 sm:px-4 sm:py-4">
+        <aside className="flex min-w-0 shrink-0 flex-col gap-1.5 sm:w-64 sm:min-w-[16rem] sm:gap-3 lg:w-72">
+          <div className="game-box shrink-0 px-1.5 py-1.5 sm:px-3 sm:py-3">
             <CharacterPicker
               selectedId={selectedCharacterId}
               onSelect={setSelectedCharacterId}
               compact
             />
           </div>
-          <div className="game-box flex min-h-[160px] min-w-0 flex-1 flex-col overflow-hidden px-3 py-3 sm:min-h-0 sm:px-4 sm:py-4">
+          <div className="game-box flex min-h-[100px] min-w-0 flex-shrink-0 flex-col overflow-hidden px-1.5 py-1.5 sm:min-h-0 sm:flex-1 sm:px-3 sm:py-3">
             <div className="min-h-0 flex-1 overflow-hidden">
               <GlitchPopper />
             </div>
@@ -265,7 +265,7 @@ export default function Home() {
       )}
 
       {/* Footer watermark — update version when you deploy to confirm live */}
-      <footer className="flex shrink-0 justify-center border-t border-white/10 px-3 py-2 sm:px-4">
+      <footer className="flex shrink-0 justify-center border-t border-white/10 px-2 py-1 sm:px-3 sm:py-1.5">
         <span className="font-mono text-[10px] text-gray-400 sm:text-xs">
           created by reamesor <span className="text-gray-500">· v2</span>
         </span>

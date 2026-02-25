@@ -195,7 +195,13 @@ export function GameCanvas() {
         }
       }
       if (autobetRunningRef.current) {
-        const sessionDelta = effectiveWon ? effectivePayout : (msg === "[ SHIELD BLOCKED ]" ? 0 : msg?.startsWith("[ CLOAK") ? -Math.floor(battleAmount / 2) : -battleAmount);
+        const sessionDelta = effectiveWon
+          ? effectivePayout - battleAmount
+          : msg === "[ SHIELD BLOCKED ]"
+            ? 0
+            : msg?.startsWith("[ CLOAK")
+              ? -Math.floor(battleAmount / 2)
+              : -battleAmount;
         setAutobetSessionProfit((p) => p + sessionDelta);
       }
     }, waitMs);

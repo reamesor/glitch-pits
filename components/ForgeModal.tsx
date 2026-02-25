@@ -45,7 +45,7 @@ export function ForgeModal({ onForge }: ForgeModalProps) {
       <div className="w-full max-w-md">
         <WindowedModal title="THE FORGE" closable={false}>
           <p className="mb-4 text-center text-base text-gray-400">
-            Create your gladiator — name them, pick clothes and weapon — then get <strong>1,000 PITS</strong> added to your balance to play. Free.
+            Create your gladiator — name them, pick clothes and weapon — then get <strong>1,000 PITS</strong> added to your balance (<strong>2,000 PITS</strong> total to start). Free.
           </p>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">

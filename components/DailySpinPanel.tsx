@@ -136,60 +136,62 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
   };
 
   return (
-    <div className="daily-spin-panel flex w-full min-w-0 flex-col overflow-visible">
-      <div className="panel-title-row w-full overflow-visible">
-        <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5 overflow-visible">
-            <span className="daily-spin-title font-pixel inline-block shrink-0 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>DAILY SPIN</span>
-            <FeatureInfoIcon
-              ariaLabel="How Daily Spin works"
-              content={
-                <>
-                  3 free spins per day. Three matching = 50 PITS, two = 25, no match = 10. Nothing staked or burned.
-                </>
-              }
-              className="shrink-0 text-[var(--glitch-teal)]"
-            />
-          </div>
+    <div className="daily-spin-panel flex h-full min-w-0 flex-col overflow-visible">
+      <div className="panel-title-row w-full shrink-0 overflow-visible">
+        <div className="flex w-full items-center gap-1.5">
+          <h3 className="daily-spin-title font-pixel glitch-text inline-block shrink-0 text-sm" data-text="DAILY SPIN" style={{ color: "#00ffff" }}>
+            DAILY SPIN
+          </h3>
+          <FeatureInfoIcon
+            ariaLabel="How Daily Spin works"
+            content={
+              <>
+                3 free spins per day. Three matching = 50 PITS, two = 25, no match = 10. Nothing staked or burned.
+              </>
+            }
+            className="shrink-0 text-[var(--glitch-teal)]"
+          />
           {onClose && (
-            <button type="button" onClick={onClose} className="font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
+            <button type="button" onClick={onClose} className="ml-auto font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
               CLOSE
             </button>
           )}
         </div>
-        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1.5" aria-hidden />
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
       </div>
-      {!canSpin ? (
-        <div className="py-2 text-center">
-          <p className="font-pixel text-[9px] text-gray-300 sm:text-[10px]">3 SPINS USED</p>
-          <p className="mt-1 font-mono text-[10px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
-        </div>
-      ) : (
-        <>
-          <div className="mb-2 flex justify-center gap-3 px-1 sm:gap-4 sm:px-2">
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="flex h-9 w-9 shrink-0 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] sm:h-10 sm:w-10">
-                <span className="inline-flex scale-[1.25] origin-center sm:scale-[1.4]">
-                  <PixelCharacter characterId={REEL_AVATAR_IDS[displayReels[i]]} size="sm" animated={false} />
-                </span>
-              </div>
-            ))}
+      <div className="panel-content min-h-0 flex-1 flex flex-col">
+        {!canSpin ? (
+          <div className="py-1.5 text-center">
+            <p className="font-pixel text-[9px] text-gray-300 sm:text-[10px]">3 SPINS USED</p>
+            <p className="mt-0.5 font-mono text-[10px] tabular-nums text-[var(--glitch-teal)]">{formatCountdown(msLeft)}</p>
           </div>
-          {result !== null && (
-            <p className="mb-1 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
-              +{result} PITS
-            </p>
-          )}
-          <button
-            type="button"
-            onClick={spin}
-            disabled={spinning}
-            className="mt-0.5 w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-1.5 font-pixel text-[9px] text-white transition-colors hover:border-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/30 hover:text-white disabled:opacity-50 sm:text-[10px]"
-          >
-            {spinning ? "…" : `SPIN (${triesLeft} left)`}
-          </button>
-        </>
-      )}
+        ) : (
+          <>
+            <div className="mb-1.5 flex justify-center gap-2 px-0 sm:gap-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="flex h-8 w-8 shrink-0 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] sm:h-9 sm:w-9">
+                  <span className="inline-flex scale-[1.2] origin-center sm:scale-[1.3]">
+                    <PixelCharacter characterId={REEL_AVATAR_IDS[displayReels[i]]} size="sm" animated={false} />
+                  </span>
+                </div>
+              ))}
+            </div>
+            {result !== null && (
+              <p className="mb-0.5 text-center font-pixel text-[9px] animate-pulse sm:text-[10px]" style={{ color: "var(--glitch-pink)" }}>
+                +{result} PITS
+              </p>
+            )}
+            <button
+              type="button"
+              onClick={spin}
+              disabled={spinning}
+              className="mt-0.5 w-full rounded border-2 border-[var(--glitch-pink)] bg-[var(--glitch-pink)]/20 py-1.5 font-pixel text-[9px] text-white transition-colors hover:border-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/30 hover:text-white disabled:opacity-50 sm:text-[10px]"
+            >
+              {spinning ? "…" : `SPIN (${triesLeft} left)`}
+            </button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

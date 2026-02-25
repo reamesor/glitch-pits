@@ -109,7 +109,7 @@ export function GlitchPopper() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="panel-title-row w-full overflow-visible">
+      <div className="panel-title-row w-full shrink-0 overflow-visible">
         <div className="flex w-full items-center gap-1.5">
           <h3
             className="font-pixel glitch-text inline-block shrink-0 text-sm"
@@ -119,24 +119,25 @@ export function GlitchPopper() {
             GLITCH POPPER
           </h3>
           <FeatureInfoIcon
-          ariaLabel="How Glitch Popper works"
-          content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
+            ariaLabel="How Glitch Popper works"
+            content={<>Click orbs before they disappear. 0.01 PITS per pop. No stake; missed orbs don’t deduct.</>}
             className="shrink-0 text-[var(--glitch-teal)]"
           />
         </div>
         <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
       </div>
 
-      <div className="mb-1 flex flex-wrap items-center justify-between gap-1.5 font-mono text-[9px] text-gray-400 sm:text-[10px]">
-        <span>POPPED: {popped}</span>
-        <span>EARNED: {earned.toFixed(2)} PITS</span>
-      </div>
-      <p className="mb-2 font-mono text-[9px] text-gray-400 sm:text-[10px]">[ CLICK THE GLITCHES ]</p>
+      <div className="panel-content min-h-0 flex-1 flex flex-col">
+        <div className="mb-0.5 flex flex-wrap items-center justify-between gap-1.5 font-mono text-[9px] text-gray-400 sm:text-[10px]">
+          <span>POPPED: {popped}</span>
+          <span>EARNED: {earned.toFixed(2)} PITS</span>
+        </div>
+        <p className="mb-1 font-mono text-[9px] text-gray-400 sm:text-[10px]">[ CLICK THE GLITCHES ]</p>
 
-      <div
-        ref={playAreaRef}
-        className="glitch-popper-play relative min-h-0 flex-1 overflow-hidden rounded border border-[var(--glitch-pink)]/20"
-      >
+        <div
+          ref={playAreaRef}
+          className="glitch-popper-play relative min-h-0 flex-1 overflow-hidden rounded border border-[var(--glitch-pink)]/20"
+        >
         {orbs.map((orb) => (
           <div
             key={orb.id}
@@ -174,6 +175,7 @@ export function GlitchPopper() {
             +0.01 PITS
           </div>
         ))}
+        </div>
       </div>
     </div>
   );

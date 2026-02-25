@@ -175,19 +175,20 @@ export function BlackMarketModal({ onClose }: BlackMarketModalProps) {
               ×
             </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-6">
-            <p className="mb-4 text-center text-xs text-gray-500">
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-6">
+            <p className="mb-2 text-center text-xs text-gray-500">
               Upgrade your character and buy consumables for the Pit.
             </p>
-            <p className="mb-6 font-pixel text-center text-xs" style={{ color: "var(--glitch-teal)" }}>
+            <p className="mb-4 font-pixel text-center text-xs" style={{ color: "var(--glitch-teal)" }}>
               Balance: {mockBalance.toLocaleString()} PITS
             </p>
 
-            <div className="space-y-3">
+            <p className="mb-1 font-pixel text-[9px] text-[var(--glitch-pink)]">[ STATS ]</p>
+            <div className="mb-5 space-y-2">
               {UPGRADES.map((u) => (
                 <div
                   key={u.stat}
-                  className="flex items-center justify-between border-4 border-[#4a4a4a] bg-[#252025] p-4"
+                  className="flex items-center justify-between border-4 border-[#4a4a4a] bg-[#252025] p-3"
                 >
                   <div>
                     <p className="font-pixel text-xs text-white">{u.name}</p>
@@ -206,8 +207,8 @@ export function BlackMarketModal({ onClose }: BlackMarketModalProps) {
             </div>
 
             {sections.map(({ key, items }) => (
-              <div key={key} className="mt-6 space-y-3">
-                <p className="font-mono text-[10px] text-gray-500">{SECTION_HEADERS[key]}</p>
+              <div key={key} className="mt-4 space-y-2">
+                <p className="font-pixel text-[9px] text-[var(--glitch-teal)]">{SECTION_HEADERS[key]}</p>
                 {items.map((item) => {
                   const active = isActive(item.id);
                   const equipped = equippedId === item.id;
@@ -216,7 +217,7 @@ export function BlackMarketModal({ onClose }: BlackMarketModalProps) {
                   return (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between border-4 border-[#4a4a4a] p-4"
+                      className="flex items-center justify-between border-4 border-[#4a4a4a] p-3"
                       style={{ backgroundColor: isDarkTier ? "#1a0000" : "#252025" }}
                     >
                       <div className="min-w-0 flex-1">

@@ -194,97 +194,99 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
 
   return (
     <div className="snake-panel flex min-h-0 w-full flex-col">
-      <div className="panel-title-row w-full overflow-visible">
-        <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <span className="font-pixel glitch-text inline-block shrink-0 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>SNAKE</span>
-            <FeatureInfoIcon
-              ariaLabel="How Snake works"
+      <div className="panel-title-row w-full shrink-0 overflow-visible">
+        <div className="flex w-full items-center gap-1.5">
+          <h3 className="font-pixel glitch-text inline-block shrink-0 text-sm" data-text="SNAKE" style={{ color: "#00ffff" }}>
+            SNAKE
+          </h3>
+          <FeatureInfoIcon
+            ariaLabel="How Snake works"
             content={
               <>
                 Arrow keys / WASD. Eat food, avoid walls and body. PITS = round(score ÷ 10), max 20 per game. No stake; you don’t lose PITS.
               </>
             }
-              className="shrink-0 text-[var(--glitch-teal)]"
-            />
-          </div>
+            className="shrink-0 text-[var(--glitch-teal)]"
+          />
           {onClose && (
-            <button type="button" onClick={handleClose} className="font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
+            <button type="button" onClick={handleClose} className="ml-auto font-mono shrink-0 text-[9px] text-gray-400 hover:text-white" aria-label="Close">
               CLOSE
             </button>
           )}
         </div>
-        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1.5" aria-hidden />
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
       </div>
-      {confirmClose && (
-        <div className="mb-1.5 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[9px]">
-          <p className="text-gray-300">Quit? Score will be lost.</p>
-          <div className="mt-1.5 flex justify-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                const g = gameRef.current;
-                if (g?.loop) clearInterval(g.loop);
-                if (gameRef.current) gameRef.current.loop = null;
-                setStatus("idle");
-                setCountdown(3);
-                setConfirmClose(false);
-                onClose?.();
-              }}
-              className="rounded border border-red-500/70 px-1.5 py-0.5 text-red-400"
-            >
-              QUIT
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirmClose(false)}
-              className="rounded border border-[var(--glitch-teal)]/70 px-1.5 py-0.5 text-[var(--glitch-teal)]"
-            >
-              CANCEL
-            </button>
+      <div className="panel-content min-h-0 flex-1 flex flex-col">
+        {confirmClose && (
+          <div className="mb-1 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[9px]">
+            <p className="text-gray-300">Quit? Score will be lost.</p>
+            <div className="mt-1 flex justify-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => {
+                  const g = gameRef.current;
+                  if (g?.loop) clearInterval(g.loop);
+                  if (gameRef.current) gameRef.current.loop = null;
+                  setStatus("idle");
+                  setCountdown(3);
+                  setConfirmClose(false);
+                  onClose?.();
+                }}
+                className="rounded border border-red-500/70 px-1.5 py-0.5 text-red-400"
+              >
+                QUIT
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmClose(false)}
+                className="rounded border border-[var(--glitch-teal)]/70 px-1.5 py-0.5 text-[var(--glitch-teal)]"
+              >
+                CANCEL
+              </button>
+            </div>
           </div>
+        )}
+        <div className="flex min-h-0 flex-1 items-center justify-center">
+          <canvas
+            ref={canvasRef}
+            width={CANVAS_W}
+            height={CANVAS_H}
+            className="w-full max-w-full h-auto block rounded border border-[var(--glitch-pink)]/20"
+            style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
+          />
         </div>
-      )}
-      <div className="min-h-0 w-full flex-1 flex items-center justify-center">
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_W}
-          height={CANVAS_H}
-          className="w-full max-w-full h-auto block rounded border border-[var(--glitch-teal)]/30"
-          style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
-        />
-      </div>
-      <p className="mt-1 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
-        {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
-        {status === "idle" && "Arrow keys / WASD"}
-        {status === "gameover" && `Score: ${score}`}
-      </p>
-      {status === "countdown" && (
-        <p className="mt-1 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
-          Get ready — {countdown}
+        <p className="mt-0.5 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
+          {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
+          {status === "idle" && "Arrow keys / WASD"}
+          {status === "gameover" && `Score: ${score}`}
         </p>
-      )}
-      {status === "idle" && (
-        <button
-          type="button"
-          onClick={startGame}
-          className="mt-1 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
-        >
-          [ START ]
-        </button>
-      )}
-      {status === "gameover" && (
-        <div className="mt-1 text-center">
-          <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
+        {status === "countdown" && (
+          <p className="mt-0.5 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
+            Get ready — {countdown}
+          </p>
+        )}
+        {status === "idle" && (
           <button
             type="button"
             onClick={startGame}
-            className="mt-1 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
+            className="mt-0.5 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
           >
-            PLAY AGAIN
+            [ START ]
           </button>
-        </div>
-      )}
+        )}
+        {status === "gameover" && (
+          <div className="mt-0.5 text-center">
+            <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
+            <button
+              type="button"
+              onClick={startGame}
+              className="mt-0.5 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
+            >
+              PLAY AGAIN
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

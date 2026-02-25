@@ -167,10 +167,15 @@ export function DailySpinPanel({ onClose }: DailySpinPanelProps) {
           </div>
         ) : (
           <>
-            <div className="mb-1.5 flex justify-center gap-2 px-0 sm:gap-3">
+            {/* Slot machine: one strip with three reel windows; avatars fit inside, no overflow */}
+            <div className="daily-spin-reels mb-1.5 inline-flex items-center justify-center gap-0.5 rounded-lg border-2 border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-1 py-1 sm:gap-1 sm:px-1.5 sm:py-1.5">
               {[0, 1, 2].map((i) => (
-                <div key={i} className="flex h-8 w-8 shrink-0 items-center justify-center rounded border-2 border-[var(--glitch-pink)]/50 bg-[var(--bg-darker)] sm:h-9 sm:w-9">
-                  <span className="inline-flex scale-[1.2] origin-center sm:scale-[1.3]">
+                <div
+                  key={i}
+                  className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded border border-[var(--glitch-pink)]/50 bg-black/50 sm:h-9 sm:w-9"
+                  style={{ imageRendering: "pixelated" }}
+                >
+                  <span className="inline-flex shrink-0 scale-[0.7] origin-center sm:scale-[0.85]">
                     <PixelCharacter characterId={REEL_AVATAR_IDS[displayReels[i]]} size="sm" animated={false} />
                   </span>
                 </div>

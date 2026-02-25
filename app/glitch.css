@@ -55,9 +55,11 @@
 .panel-content {
   min-width: 0;
 }
-.daily-spin-panel,
-.snake-panel {
+.daily-spin-panel {
   overflow: visible;
+}
+.snake-panel {
+  overflow: hidden;
 }
 /* Left panel (arena-decor): same structure as right panel — no extra border or vertical line */
 .arena-decor {

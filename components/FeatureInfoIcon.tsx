@@ -82,17 +82,20 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
         createPortal(
           <div
             ref={popRef}
-            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] p-3 shadow-lg overflow-y-auto"
-            style={{ ...popoverStyle, maxWidth: "100%" }}
+            className="fixed z-[100] rounded border border-[var(--glitch-pink)]/40 bg-[var(--bg-darker)] px-4 py-3 shadow-lg overflow-y-auto"
+            style={{ ...popoverStyle, maxWidth: "100%", boxSizing: "border-box" }}
             role="tooltip"
           >
-            <div className="text-center font-mono text-[10px] leading-relaxed text-gray-200 sm:text-[11px] break-words" style={{ overflowWrap: "break-word" }}>
+            <div
+              className="font-mono text-[10px] leading-relaxed text-gray-200 sm:text-[11px] break-words"
+              style={{ overflowWrap: "break-word", textAlign: "center" }}
+            >
               {content}
             </div>
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="mt-1.5 w-full rounded border border-[var(--glitch-teal)]/50 py-0.5 font-pixel text-[8px] text-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/10"
+              className="mt-1.5 block w-full rounded border border-[var(--glitch-teal)]/50 py-0.5 font-pixel text-[8px] text-[var(--glitch-teal)] hover:bg-[var(--glitch-teal)]/10 text-center"
             >
               GOT IT
             </button>

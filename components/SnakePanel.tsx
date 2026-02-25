@@ -216,13 +216,13 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
             </button>
           )}
         </div>
-        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-1" aria-hidden />
+        <div className="mt-1 w-full border-b-2 border-[var(--glitch-teal)]/50 pb-1.5 mb-2" aria-hidden />
       </div>
-      <div className="panel-content min-h-0 flex-1 flex flex-col">
+      <div className="panel-content min-h-0 flex-1 flex flex-col gap-0 pt-1.5 pb-3">
         {confirmClose && (
-          <div className="mb-1 rounded border border-[var(--glitch-pink)]/50 bg-black/50 p-1.5 text-center font-mono text-[9px]">
+          <div className="mb-1.5 rounded border border-[var(--glitch-pink)]/50 bg-black/50 px-2 py-1.5 text-center font-mono text-[9px]">
             <p className="text-gray-300">Quit? Score will be lost.</p>
-            <div className="mt-1 flex justify-center gap-1.5">
+            <div className="mt-1.5 flex justify-center gap-1.5">
               <button
                 type="button"
                 onClick={() => {
@@ -248,46 +248,48 @@ export function SnakePanel({ onClose }: SnakePanelProps) {
             </div>
           </div>
         )}
-        <div className="flex min-h-0 flex-1 items-center justify-center">
+        <div className="flex min-h-0 flex-1 items-center justify-center shrink-0 overflow-hidden">
           <canvas
             ref={canvasRef}
             width={CANVAS_W}
             height={CANVAS_H}
-            className="w-full max-w-full h-auto block rounded border border-[var(--glitch-pink)]/20"
+            className="h-auto max-h-full w-full max-w-full shrink-0 rounded border border-[var(--glitch-pink)]/20"
             style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}`, imageRendering: "pixelated" }}
           />
         </div>
-        <p className="mt-3 text-center font-mono text-[9px] sm:text-[10px] text-gray-400">
-          {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
-          {status === "idle" && "Arrow keys / WASD"}
-          {status === "gameover" && `Score: ${score}`}
-        </p>
-        {status === "countdown" && (
-          <p className="mt-2 text-center font-pixel text-[10px] sm:text-[11px] text-[var(--glitch-teal)] animate-pulse">
-            Get ready — {countdown}
+        <div className="mt-2 flex shrink-0 flex-col gap-1.5">
+          <p className="text-center font-mono text-[9px] leading-tight text-gray-400 sm:text-[10px]">
+            {status === "playing" && `Score: ${score} · Arrow keys / WASD`}
+            {status === "idle" && "Arrow keys / WASD"}
+            {status === "gameover" && `Score: ${score}`}
           </p>
-        )}
-        {status === "idle" && (
-          <button
-            type="button"
-            onClick={startGame}
-            className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
-          >
-            [ START ]
-          </button>
-        )}
-        {status === "gameover" && (
-          <div className="mt-3 text-center">
-            <p className="font-pixel text-[9px] sm:text-[10px] text-[var(--glitch-pink)]">GAME OVER — {earned} PITS</p>
+          {status === "countdown" && (
+            <p className="text-center font-pixel text-[10px] leading-tight text-[var(--glitch-teal)] animate-pulse sm:text-[11px]">
+              Get ready — {countdown}
+            </p>
+          )}
+          {status === "idle" && (
             <button
               type="button"
               onClick={startGame}
-              className="mt-2 w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-1.5 font-pixel text-[9px] sm:text-[10px]"
+              className="w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] text-[var(--glitch-teal)] sm:text-[10px]"
             >
-              PLAY AGAIN
+              [ START ]
             </button>
-          </div>
-        )}
+          )}
+          {status === "gameover" && (
+            <div className="flex flex-col gap-1.5">
+              <p className="text-center font-pixel text-[9px] leading-tight text-[var(--glitch-pink)] sm:text-[10px]">GAME OVER — {earned} PITS</p>
+              <button
+                type="button"
+                onClick={startGame}
+                className="w-full rounded border-2 border-[var(--glitch-teal)] bg-[var(--glitch-teal)]/20 py-2 font-pixel text-[9px] sm:text-[10px]"
+              >
+                PLAY AGAIN
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

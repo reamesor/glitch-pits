@@ -40,6 +40,7 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
     let popoverWidth = maxW;
     let centerX = rect.left + rect.width / 2;
     let left = Math.max(padding, Math.min(centerX - popoverWidth / 2, document.documentElement.clientWidth - popoverWidth - padding));
+    let top = rect.bottom + gap;
     let maxHeight: number | undefined;
 
     if (constrainToRef?.current) {
@@ -49,11 +50,28 @@ export function FeatureInfoIcon({ content, ariaLabel = "How this feature works",
       popoverWidth = Math.min(popoverWidth, maxWidthInBox, 320);
       centerX = box.left + box.width / 2;
       left = Math.max(box.left + innerPad, Math.min(centerX - popoverWidth / 2, box.right - popoverWidth - innerPad));
-      const topIfBelow = rect.bottom + gap;
-      maxHeight = Math.max(120, box.bottom - topIfBelow - innerPad);
+      const spaceBelow = box.bottom - (rect.bottom + gap) - innerPad;
+      const spaceAbove = rect.top - box.top - innerPad;
+      const minComfortHeight = 100;
+      const maxComfortHeight = 280;
+      if (spaceBelow >= minComfortHeight) {
+        // Open below: cap height so popover stays inside panel
+        maxHeight = Math.min(maxComfortHeight, Math.max(minComfortHeight, spaceBelow));
+      } else if (spaceAbove >= minComfortHeight) {
+        // Open above so content stays inside Daily Spin panel (no overlap with Snake)
+        maxHeight = Math.min(maxComfortHeight, spaceAbove);
+        top = rect.top - gap - maxHeight;
+      } else {
+        // Very tight: use whatever space is larger, cap strictly
+        if (spaceAbove >= spaceBelow) {
+          maxHeight = Math.max(80, spaceAbove);
+          top = rect.top - gap - maxHeight;
+        } else {
+          maxHeight = Math.max(80, spaceBelow);
+        }
+      }
     }
 
-    const top = rect.bottom + gap;
     setPopoverStyle({
       left,
       top,
